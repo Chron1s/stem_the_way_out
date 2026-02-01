@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SIGNAL - Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      font-family: 'Space Mono', monospace;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 20px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #555;
+      text-decoration: none;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color 0.2s ease;
+      padding: 8px 12px;
+      border: 1px solid #222;
+      border-radius: 20px;
+      background: transparent;
+      cursor: pointer;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .back-btn:hover {
+      color: #fff;
+      border-color: #444;
+    }
+
+    .track-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .header-spacer {
+      flex: 1;
+    }
+
+    /* Main Player Area */
+    .player-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+    }
+
+    /* Stem Control Grid - Cross Pattern */
+    .stem-grid {
+      display: grid;
+      grid-template-columns: auto 70px auto;
+      grid-template-rows: auto 70px auto;
+      gap: 6px;
+      align-items: center;
+      justify-items: center;
+    }
+
+    /* Individual Stem Controllers */
+    .stem-control {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stem-control.horizontal {
+      flex-direction: row;
+      gap: 8px;
+    }
+
+    .stem-control.top { grid-column: 2; grid-row: 1; }
+    .stem-control.left { grid-column: 1; grid-row: 2; justify-self: end; }
+    .stem-control.center { grid-column: 2; grid-row: 2; }
+    .stem-control.right { grid-column: 3; grid-row: 2; justify-self: start; }
+    .stem-control.bottom { grid-column: 2; grid-row: 3; }
+
+    .stem-label {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #555;
+      transition: color 0.2s ease;
+    }
+
+    .stem-control:hover .stem-label {
+      color: #fff;
+    }
+
+    /* Futuristic Light Bar Slider - No frame, just LEDs */
+    .light-bar {
+      display: flex;
+      gap: 6px;
+      padding: 0;
+      background: transparent;
+      border-radius: 0;
+      box-shadow: none;
+      border: none;
+      position: relative;
+      cursor: pointer;
+      touch-action: none;
+    }
+
+    .light-bar.horizontal {
+      width: auto;
+      height: auto;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 8px;
+    }
+
+    /* Left slider (Other) - fills from right to left (inside to outside) */
+    .stem-control.left .light-bar.horizontal {
+      flex-direction: row-reverse;
+    }
+
+    .light-bar.vertical {
+      width: auto;
+      height: auto;
+      flex-direction: column-reverse;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 8px;
+    }
+
+    /* Bottom slider (Bass) - fills from top to bottom (inside to outside) */
+    .stem-control.bottom .light-bar.vertical {
+      flex-direction: column;
+    }
+
+    .led-segment {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #1a1a1a;
+      transition: all 0.08s ease-out;
+      position: relative;
+      opacity: 0.4;
+    }
+
+    .led-segment.active {
+      opacity: 1;
+    }
+
+    /* Stem-specific LED colors - Dark blue shades */
+    .stem-control[data-stem="drums"] .led-segment.active {
+      background: radial-gradient(circle at 30% 30%, #5dade2, #2e86de 40%, #1a5276);
+      box-shadow: 
+        0 0 8px #2e86de,
+        0 0 16px rgba(46, 134, 222, 0.6),
+        0 0 24px rgba(46, 134, 222, 0.3),
+        inset 0 1px 2px rgba(255,255,255,0.4);
+    }
+
+    .stem-control[data-stem="bass"] .led-segment.active {
+      background: radial-gradient(circle at 30% 30%, #3498db, #1a5276 40%, #0d2840);
+      box-shadow: 
+        0 0 8px #1a5276,
+        0 0 16px rgba(26, 82, 118, 0.6),
+        0 0 24px rgba(26, 82, 118, 0.3),
+        inset 0 1px 2px rgba(255,255,255,0.4);
+    }
+
+    .stem-control[data-stem="other"] .led-segment.active {
+      background: radial-gradient(circle at 30% 30%, #85c1e9, #5dade2 40%, #2874a6);
+      box-shadow: 
+        0 0 8px #5dade2,
+        0 0 16px rgba(93, 173, 226, 0.6),
+        0 0 24px rgba(93, 173, 226, 0.3),
+        inset 0 1px 2px rgba(255,255,255,0.4);
+    }
+
+    .stem-control[data-stem="vocals"] .led-segment.active {
+      background: radial-gradient(circle at 30% 30%, #aed6f1, #85c1e9 40%, #3498db);
+      box-shadow: 
+        0 0 8px #85c1e9,
+        0 0 16px rgba(133, 193, 233, 0.6),
+        0 0 24px rgba(133, 193, 233, 0.3),
+        inset 0 1px 2px rgba(255,255,255,0.4);
+    }
+
+    /* Hover glow effect on slider */
+    .light-bar:hover {
+      border-color: transparent;
+    }
+
+    .stem-control[data-stem="drums"] .light-bar:hover {
+      box-shadow: none;
+    }
+    .stem-control[data-stem="bass"] .light-bar:hover {
+      box-shadow: none;
+    }
+    .stem-control[data-stem="other"] .light-bar:hover {
+      box-shadow: none;
+    }
+    .stem-control[data-stem="vocals"] .light-bar:hover {
+      box-shadow: none;
+    }
+
+    /* Center Play Button - Smaller */
+    .play-button {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: transparent;
+      border: 2px solid #333;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .play-button:hover {
+      border-color: #fff;
+      transform: scale(1.05);
+    }
+
+    .play-button:active {
+      transform: scale(0.95);
+    }
+
+    .play-icon {
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 8px 0 8px 14px;
+      border-color: transparent transparent transparent #fff;
+      margin-left: 3px;
+      transition: all 0.2s ease;
+    }
+
+    .play-button.playing .play-icon {
+      border: none;
+      width: 14px;
+      height: 14px;
+      margin-left: 0;
+      background: linear-gradient(to right, 
+        #fff 0%, #fff 35%, 
+        transparent 35%, transparent 65%, 
+        #fff 65%, #fff 100%);
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      width: 100%;
+      max-width: 320px;
+      margin-top: 20px;
+      padding: 0 10px;
+    }
+
+    .time-display {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      letter-spacing: 1px;
+      color: #444;
+      margin-bottom: 5px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 3px;
+      background: #1a1a1a;
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3498db, #85c1e9);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* Skip Controls */
+    .skip-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .skip-btn {
+      width: 28px;
+      height: 28px;
+      background: transparent;
+      border: 1px solid #2a2a2a;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      color: #444;
+    }
+
+    .skip-btn:hover {
+      border-color: #fff;
+      color: #fff;
+    }
+
+    .skip-btn:active {
+      transform: scale(0.95);
+    }
+
+    .skip-btn svg {
+      width: 10px;
+      height: 10px;
+      fill: currentColor;
+    }
+
+    /* Loading State */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      transition: opacity 0.5s ease;
+    }
+
+    .loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading-text {
+      font-size: 12px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #444;
+      margin-bottom: 20px;
+    }
+
+    .loading-bar {
+      width: 200px;
+      height: 2px;
+      background: #222;
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .loading-progress {
+      height: 100%;
+      background: #fff;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Pre-load state - shows track info before loading */
+    .preload-content {
+      text-align: center;
+    }
+
+    .preload-track-name {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .preload-featuring {
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: #555;
+      margin-bottom: 40px;
+    }
+
+    .load-btn {
+      padding: 20px 50px;
+      background: transparent;
+      border: 2px solid #333;
+      border-radius: 50px;
+      color: #fff;
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .load-btn:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+      box-shadow: 0 0 40px rgba(255,255,255,0.2);
+    }
+
+    .load-btn.loading {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    .loading-info {
+      display: none;
+      margin-top: 30px;
+    }
+
+    .loading-info.visible {
+      display: block;
+    }
+
+    /* Responsive - Mobile friendly compact design */
+    @media (max-width: 500px) {
+      .stem-grid {
+        grid-template-columns: auto 60px auto;
+        grid-template-rows: auto 60px auto;
+        gap: 4px;
+      }
+
+      .light-bar.horizontal,
+      .light-bar.vertical {
+        gap: 5px;
+        padding: 10px;
+      }
+
+      .led-segment {
+        width: 14px;
+        height: 14px;
+      }
+
+      .play-button {
+        width: 50px;
+        height: 50px;
+      }
+
+      .play-icon {
+        border-width: 8px 0 8px 14px;
+        margin-left: 3px;
+      }
+
+      .play-button.playing .play-icon {
+        width: 14px;
+        height: 14px;
+      }
+
+      .header {
+        padding: 10px 15px;
+      }
+
+      .back-btn {
+        font-size: 9px;
+        padding: 6px 10px;
+      }
+
+      .track-title {
+        font-size: 10px;
+        letter-spacing: 1px;
+      }
+
+      .stem-label {
+        font-size: 8px;
+        letter-spacing: 2px;
+      }
+
+      .stem-control {
+        gap: 4px;
+      }
+
+      .stem-control.horizontal {
+        gap: 6px;
+      }
+
+      .player-container {
+        padding: 15px 10px;
+      }
+
+      .progress-container {
+        max-width: 280px;
+        margin-top: 15px;
+      }
+
+      .skip-controls {
+        gap: 12px;
+        margin-top: 8px;
+      }
+
+      .skip-btn {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    /* Extra small phones */
+    @media (max-width: 380px) {
+      .stem-grid {
+        grid-template-columns: auto 50px auto;
+        grid-template-rows: auto 50px auto;
+        gap: 2px;
+      }
+
+      .led-segment {
+        width: 12px;
+        height: 12px;
+      }
+
+      .light-bar.horizontal,
+      .light-bar.vertical {
+        gap: 4px;
+        padding: 8px;
+      }
+
+      .play-button {
+        width: 44px;
+        height: 44px;
+      }
+
+      .play-icon {
+        border-width: 7px 0 7px 12px;
+      }
+
+      .stem-label {
+        font-size: 7px;
+        letter-spacing: 1px;
+      }
+
+      .progress-container {
+        max-width: 240px;
+      }
+    }
+
+    /* Landscape mode on phones */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .player-container {
+        padding: 8px;
+      }
+
+      .stem-grid {
+        grid-template-columns: auto 50px auto;
+        grid-template-rows: auto 50px auto;
+        gap: 4px;
+      }
+
+      .led-segment {
+        width: 10px;
+        height: 10px;
+      }
+
+      .light-bar.horizontal,
+      .light-bar.vertical {
+        gap: 3px;
+        padding: 6px;
+      }
+
+      .play-button {
+        width: 40px;
+        height: 40px;
+      }
+
+      .header {
+        padding: 6px 12px;
+      }
+
+      .progress-container {
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-info">
+    <div class="loading-text">Loading Stems</div>
+    <div class="loading-bar">
+      <div class="loading-progress" id="loadingProgress"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <button onclick="window.location.href='index.html?menu=open'" class="back-btn">
+    Tracks
+  </button>
+  <div class="track-title" id="trackTitle">Loading...</div>
+  <div class="header-spacer"></div>
+</div>
+
+<!-- Player -->
+<div class="player-container">
+
+  <!-- Stem Control Grid -->
+  <div class="stem-grid">
+
+    <!-- Vocals (Top) -->
+    <div class="stem-control top" data-stem="vocals">
+      <span class="stem-label">Vocals</span>
+      <div class="light-bar vertical" data-value="100">
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+      </div>
+    </div>
+
+    <!-- Other (Left) -->
+    <div class="stem-control left horizontal" data-stem="other">
+      <span class="stem-label">Other</span>
+      <div class="light-bar horizontal" data-value="100">
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+      </div>
+    </div>
+
+    <!-- Center Play Button -->
+    <div class="stem-control center">
+      <div class="play-button" id="playButton">
+        <div class="play-icon"></div>
+      </div>
+    </div>
+
+    <!-- Drums (Right) -->
+    <div class="stem-control right horizontal" data-stem="drums">
+      <div class="light-bar horizontal" data-value="100">
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+      </div>
+      <span class="stem-label">Drums</span>
+    </div>
+
+    <!-- Bass (Bottom) -->
+    <div class="stem-control bottom" data-stem="bass">
+      <div class="light-bar vertical" data-value="100">
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+        <div class="led-segment"></div>
+      </div>
+      <span class="stem-label">Bass</span>
+    </div>
+
+  </div>
+
+  <!-- Progress Bar with Skip Controls -->
+  <div class="progress-container">
+    <div class="time-display">
+      <span id="currentTime">0:00</span>
+      <span id="totalTime">0:00</span>
+    </div>
+    <div class="progress-bar" id="progressBar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="skip-controls">
+      <button class="skip-btn" id="skipBack">
+        <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
+      </button>
+      <button class="skip-btn" id="skipForward">
+        <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ========================================
+  // AUDIO ENGINE
+  // ========================================
+
+  class StemPlayer {
+    constructor() {
+      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      this.isPlaying = false;
+      this.startTime = 0;
+      this.pauseTime = 0;
+      this.duration = 0;
+
+      this.stems = {
+        vocals: { buffer: null, source: null, gainNode: null, volume: 100 },
+        drums: { buffer: null, source: null, gainNode: null, volume: 100 },
+        bass: { buffer: null, source: null, gainNode: null, volume: 100 },
+        other: { buffer: null, source: null, gainNode: null, volume: 100 }
+      };
+
+      this.masterGain = this.audioContext.createGain();
+      this.masterGain.connect(this.audioContext.destination);
+
+      this.loadingProgress = document.getElementById('loadingProgress');
+      this.loadingOverlay = document.getElementById('loadingOverlay');
+      this.progressBar = document.getElementById('progressBar');
+      this.progressFill = document.getElementById('progressFill');
+      this.currentTimeEl = document.getElementById('currentTime');
+      this.totalTimeEl = document.getElementById('totalTime');
+
+      this.init();
+    }
+
+    async init() {
+      await this.loadStems();
+      this.setupUI();
+      this.setupProgressBar();
+      this.setupSkipControls();
+      
+      // Initialize all sliders to full
+      Object.keys(this.stems).forEach(stem => {
+        updateLightBar(stem, 100);
+      });
+
+      // Get duration from first stem
+      for (const stem of Object.values(this.stems)) {
+        if (stem.buffer) {
+          this.duration = stem.buffer.duration;
+          this.totalTimeEl.textContent = this.formatTime(this.duration);
+          break;
+        }
+      }
+
+      // Start progress update loop
+      this.updateProgress();
+      
+      // Hide loading
+      this.loadingOverlay.classList.add('hidden');
+    }
+
+    async loadStems() {
+      const stemsToLoad = Object.entries(TRACK_CONFIG.stems).filter(([_, stem]) => stem !== null);
+      const totalStems = stemsToLoad.length;
+      let loaded = 0;
+
+      for (const [stemName, stemData] of stemsToLoad) {
+        if (stemData && stemData.file) {
+          try {
+            console.log(`Loading ${stemName}: ${stemData.file}`);
+            const response = await fetch(stemData.file);
+            const arrayBuffer = await response.arrayBuffer();
+            const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+
+            const gainNode = this.audioContext.createGain();
+            gainNode.connect(this.masterGain);
+
+            this.stems[stemName].buffer = audioBuffer;
+            this.stems[stemName].gainNode = gainNode;
+
+            loaded++;
+            this.loadingProgress.style.width = (loaded / totalStems * 100) + '%';
+
+            console.log(`✓ Loaded ${stemName}`);
+          } catch (error) {
+            console.error(`Failed to load ${stemName}:`, error);
+          }
+        }
+      }
+    }
+
+    setupUI() {
+      // Play button
+      document.getElementById('playButton').addEventListener('click', () => this.togglePlay());
+
+      // Stem sliders with improved touch/mouse handling
+      document.querySelectorAll('.stem-control[data-stem]').forEach(control => {
+        const stemName = control.dataset.stem;
+        const slider = control.querySelector('.light-bar');
+        const isHorizontal = slider.classList.contains('horizontal');
+        const isLeftSlider = control.classList.contains('left');
+
+        let isDragging = false;
+        let dragStarted = false;
+
+        const updateVolume = (percent) => {
+          percent = Math.max(0, Math.min(100, percent));
+          this.stems[stemName].volume = percent;
+
+          updateLightBar(stemName, percent);
+
+          if (this.stems[stemName].gainNode) {
+            this.stems[stemName].gainNode.gain.setTargetAtTime(
+              percent / 100, 
+              this.audioContext.currentTime, 
+              0.02
+            );
+          }
+        };
+
+        const handleMove = (clientX, clientY) => {
+          const rect = slider.getBoundingClientRect();
+          let percent;
+          
+          if (isHorizontal) {
+            if (isLeftSlider) {
+              percent = 100 - ((clientX - rect.left) / rect.width) * 100;
+            } else {
+              percent = ((clientX - rect.left) / rect.width) * 100;
+            }
+          } else {
+            const isBottomSlider = control.classList.contains('bottom');
+            if (isBottomSlider) {
+              percent = ((clientY - rect.top) / rect.height) * 100;
+            } else {
+              percent = 100 - ((clientY - rect.top) / rect.height) * 100;
+            }
+          }
+          
+          updateVolume(percent);
+        };
+
+        // Solo function - single click
+        const soloStem = () => {
+          const allMuted = Object.entries(this.stems)
+            .filter(([name]) => name !== stemName)
+            .every(([, stem]) => stem.volume === 0);
+          
+          const thisStemFull = this.stems[stemName].volume === 100;
+
+          if (allMuted && thisStemFull) {
+            // Unsolo - restore all stems to 100
+            Object.keys(this.stems).forEach(name => {
+              this.stems[name].volume = 100;
+              if (this.stems[name].gainNode) {
+                this.stems[name].gainNode.gain.setTargetAtTime(1, this.audioContext.currentTime, 0.02);
+              }
+              updateLightBar(name, 100);
+            });
+          } else {
+            // Solo - mute others, max this one
+            Object.keys(this.stems).forEach(name => {
+              if (name === stemName) {
+                this.stems[name].volume = 100;
+                if (this.stems[name].gainNode) {
+                  this.stems[name].gainNode.gain.setTargetAtTime(1, this.audioContext.currentTime, 0.02);
+                }
+                updateLightBar(name, 100);
+              } else {
+                this.stems[name].volume = 0;
+                if (this.stems[name].gainNode) {
+                  this.stems[name].gainNode.gain.setTargetAtTime(0, this.audioContext.currentTime, 0.02);
+                }
+                updateLightBar(name, 0);
+              }
+            });
+          }
+        };
+
+        // Mouse events
+        slider.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          isDragging = true;
+          dragStarted = false;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+          if (isDragging) {
+            dragStarted = true;
+            e.preventDefault();
+            handleMove(e.clientX, e.clientY);
+          }
+        });
+
+        document.addEventListener('mouseup', (e) => {
+          if (isDragging && !dragStarted) {
+            // Was a click, not a drag - solo the stem
+            soloStem();
+          }
+          isDragging = false;
+          dragStarted = false;
+        });
+
+        // Touch events
+        let touchMoved = false;
+        slider.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          isDragging = true;
+          touchMoved = false;
+        }, { passive: false });
+
+        slider.addEventListener('touchmove', (e) => {
+          if (isDragging) {
+            touchMoved = true;
+            e.preventDefault();
+            handleMove(e.touches[0].clientX, e.touches[0].clientY);
+          }
+        }, { passive: false });
+
+        slider.addEventListener('touchend', (e) => {
+          if (isDragging && !touchMoved) {
+            // Was a tap, not a drag - solo the stem
+            soloStem();
+          }
+          isDragging = false;
+          touchMoved = false;
+        });
+
+        // Double-click/tap to mute/unmute
+        let lastTap = 0;
+        slider.addEventListener('dblclick', () => {
+          const current = this.stems[stemName].volume;
+          if (current > 0) {
+            this.stems[stemName].prevVolume = current;
+            updateVolume(0);
+          } else {
+            updateVolume(this.stems[stemName].prevVolume || 100);
+          }
+        });
+      });
+    }
+
+    setupProgressBar() {
+      let isDragging = false;
+
+      const seek = (clientX) => {
+        const rect = this.progressBar.getBoundingClientRect();
+        const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        this.seekTo(percent * this.duration);
+      };
+
+      this.progressBar.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        seek(e.clientX);
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (isDragging) seek(e.clientX);
+      });
+
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+
+      // Touch support
+      this.progressBar.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        seek(e.touches[0].clientX);
+      }, { passive: true });
+
+      this.progressBar.addEventListener('touchmove', (e) => {
+        if (isDragging) seek(e.touches[0].clientX);
+      }, { passive: true });
+
+      this.progressBar.addEventListener('touchend', () => {
+        isDragging = false;
+      });
+    }
+
+    setupSkipControls() {
+      document.getElementById('skipBack').addEventListener('click', () => {
+        this.seekTo(Math.max(0, this.getCurrentTime() - 10));
+      });
+
+      document.getElementById('skipForward').addEventListener('click', () => {
+        this.seekTo(Math.min(this.duration, this.getCurrentTime() + 10));
+      });
+    }
+
+    getCurrentTime() {
+      if (this.isPlaying) {
+        return this.audioContext.currentTime - this.startTime;
+      }
+      return this.pauseTime;
+    }
+
+    seekTo(time) {
+      time = Math.max(0, Math.min(time, this.duration));
+      
+      if (this.isPlaying) {
+        // Stop and restart at new position
+        Object.values(this.stems).forEach(stem => {
+          if (stem.source) {
+            stem.source.stop();
+            stem.source = null;
+          }
+        });
+
+        this.startTime = this.audioContext.currentTime - time;
+
+        Object.entries(this.stems).forEach(([name, stem]) => {
+          if (stem.buffer) {
+            const source = this.audioContext.createBufferSource();
+            source.buffer = stem.buffer;
+            source.connect(stem.gainNode);
+            source.start(0, time);
+            stem.source = source;
+          }
+        });
+      } else {
+        this.pauseTime = time;
+      }
+
+      // Update UI
+      const percent = (time / this.duration) * 100;
+      this.progressFill.style.width = percent + '%';
+      this.currentTimeEl.textContent = this.formatTime(time);
+    }
+
+    togglePlay() {
+      if (this.isPlaying) {
+        this.pause();
+      } else {
+        this.play();
+      }
+    }
+
+    play() {
+      if (this.isPlaying) return;
+
+      if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume();
+      }
+
+      const offset = this.pauseTime;
+      this.startTime = this.audioContext.currentTime - offset;
+
+      Object.entries(this.stems).forEach(([name, stem]) => {
+        if (stem.buffer) {
+          const source = this.audioContext.createBufferSource();
+          source.buffer = stem.buffer;
+          source.connect(stem.gainNode);
+          source.start(0, offset);
+          stem.source = source;
+
+          stem.gainNode.gain.value = stem.volume / 100;
+        }
+      });
+
+      this.isPlaying = true;
+      document.getElementById('playButton').classList.add('playing');
+    }
+
+    pause() {
+      if (!this.isPlaying) return;
+
+      this.pauseTime = this.audioContext.currentTime - this.startTime;
+
+      Object.values(this.stems).forEach(stem => {
+        if (stem.source) {
+          stem.source.stop();
+          stem.source = null;
+        }
+      });
+
+      this.isPlaying = false;
+      document.getElementById('playButton').classList.remove('playing');
+    }
+
+    stop() {
+      this.pause();
+      this.pauseTime = 0;
+      this.progressFill.style.width = '0%';
+      this.currentTimeEl.textContent = '0:00';
+    }
+
+    updateProgress() {
+      const update = () => {
+        if (this.isPlaying) {
+          const currentTime = this.getCurrentTime();
+          const percent = (currentTime / this.duration) * 100;
+          this.progressFill.style.width = Math.min(percent, 100) + '%';
+          this.currentTimeEl.textContent = this.formatTime(currentTime);
+
+          if (currentTime >= this.duration) {
+            this.stop();
+          }
+        }
+        requestAnimationFrame(update);
+      };
+      update();
+    }
+
+    formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+  }
+
+  // Update LED visualization
+  function updateLightBar(stemName, volume) {
+    const control = document.querySelector(`.stem-control[data-stem="${stemName}"]`);
+    if (!control) return;
+    
+    const segments = control.querySelectorAll('.led-segment');
+    const totalSegments = segments.length;
+    const activeSegments = Math.round((volume / 100) * totalSegments);
+    
+    segments.forEach((seg, index) => {
+      if (index < activeSegments) {
+        seg.classList.add('active');
+      } else {
+        seg.classList.remove('active');
+      }
+    });
+  }
+
+  // ========================================
+  // TRACK CONFIGURATION
+  // ========================================
+
+  const TRACKS = {
+    'script': {
+      name: 'Script (Intro)',
+      stems: {
+        vocals: { file: 'audio/01_SC_Instruments.mp3', label: 'Instruments' },
+        drums: { file: 'audio/01_SC_Drums.mp3', label: 'Drums' },
+        bass: { file: 'audio/01_SC_Bass.mp3', label: 'Bass' },
+        other: { file: 'audio/01_SC_Other.mp3', label: 'Other' }
+      }
+    },
+    'neon': {
+      name: 'Neon',
+      stems: {
+        vocals: { file: 'audio/02_NE_Instruments.mp3', label: 'Instruments' },
+        drums: { file: 'audio/02_NE_Drums.mp3', label: 'Drums' },
+        bass: { file: 'audio/02_NE_Bass.mp3', label: 'Bass' },
+        other: { file: 'audio/02_NE_Other.mp3', label: 'Other' }
+      }
+    },
+    'smoke-show': {
+      name: 'Smoke Show',
+      stems: {
+        vocals: { file: 'audio/03_SMS_Vocals.mp3', label: 'Vocals' },
+        drums: { file: 'audio/03_SMS_Drums.mp3', label: 'Drums' },
+        bass: { file: 'audio/03_SMS_Bass.mp3', label: 'Bass' },
+        other: { file: 'audio/03_SMS_Other.mp3', label: 'Other' }
+      }
+    },
+    'godless-idols': {
+      name: 'Godless Idols',
+      stems: {
+        vocals: { file: 'audio/GI_Voice.mp3', label: 'Voice' },
+        drums: { file: 'audio/GI_Drums.mp3', label: 'Drums' },
+        bass: { file: 'audio/GI_Bass.mp3', label: 'Bass' },
+        other: { file: 'audio/GI_Other.mp3', label: 'Other' }
+      }
+    },
+    'printer-brain': {
+      name: 'Printer Brain',
+      stems: {
+        vocals: { file: 'audio/05_PB_Vocals.mp3', label: 'Vocals' },
+        drums: { file: 'audio/05_PB_Drums.mp3', label: 'Drums' },
+        bass: { file: 'audio/05_PB_Bass.mp3', label: 'Bass' },
+        other: { file: 'audio/05_PB_Other.mp3', label: 'Other' }
+      }
+    },
+    'ash-and-gold': {
+      name: 'Ash and Gold',
+      stems: {
+        vocals: { file: 'audio/06_AG_Vocals.mp3', label: 'Vocals' },
+        drums: { file: 'audio/06_AG_Drums.mp3', label: 'Drums' },
+        bass: { file: 'audio/06_AG_Instruments.mp3', label: 'Instruments' },
+        other: { file: 'audio/06_AG_Other.mp3', label: 'Other' }
+      }
+    },
+    'production-line': {
+      name: 'Production Line',
+      stems: {
+        vocals: { file: 'audio/07_PL_Vocals.mp3', label: 'Vocals' },
+        drums: { file: 'audio/07_PL_Drums.mp3', label: 'Drums' },
+        bass: { file: 'audio/07_PL_Bass.mp3', label: 'Bass' },
+        other: { file: 'audio/07_PL_Other.mp3', label: 'Other' }
+      }
+    },
+    'byd3s1gn': {
+      name: 'ByD3s1Gn',
+      stems: {
+        vocals: { file: 'audio/08_BD_Vocals.mp3', label: 'Vocals' },
+        drums: { file: 'audio/08_BD_Drums.mp3', label: 'Drums' },
+        bass: { file: 'audio/08_BD_Bass.mp3', label: 'Bass' },
+        other: { file: 'audio/08_BD_Instruments.mp3', label: 'Instruments' }
+      }
+    },
+    'youre-meant-to-forget-this': {
+      name: "You're Meant to Forget This",
+      stems: {
+        vocals: { file: 'audio/09_YAMTFT_Instrument.mp3', label: 'Instrument' },
+        drums: { file: 'audio/09_YAMTFT_Drums.mp3', label: 'Drums' },
+        bass: { file: 'audio/09_YAMTFT_Bass.mp3', label: 'Bass' },
+        other: null
+      }
+    },
+    'broken-blueprints': {
+      name: 'Broken Blueprints',
+      stems: {
+        vocals: { file: 'audio/10_BL_Instruments.mp3', label: 'Instruments' },
+        drums: { file: 'audio/10_BL_Drums.mp3', label: 'Drums' },
+        bass: { file: 'audio/10_BL_Bass.mp3', label: 'Bass' },
+        other: { file: 'audio/10_BL_Other.mp3', label: 'Other' }
+      }
+    },
+    'blurred-lines': {
+      name: 'Blurred Lines (Interlude)',
+      stems: {
+        vocals: { file: 'audio/11_BLI_Sample.mp3', label: 'Sample' },
+        drums: { file: 'audio/11_BLI_Noise.mp3', label: 'Noise' },
+        bass: null,
+        other: { file: 'audio/11_BLI_Other.mp3', label: 'Other' }
+      }
+    },
+    'synthetic-dream': {
+      name: 'Synthetic Dream',
+      stems: {
+        vocals: { file: 'audio/12_SF_Pads.mp3', label: 'Pads' },
+        drums: { file: 'audio/12_SF_Druma.mp3', label: 'Drums' },
+        bass: { file: 'audio/12_SF_Bass.mp3', label: 'Bass' },
+        other: { file: 'audio/12_SF_Arp.mp3', label: 'Arp' }
+      }
+    },
+    'glass-walls': {
+      name: 'Glass Walls (Outro)',
+      stems: {
+        vocals: { file: 'audio/13_GW_Vocals.mp3', label: 'Vocals' },
+        drums: { file: 'audio/13_GW_Instruments.mp3', label: 'Instruments' },
+        bass: null,
+        other: { file: 'audio/13_GW_Other.mp3', label: 'Other' }
+      }
+    }
+  };
+
+  // Get track from URL or default to godless-idols
+  const urlParams = new URLSearchParams(window.location.search);
+  const trackId = urlParams.get('track') || 'godless-idols';
+  const TRACK_CONFIG = TRACKS[trackId] || TRACKS['godless-idols'];
+
+  // Set track title
+  document.getElementById('trackTitle').textContent = TRACK_CONFIG.name;
+  document.title = `SIGNAL - ${TRACK_CONFIG.name}`;
+
+  // Update stem labels and hide unused sliders
+  const stemPositions = {
+    vocals: '.stem-control.top',
+    drums: '.stem-control.right',
+    bass: '.stem-control.bottom',
+    other: '.stem-control.left'
+  };
+
+  Object.entries(stemPositions).forEach(([stem, selector]) => {
+    const control = document.querySelector(selector);
+    if (TRACK_CONFIG.stems[stem]) {
+      control.style.visibility = 'visible';
+      control.querySelector('.stem-label').textContent = TRACK_CONFIG.stems[stem].label;
+    } else {
+      control.style.visibility = 'hidden';
+    }
+  });
+
+  // Auto-load stems on page load
+  new StemPlayer();
+</script>
+
+</body>
+</html>

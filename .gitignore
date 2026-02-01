@@ -1,0 +1,12 @@
+# Exclude large WAV files (we'll use MP3s for web)
+*.wav
+
+# Exclude Ableton analysis files
+*.asd
+
+# Exclude macOS system files
+.DS_Store
+._*
+
+# Exclude node modules if any
+node_modules/

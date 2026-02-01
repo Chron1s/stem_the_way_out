@@ -1,0 +1,9 @@
+# macOS metadata files
+._*
+.DS_Store
+
+# Ableton files
+*.asd
+
+# WAV files (we'll use MP3 for web to keep file sizes smaller)
+*.wav

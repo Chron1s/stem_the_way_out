@@ -1,0 +1,2261 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SIGNAL - GODLESS IDOLS</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;900&display=swap');
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* LANDING PAGE */
+    #landingPage {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: pointer;
+      transition: opacity 0.5s ease;
+    }
+
+    #landingPage.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #signalText {
+      font-size: 120px;
+      font-weight: 900;
+      letter-spacing: -4px;
+      text-transform: uppercase;
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+      transition: all 0.3s ease;
+      position: relative;
+      opacity: 0;
+      text-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    }
+
+    #landingPage:hover #signalText {
+      letter-spacing: 8px;
+      opacity: 0;
+      animation: none;
+    }
+
+    @keyframes glitch {
+      0% {
+        transform: translate(0);
+        text-shadow: 0 0 0 rgba(255, 255, 255, 0);
+      }
+      20% {
+        transform: translate(-2px, 2px);
+        text-shadow: 2px 0 0 rgba(255, 0, 0, 0.7), -2px 0 0 rgba(0, 255, 255, 0.7);
+      }
+      40% {
+        transform: translate(2px, -2px);
+        text-shadow: -2px 0 0 rgba(255, 0, 0, 0.7), 2px 0 0 rgba(0, 255, 255, 0.7);
+      }
+      60% {
+        transform: translate(-1px, 1px);
+        text-shadow: 1px 0 0 rgba(255, 0, 0, 0.7), -1px 0 0 rgba(0, 255, 255, 0.7);
+      }
+      80% {
+        transform: translate(1px, -1px);
+        text-shadow: -1px 0 0 rgba(255, 0, 0, 0.7), 1px 0 0 rgba(0, 255, 255, 0.7);
+      }
+      100% {
+        transform: translate(0);
+        text-shadow: 0 0 0 rgba(255, 255, 255, 0);
+      }
+    }
+
+    /* TRACK LIST PAGE */
+    #trackListPage {
+      display: none;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    #trackListPage.visible {
+      display: block;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .page-title {
+      font-size: 80px;
+      font-weight: 900;
+      letter-spacing: -3px;
+      margin: 0;
+      text-transform: uppercase;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .page-subtitle {
+      font-size: 11px;
+      color: #666;
+      margin-top: 10px;
+      font-family: 'Inter', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 6px;
+      font-weight: 700;
+    }
+
+    /* Global Controls */
+    .global-controls {
+      max-width: 1400px;
+      margin: 0 auto 40px;
+      display: flex;
+      gap: 15px;
+      padding: 0 20px;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .global-controls select,
+    .global-controls button {
+      flex: 1;
+    }
+
+    .global-controls .output-select {
+      flex: 0 0 auto;
+    }
+
+    /* Waveform Display Button */
+    .waveform-btn {
+      width: 60px;
+      height: 60px;
+      padding: 0;
+      font-size: 11px;
+      font-family: 'Inter', sans-serif;
+      border-radius: 0;
+      border: 3px solid #fff;
+      background: #000;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .waveform-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .waveform-btn:hover .waveform-icon {
+      stroke: #000;
+    }
+
+    .waveform-btn.active {
+      background: #fff;
+      color: #000;
+    }
+
+    .waveform-btn.active .waveform-icon {
+      stroke: #000;
+    }
+
+    .waveform-icon {
+      width: 32px;
+      height: 32px;
+      stroke: #fff;
+      transition: stroke 0.2s ease;
+    }
+    
+    .global-controls .waveform-btn {
+      width: auto;
+      min-width: 60px;
+    }
+
+    /* Record Button */
+    .record-btn {
+      width: 60px;
+      height: 60px;
+      padding: 0;
+      font-size: 11px;
+      font-family: 'Inter', sans-serif;
+      border-radius: 0;
+      border: 3px solid #fff;
+      background: #000;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .record-btn:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+
+    .record-btn.recording {
+      background: #ff0000;
+      border-color: #ff0000;
+      animation: recordPulse 1.5s infinite;
+    }
+
+    @keyframes recordPulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+      }
+      50% {
+        box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
+      }
+    }
+
+    .record-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      transition: background 0.2s ease;
+    }
+
+    .record-btn:hover .record-icon {
+      background: #000;
+    }
+
+    .record-btn.recording .record-icon {
+      background: #fff;
+      animation: recordBlink 1s infinite;
+    }
+
+    @keyframes recordBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* BPM Display */
+    .bpm-display {
+      padding: 12px 24px;
+      font-size: 11px;
+      font-family: 'Inter', sans-serif;
+      border-radius: 0;
+      border: 3px solid #fff;
+      background: #000;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 120px;
+    }
+
+    .bpm-value {
+      font-size: 24px;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 1px;
+    }
+
+    .track-controls-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
+    .track-controls-row .output-select {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    /* Track List Styling */
+    .track-item {
+      max-width: 1400px;
+      margin: 0 auto 20px;
+      border: 2px solid #222;
+      background: #000;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .track-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 30px;
+      cursor: pointer;
+      background: #0a0a0a;
+      border-bottom: 1px solid #222;
+      transition: all 0.2s ease;
+    }
+
+    .track-header:hover {
+      background: #1a1a1a;
+      border-bottom-color: #444;
+    }
+
+    .track-number {
+      font-size: 24px;
+      font-weight: 900;
+      color: #666;
+      min-width: 60px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .track-name {
+      flex: 1;
+      font-size: 28px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .track-arrow {
+      font-size: 20px;
+      color: #666;
+      transition: transform 0.3s ease;
+    }
+
+    .track-item.expanded .track-arrow {
+      transform: rotate(90deg);
+      color: #fff;
+    }
+
+    .track-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .track-item.expanded .track-content {
+      max-height: 2000px;
+    }
+
+    .track-player {
+      padding: 20px;
+    }
+
+    /* Output Select - Smaller Size */
+    .output-select {
+      width: auto;
+      min-width: 200px;
+      max-width: 250px;
+      padding: 8px 30px 8px 12px;
+      font-size: 9px;
+      font-family: 'Inter', sans-serif;
+      border-radius: 2px;
+      border: 1px solid #444;
+      background: #0a0a0a url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23666" d="M6 8L2 4h8z"/></svg>') no-repeat right 8px center;
+      background-size: 10px;
+      color: #999;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+
+    .output-select:hover {
+      border-color: #666;
+      background-color: #111;
+      color: #fff;
+    }
+
+    .output-select:focus {
+      outline: none;
+      border-color: #888;
+      background-color: #111;
+      color: #fff;
+    }
+
+    /* Hide individual track output selects */
+    .track-player .output-select {
+      display: none;
+    }
+
+    /* Max MSP Style Patches */
+    .container {
+      background: #000;
+      border: none;
+      padding: 30px 40px 20px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      position: relative;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .track-title {
+      font-size: 13px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 12px;
+      border: none;
+      background: transparent;
+      position: relative;
+    }
+
+    .track-title::before {
+      display: none;
+    }
+
+    .track-title::after {
+      display: none;
+    }
+
+    .patch-area {
+      background: #000;
+      padding: 20px;
+      border: none;
+      margin-bottom: 0;
+      position: relative;
+      border-radius: 0;
+    }
+
+    .visualizer {
+      width: 100%;
+      height: 300px;
+      background: #000;
+      border: 1px solid #222;
+      margin-bottom: 15px;
+      margin-top: 0;
+      position: relative;
+      overflow: hidden;
+      border-radius: 0;
+      cursor: pointer;
+    }
+    
+    .visualizer canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Cable Connectors */
+    .stem-channel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      background: #000;
+      border-radius: 0;
+      backdrop-filter: none;
+      transition: all 0.3s ease;
+      border: 1px solid #222;
+      position: relative;
+      overflow: visible;
+    }
+
+    .stem-channel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at center, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .stem-channel.spotlight::before {
+      opacity: 1;
+    }
+
+    .stem-channel > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .stem-channel:hover {
+      background: #0a0a0a;
+      border-color: #444;
+    }
+
+    .master-controls {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      margin-bottom: 30px;
+      padding: 20px;
+      border-top: 1px solid #222;
+      border-bottom: 1px solid #222;
+      background: #000;
+      position: relative;
+    }
+
+    .master-controls::before {
+      display: none;
+    }
+
+    .master-controls::after {
+      display: none;
+    }
+
+    .controls {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 25px;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background: #000;
+      border-radius: 0;
+      border: none;
+    }
+
+    button {
+      width: 60px;
+      height: 60px;
+      border: 2px solid #fff;
+      border-radius: 0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #000;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      position: relative;
+      font-weight: 900;
+      padding: 0;
+    }
+
+    button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      border-color: #333;
+    }
+
+    button.play-btn { 
+      width: 80px;
+      height: 80px;
+      border-width: 2px;
+      border-color: #fff;
+      background: #000;
+    }
+    
+    /* Play triangle icon using CSS */
+    button.play-btn::before {
+      content: '';
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 14px 0 14px 24px;
+      border-color: transparent transparent transparent #fff;
+      margin-left: 4px;
+    }
+    
+    /* Pause bars icon using CSS */
+    button.play-btn.playing::before {
+      border: none;
+      width: 20px;
+      height: 28px;
+      background: linear-gradient(to right, #fff 0%, #fff 35%, transparent 35%, transparent 65%, #fff 65%, #fff 100%);
+      margin-left: 0;
+    }
+    
+    /* Stop square icon using CSS */
+    .stop-btn::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      display: block;
+    }
+    
+    button:not(:disabled):hover {
+      background: #fff;
+      border-color: #fff;
+      transform: scale(1.05);
+    }
+
+    button:not(:disabled):hover.play-btn::before {
+      border-color: transparent transparent transparent #000;
+    }
+    
+    button:not(:disabled):hover.play-btn.playing::before {
+      background: linear-gradient(to right, #000 0%, #000 35%, transparent 35%, transparent 65%, #000 65%, #000 100%);
+    }
+    
+    button:not(:disabled):hover.stop-btn::before {
+      background: #000;
+    }
+
+    button:not(:disabled):active {
+      transform: scale(0.95);
+    }
+    
+    /* Touch device support - active state instead of hover */
+    @media (hover: none) and (pointer: coarse) {
+      button:not(:disabled):active {
+        background: #fff;
+        border-color: #fff;
+        transform: scale(0.95);
+      }
+      
+      button:not(:disabled):active.play-btn::before {
+        border-color: transparent transparent transparent #000;
+      }
+      
+      button:not(:disabled):active.play-btn.playing::before {
+        background: linear-gradient(to right, #000 0%, #000 35%, transparent 35%, transparent 65%, #000 65%, #000 100%);
+      }
+      
+      button:not(:disabled):active.stop-btn::before {
+        background: #000;
+      }
+      
+      /* Make buttons easier to tap on mobile */
+      button {
+        min-width: 60px;
+        min-height: 60px;
+      }
+      
+      button.play-btn {
+        min-width: 80px;
+        min-height: 80px;
+      }
+    }
+
+    .stop-btn {
+      border-color: #fff;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: #222;
+      margin: 25px 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: linear-gradient(to top, #fff 0%, #fff 100%);
+      transition: height 0.05s ease, box-shadow 0.2s ease;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .volume-slider-wrapper {
+      position: relative;
+      width: 8px;
+      height: 180px;
+      margin: 0 auto;
+    }
+
+    .volume-slider-track {
+      position: absolute;
+      width: 8px;
+      height: 180px;
+      background: #1a1a1a;
+      border: none;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .volume-slider-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: linear-gradient(to top, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.9) 80%, rgba(255, 255, 255, 1) 100%);
+      transition: height 0.1s ease-out, box-shadow 0.2s ease, opacity 0.2s ease;
+      box-shadow: 
+        0 0 15px rgba(255, 255, 255, 0.4),
+        0 0 25px rgba(255, 255, 255, 0.3),
+        inset 0 -3px 15px rgba(255, 255, 255, 0.5);
+      opacity: 0.8;
+    }
+
+    .volume-slider-track:hover .volume-slider-fill,
+    .volume-slider-track.active .volume-slider-fill {
+      opacity: 1;
+      box-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.7),
+        0 0 35px rgba(255, 255, 255, 0.5),
+        0 0 50px rgba(255, 255, 255, 0.3),
+        inset 0 -3px 20px rgba(255, 255, 255, 0.7);
+    }
+
+    .volume-slider {
+      position: absolute;
+      width: 180px;
+      height: 8px;
+      transform: rotate(-90deg);
+      transform-origin: left top;
+      left: 4px;
+      top: 180px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .volume-slider::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 8px;
+      background: transparent;
+      border: none;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      background: transparent;
+      cursor: pointer;
+      border: none;
+      opacity: 0;
+    }
+
+    .volume-slider::-moz-range-track {
+      width: 100%;
+      height: 8px;
+      background: transparent;
+      border: none;
+    }
+
+    .volume-slider::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      background: transparent;
+      cursor: pointer;
+      border: none;
+      opacity: 0;
+    }
+
+    /* Enhanced glow on high volume */
+    .stem-channel:has(.volume-slider[data-volume-high="true"]) .volume-slider-fill {
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.4);
+    }
+
+    .stem-label {
+      font-size: 11px;
+      color: #999;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+
+    .volume-value {
+      font-size: 14px;
+      color: #fff;
+      margin-bottom: 10px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .mute-solo-container {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .mute-btn, .solo-btn {
+      width: 35px;
+      height: 35px;
+      font-size: 11px;
+      border: 1px solid #444;
+      background: #0a0a0a;
+      color: #666;
+    }
+
+    .mute-btn:hover, .solo-btn:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+
+    .mute-btn.active {
+      background: #ff4444;
+      border-color: #ff4444;
+      color: #fff;
+    }
+
+    .solo-btn.active {
+      background: #ffff44;
+      border-color: #ffff44;
+      color: #000;
+    }
+
+    .stems {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 12px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      margin-bottom: 15px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border-radius: 2px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #fff 0%, #aaa 100%);
+      width: 0%;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .time-display {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      font-size: 11px;
+      color: #666;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .master-label {
+      font-size: 11px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+
+    .master-fader-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .master-knob-container {
+      width: 100%;
+      height: 8px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .master-knob {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .master-knob-indicator {
+      height: 100%;
+      background: #fff;
+      transition: width 0.1s ease;
+    }
+
+    .master-volume-value {
+      font-size: 14px;
+      color: #fff;
+      font-weight: 900;
+      min-width: 40px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Add glow effect to track based on slider value */
+    .stem-channel:has(.volume-slider:active) {
+      border-color: #666;
+    }
+
+    .stem-channel:has(.volume-slider:active) .volume-slider::-webkit-slider-track {
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3),
+                  0 0 20px rgba(255, 255, 255, 0.3);
+      border-color: #666;
+    }
+
+    .stem-channel:has(.volume-slider:active) .volume-slider::-webkit-slider-thumb {
+      box-shadow: 0 0 30px rgba(255, 255, 255, 1), 0 0 60px rgba(255, 255, 255, 0.6);
+    }
+
+    /* Waveform Popup */
+    .waveform-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px;
+      background: #000;
+      border: 2px solid #444;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .waveform-popup.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .waveform-popup-header {
+      padding: 12px 15px;
+      background: #0a0a0a;
+      border-bottom: 1px solid #333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move;
+    }
+
+    .waveform-popup-title {
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .waveform-popup-close {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .waveform-popup-close:hover {
+      color: #ff4444;
+    }
+
+    .waveform-popup-content {
+      padding: 20px;
+    }
+
+    .waveform-popup-canvas {
+      width: 100%;
+      height: 200px;
+      background: #0a0a0a;
+      border: 1px solid #222;
+      display: block;
+    }
+
+    .waveform-popup-info {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      font-size: 10px;
+      color: #666;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 768px) {
+      #signalText {
+        font-size: 60px;
+      }
+      
+      .page-title {
+        font-size: 48px;
+      }
+      
+      .track-name {
+        font-size: 20px;
+      }
+      
+      .stems {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LANDING PAGE -->
+<div id="landingPage">
+  <h1 id="signalText">SIGNAL</h1>
+</div>
+
+<!-- Waveform Pop-up Window -->
+<div class="waveform-popup" id="waveformPopup">
+  <div class="waveform-popup-header" id="waveformHeader">
+    <span class="waveform-popup-title">◼ WAVEFORM DISPLAY</span>
+    <button class="waveform-popup-close" id="waveformClose">×</button>
+  </div>
+  <div class="waveform-popup-content">
+    <canvas class="waveform-popup-canvas" id="waveformCanvas"></canvas>
+    <div class="waveform-popup-info">
+      <span id="waveformTrack">NO TRACK PLAYING</span>
+      <span id="waveformTime">0:00 / 0:00</span>
+    </div>
+  </div>
+</div>
+
+<!-- TRACK LIST PAGE -->
+<div id="trackListPage">
+  <div class="page-header">
+    <h1 class="page-title">NO WAY OUT!</h1>
+    <div class="page-subtitle">v1.0</div>
+  </div>
+
+  <!-- Global Output Device Selector -->
+  <div class="global-controls">
+    <select id="globalOutputSelect" class="output-select">
+      <option value="">SELECT OUTPUT DEVICE</option>
+    </select>
+  </div>
+
+  <!-- Track List -->
+  <div class="track-list">
+    <!-- Track 1 -->
+    <div class="track-item" data-track="1">
+      <div class="track-header">
+        <span class="track-number">01</span>
+        <span class="track-name">Script Intro</span>
+        <span class="track-arrow">▶</span>
+      </div>
+      <div class="track-content">
+        <div class="track-player">
+          <div class="container">
+            <div class="track-title">01 Script Intro</div>
+            
+            <select class="output-select">
+              <option value="">SELECT OUTPUT DEVICE</option>
+            </select>
+
+            <div class="controls">
+              <button class="play-btn"></button>
+              <button class="stop-btn"></button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="patch-area">
+              <div class="progress-container">
+                <div class="progress-fill"></div>
+              </div>
+
+              <div class="visualizer">
+                <canvas></canvas>
+              </div>
+
+              <div class="time-display">
+                <span class="current-time">0:00</span>
+                <span class="total-time">0:00</span>
+              </div>
+
+              <div class="master-controls">
+                <span class="master-label">Master</span>
+                <div class="master-fader-container">
+                  <div class="master-knob-container">
+                    <div class="master-knob">
+                      <div class="master-knob-indicator" style="width: 100%"></div>
+                    </div>
+                  </div>
+                </div>
+                <span class="master-volume-value">100</span>
+              </div>
+
+              <div class="stems">
+                <div class="stem-channel">
+                  <label class="stem-label">Rhythm</label>
+                  <div class="volume-value">100</div>
+                  <div class="volume-slider-wrapper">
+                    <div class="volume-slider-track">
+                      <div class="volume-slider-fill" style="height: 100%;"></div>
+                    </div>
+                    <input type="range" class="volume-slider" min="0" max="100" value="100">
+                  </div>
+                  <div class="mute-solo-container">
+                    <button class="mute-btn">M</button>
+                    <button class="solo-btn">S</button>
+                  </div>
+                </div>
+
+                <div class="stem-channel">
+                  <label class="stem-label">Voice</label>
+                  <div class="volume-value">100</div>
+                  <div class="volume-slider-wrapper">
+                    <div class="volume-slider-track">
+                      <div class="volume-slider-fill" style="height: 100%;"></div>
+                    </div>
+                    <input type="range" class="volume-slider" min="0" max="100" value="100">
+                  </div>
+                  <div class="mute-solo-container">
+                    <button class="mute-btn">M</button>
+                    <button class="solo-btn">S</button>
+                  </div>
+                </div>
+
+                <div class="stem-channel">
+                  <label class="stem-label">Signal</label>
+                  <div class="volume-value">100</div>
+                  <div class="volume-slider-wrapper">
+                    <div class="volume-slider-track">
+                      <div class="volume-slider-fill" style="height: 100%;"></div>
+                    </div>
+                    <input type="range" class="volume-slider" min="0" max="100" value="100">
+                  </div>
+                  <div class="mute-solo-container">
+                    <button class="mute-btn">M</button>
+                    <button class="solo-btn">S</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Track 2 -->
+    <div class="track-item" data-track="2">
+      <div class="track-header">
+        <span class="track-number">02</span>
+        <span class="track-name">Neon</span>
+        <span class="track-arrow">▶</span>
+      </div>
+      <div class="track-content">
+        <div class="track-player">
+          <div class="container">
+            <div class="track-title">02 Neon</div>
+            
+            <select class="output-select">
+              <option value="">SELECT OUTPUT DEVICE</option>
+            </select>
+
+            <div class="controls">
+              <button class="play-btn"></button>
+              <button class="stop-btn"></button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="patch-area">
+              <div class="progress-container">
+                <div class="progress-fill"></div>
+              </div>
+
+              <div class="visualizer">
+                <canvas></canvas>
+              </div>
+
+              <div class="time-display">
+                <span class="current-time">0:00</span>
+                <span class="total-time">0:00</span>
+              </div>
+
+              <div class="master-controls">
+                <span class="master-label">Master</span>
+                <div class="master-fader-container">
+                  <div class="master-knob-container">
+                    <div class="master-knob">
+                      <div class="master-knob-indicator" style="width: 100%"></div>
+                    </div>
+                  </div>
+                </div>
+                <span class="master-volume-value">100</span>
+              </div>
+
+              <div class="stems">
+                <div class="stem-channel">
+                  <label class="stem-label">Rhythm</label>
+                  <div class="volume-value">100</div>
+                  <div class="volume-slider-wrapper">
+                    <div class="volume-slider-track">
+                      <div class="volume-slider-fill" style="height: 100%;"></div>
+                    </div>
+                    <input type="range" class="volume-slider" min="0" max="100" value="100">
+                  </div>
+                  <div class="mute-solo-container">
+                    <button class="mute-btn">M</button>
+                    <button class="solo-btn">S</button>
+                  </div>
+                </div>
+
+                <div class="stem-channel">
+                  <label class="stem-label">Voice</label>
+                  <div class="volume-value">100</div>
+                  <div class="volume-slider-wrapper">
+                    <div class="volume-slider-track">
+                      <div class="volume-slider-fill" style="height: 100%;"></div>
+                    </div>
+                    <input type="range" class="volume-slider" min="0" max="100" value="100">
+                  </div>
+                  <div class="mute-solo-container">
+                    <button class="mute-btn">M</button>
+                    <button class="solo-btn">S</button>
+                  </div>
+                </div>
+
+                <div class="stem-channel">
+                  <label class="stem-label">Signal</label>
+                  <div class="volume-value">100</div>
+                  <div class="volume-slider-wrapper">
+                    <div class="volume-slider-track">
+                      <div class="volume-slider-fill" style="height: 100%;"></div>
+                    </div>
+                    <input type="range" class="volume-slider" min="0" max="100" value="100">
+                  </div>
+                  <div class="mute-solo-container">
+                    <button class="mute-btn">M</button>
+                    <button class="solo-btn">S</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Track 3 -->
+    <div class="track-item" data-track="3">
+      <div class="track-header">
+        <span class="track-number">03</span>
+        <span class="track-name">Smoke Show</span>
+        <span class="track-arrow">▶</span>
+      </div>
+      <div class="track-content">
+        <div class="track-player">
+          <div class="container">
+            <div class="track-title">03 Smoke Show</div>
+            
+            <select class="output-select">
+              <option value="">SELECT OUTPUT DEVICE</option>
+            </select>
+
+            <div class="controls">
+              <button class="play-btn"></button>
+              <button class="stop-btn"></button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="patch-area">
+              <div class="progress-container">
+                <div class="progress-fill"></div>
+              </div>
+
+              <div class="visualizer">
+                <canvas></canvas>
+              </div>
+
+              <div class="time-display">
+                <span class="current-time">0:00</span>
+                <span class="total-time">0:00</span>
+              </div>
+
+              <div class="master-controls">
+                <span class="master-label">Master</span>
+                <div class="master-fader-container">
+                  <div class="master-knob-container">
+                    <div class="master-knob">
+                      <div class="master-knob-indicator" style="width: 100%"></div>
+                    </div>
+                  </div>
+                </div>
+                <span class="master-volume-value">100</span>
+              </div>
+
+              <div class="stems">
+                <div class="stem-channel">
+                  <label class="stem-label">Rhythm</label>
+                  <div class="volume-value">100</div>
+                  <div class="volume-slider-wrapper">
+                    <div class="volume-slider-track">
+                      <div class="volume-slider-fill" style="height: 100%;"></div>
+                    </div>
+                    <input type="range" class="volume-slider" min="0" max="100" value="100">
+                  </div>
+                  <div class="mute-solo-container">
+                    <button class="mute-btn">M</button>
+                    <button class="solo-btn">S</button>
+                  </div>
+                </div>
+
+                <div class="stem-channel">
+                  <label class="stem-label">Voice</label>
+                  <div class="volume-value">100</div>
+                  <div class="volume-slider-wrapper">
+                    <div class="volume-slider-track">
+                      <div class="volume-slider-fill" style="height: 100%;"></div>
+                    </div>
+                    <input type="range" class="volume-slider" min="0" max="100" value="100">
+                  </div>
+                  <div class="mute-solo-container">
+                    <button class="mute-btn">M</button>
+                    <button class="solo-btn">S</button>
+                  </div>
+                </div>
+
+                <div class="stem-channel">
+                  <label class="stem-label">Signal</label>
+                  <div class="volume-value">100</div>
+                  <div class="volume-slider-wrapper">
+                    <div class="volume-slider-track">
+                      <div class="volume-slider-fill" style="height: 100%;"></div>
+                    </div>
+                    <input type="range" class="volume-slider" min="0" max="100" value="100">
+                  </div>
+                  <div class="mute-solo-container">
+                    <button class="mute-btn">M</button>
+                    <button class="solo-btn">S</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Track 4 -->
+    <div class="track-item" data-track="4">
+      <div class="track-header">
+        <span class="track-number">04</span>
+        <span class="track-name">Godless Idols</span>
+        <span class="track-arrow">▶</span>
+      </div>
+      <div class="track-content">
+        <div class="track-player">
+          <div class="container">
+            <div class="track-title">04 Godless Idols</div>
+            
+            <select class="output-select">
+              <option value="">SELECT OUTPUT DEVICE</option>
+            </select>
+
+            <div class="controls">
+              <button class="play-btn"></button>
+              <button class="stop-btn"></button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="patch-area">
+              <div class="progress-container">
+                <div class="progress-fill"></div>
+              </div>
+
+              <div class="visualizer">
+                <canvas></canvas>
+              </div>
+
+              <div class="time-display">
+                <span class="current-time">0:00</span>
+                <span class="total-time">0:00</span>
+              </div>
+
+              <div class="master-controls">
+                <span class="master-label">Master</span>
+                <div class="master-fader-container">
+                  <div class="master-knob-container">
+                    <div class="master-knob">
+                      <div class="master-knob-indicator" style="width: 100%"></div>
+                    </div>
+                  </div>
+                </div>
+                <span class="master-volume-value">100</span>
+              </div>
+
+              <div class="stems">
+                <div class="stem-channel">
+                  <label class="stem-label">Rhythm</label>
+                  <div class="volume-value">100</div>
+                  <div class="volume-slider-wrapper">
+                    <div class="volume-slider-track">
+                      <div class="volume-slider-fill" style="height: 100%;"></div>
+                    </div>
+                    <input type="range" class="volume-slider" min="0" max="100" value="100">
+                  </div>
+                  <div class="mute-solo-container">
+                    <button class="mute-btn">M</button>
+                    <button class="solo-btn">S</button>
+                  </div>
+                </div>
+
+                <div class="stem-channel">
+                  <label class="stem-label">Voice</label>
+                  <div class="volume-value">100</div>
+                  <div class="volume-slider-wrapper">
+                    <div class="volume-slider-track">
+                      <div class="volume-slider-fill" style="height: 100%;"></div>
+                    </div>
+                    <input type="range" class="volume-slider" min="0" max="100" value="100">
+                  </div>
+                  <div class="mute-solo-container">
+                    <button class="mute-btn">M</button>
+                    <button class="solo-btn">S</button>
+                  </div>
+                </div>
+
+                <div class="stem-channel">
+                  <label class="stem-label">Signal</label>
+                  <div class="volume-value">100</div>
+                  <div class="volume-slider-wrapper">
+                    <div class="volume-slider-track">
+                      <div class="volume-slider-fill" style="height: 100%;"></div>
+                    </div>
+                    <input type="range" class="volume-slider" min="0" max="100" value="100">
+                  </div>
+                  <div class="mute-solo-container">
+                    <button class="mute-btn">M</button>
+                    <button class="solo-btn">S</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Track 5 -->
+    <div class="track-item" data-track="5">
+      <div class="track-header">
+        <span class="track-number">05</span>
+        <span class="track-name">Printer Brain</span>
+        <span class="track-arrow">▶</span>
+      </div>
+      <div class="track-content">
+        <div class="track-player">
+          <div class="container">
+            <div class="track-title">05 Printer Brain</div>
+            
+            <select class="output-select">
+              <option value="">SELECT OUTPUT DEVICE</option>
+            </select>
+
+            <div class="controls">
+              <button class="play-btn"></button>
+              <button class="stop-btn"></button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="patch-area">
+              <div class="progress-container">
+                <div class="progress-fill"></div>
+              </div>
+
+              <div class="visualizer">
+                <canvas></canvas>
+              </div>
+
+              <div class="time-display">
+                <span class="current-time">0:00</span>
+                <span class="total-time">0:00</span>
+              </div>
+
+              <div class="master-controls">
+                <span class="master-label">Master</span>
+                <div class="master-fader-container">
+                  <div class="master-knob-container">
+                    <div class="master-knob">
+                      <div class="master-knob-indicator" style="width: 100%"></div>
+                    </div>
+                  </div>
+                </div>
+                <span class="master-volume-value">100</span>
+              </div>
+
+              <div class="stems">
+                <div class="stem-channel">
+                  <label class="stem-label">Rhythm</label>
+                  <div class="volume-value">100</div>
+                  <div class="volume-slider-wrapper">
+                    <div class="volume-slider-track">
+                      <div class="volume-slider-fill" style="height: 100%;"></div>
+                    </div>
+                    <input type="range" class="volume-slider" min="0" max="100" value="100">
+                  </div>
+                  <div class="mute-solo-container">
+                    <button class="mute-btn">M</button>
+                    <button class="solo-btn">S</button>
+                  </div>
+                </div>
+
+                <div class="stem-channel">
+                  <label class="stem-label">Voice</label>
+                  <div class="volume-value">100</div>
+                  <div class="volume-slider-wrapper">
+                    <div class="volume-slider-track">
+                      <div class="volume-slider-fill" style="height: 100%;"></div>
+                    </div>
+                    <input type="range" class="volume-slider" min="0" max="100" value="100">
+                  </div>
+                  <div class="mute-solo-container">
+                    <button class="mute-btn">M</button>
+                    <button class="solo-btn">S</button>
+                  </div>
+                </div>
+
+                <div class="stem-channel">
+                  <label class="stem-label">Signal</label>
+                  <div class="volume-value">100</div>
+                  <div class="volume-slider-wrapper">
+                    <div class="volume-slider-track">
+                      <div class="volume-slider-fill" style="height: 100%;"></div>
+                    </div>
+                    <input type="range" class="volume-slider" min="0" max="100" value="100">
+                  </div>
+                  <div class="mute-solo-container">
+                    <button class="mute-btn">M</button>
+                    <button class="solo-btn">S</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ========================================
+  // AUDIO ENGINE - Web Audio API
+  // ========================================
+  
+  // Track configuration - Define audio files for each track
+  const TRACK_AUDIO_FILES = {
+    4: { rhythm: 'GI_Rhythm.mp3', voice: 'GI_Voice.mp3', signal: 'GI_Signal.mp3' }, // Godless Idols - HAS AUDIO!
+    5: { rhythm: 'Track05_Rhythm.mp3', voice: 'Track05_Voice.mp3', signal: 'Track05_Signal.mp3' },
+    8: { rhythm: 'Track08_Rhythm.mp3', voice: 'Track08_Voice.mp3', signal: 'Track08_Signal.mp3' },
+    10: { rhythm: 'Track10_Rhythm.mp3', voice: 'Track10_Voice.mp3', signal: 'Track10_Signal.mp3' }
+  };
+
+  // Audio context and player state for each track
+  const audioPlayers = {};
+
+  class TrackPlayer {
+    constructor(trackNumber, container) {
+      this.trackNumber = trackNumber;
+      this.container = container;
+      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      this.isPlaying = false;
+      this.startTime = 0;
+      this.pauseTime = 0;
+      
+      // Audio nodes
+      this.stems = {
+        rhythm: { buffer: null, source: null, gainNode: null, analyser: null, muted: false, soloed: false },
+        voice: { buffer: null, source: null, gainNode: null, analyser: null, muted: false, soloed: false },
+        signal: { buffer: null, source: null, gainNode: null, analyser: null, muted: false, soloed: false }
+      };
+      
+      this.masterGain = this.audioContext.createGain();
+      this.masterGain.connect(this.audioContext.destination);
+      
+      // UI elements
+      this.playBtn = container.querySelector('.play-btn');
+      this.stopBtn = container.querySelector('.stop-btn');
+      this.progressFill = container.querySelector('.progress-fill');
+      this.progressContainer = container.querySelector('.progress-container');
+      this.currentTimeDisplay = container.querySelector('.current-time');
+      this.totalTimeDisplay = container.querySelector('.total-time');
+      this.visualizerCanvas = container.querySelector('.visualizer canvas');
+      
+      this.setupUI();
+      this.loadAudioFiles();
+    }
+    
+    async loadAudioFiles() {
+      const files = TRACK_AUDIO_FILES[this.trackNumber];
+      if (!files.rhythm && !files.voice && !files.signal) {
+        console.log(`No audio files configured for track ${this.trackNumber}`);
+        this.playBtn.disabled = true;
+        this.stopBtn.disabled = true;
+        return;
+      }
+      
+      try {
+        // Load all three stems
+        for (const [stemName, fileName] of Object.entries(files)) {
+          if (fileName) {
+            console.log(`Loading ${fileName}...`);
+            const response = await fetch(fileName);
+            const arrayBuffer = await response.arrayBuffer();
+            const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+            
+            // Create gain node and analyser
+            const gainNode = this.audioContext.createGain();
+            const analyser = this.audioContext.createAnalyser();
+            analyser.fftSize = 2048;
+            
+            gainNode.connect(analyser);
+            analyser.connect(this.masterGain);
+            
+            this.stems[stemName].buffer = audioBuffer;
+            this.stems[stemName].gainNode = gainNode;
+            this.stems[stemName].analyser = analyser;
+            
+            console.log(`✓ Loaded ${fileName}`);
+          }
+        }
+        
+        // Set total duration
+        const duration = this.stems.rhythm?.buffer?.duration || 
+                        this.stems.voice?.buffer?.duration || 
+                        this.stems.signal?.buffer?.duration || 0;
+        this.totalTimeDisplay.textContent = this.formatTime(duration);
+        
+        // Enable play button
+        this.playBtn.disabled = false;
+        this.stopBtn.disabled = false;
+        
+        console.log(`✓ Track ${this.trackNumber} ready to play!`);
+      } catch (error) {
+        console.error(`Error loading audio for track ${this.trackNumber}:`, error);
+        this.playBtn.disabled = true;
+        this.stopBtn.disabled = true;
+      }
+    }
+    
+    setupUI() {
+      // Play button
+      this.playBtn.addEventListener('click', () => this.togglePlay());
+      
+      // Stop button
+      this.stopBtn.addEventListener('click', () => this.stop());
+      
+      // Progress bar seeking
+      this.progressContainer.addEventListener('click', (e) => {
+        if (!this.getDuration()) return;
+        const rect = this.progressContainer.getBoundingClientRect();
+        const percent = (e.clientX - rect.left) / rect.width;
+        this.seek(percent);
+      });
+      
+      // Volume sliders
+      const volumeSliders = this.container.querySelectorAll('.stem-channel .volume-slider');
+      volumeSliders.forEach((slider, index) => {
+        const stemNames = ['rhythm', 'voice', 'signal'];
+        const stemName = stemNames[index];
+        const stemChannel = slider.closest('.stem-channel');
+        const volumeValue = stemChannel.querySelector('.volume-value');
+        const volumeFill = stemChannel.querySelector('.volume-slider-fill');
+        
+        slider.addEventListener('input', (e) => {
+          const value = e.target.value;
+          volumeValue.textContent = value;
+          volumeFill.style.height = value + '%';
+          
+          if (this.stems[stemName].gainNode) {
+            this.stems[stemName].gainNode.gain.value = value / 100;
+          }
+          
+          // High volume indicator
+          if (value > 70) {
+            slider.setAttribute('data-volume-high', 'true');
+          } else {
+            slider.removeAttribute('data-volume-high');
+          }
+          
+          // Spotlight effect
+          if (value > 30) {
+            stemChannel.classList.add('spotlight');
+          } else {
+            stemChannel.classList.remove('spotlight');
+          }
+        });
+      });
+      
+      // Mute buttons
+      const muteButtons = this.container.querySelectorAll('.mute-btn');
+      muteButtons.forEach((btn, index) => {
+        const stemNames = ['rhythm', 'voice', 'signal'];
+        const stemName = stemNames[index];
+        
+        btn.addEventListener('click', () => {
+          this.stems[stemName].muted = !this.stems[stemName].muted;
+          btn.classList.toggle('active');
+          this.updateStemVolumes();
+        });
+      });
+      
+      // Solo buttons
+      const soloButtons = this.container.querySelectorAll('.solo-btn');
+      soloButtons.forEach((btn, index) => {
+        const stemNames = ['rhythm', 'voice', 'signal'];
+        const stemName = stemNames[index];
+        
+        btn.addEventListener('click', () => {
+          this.stems[stemName].soloed = !this.stems[stemName].soloed;
+          btn.classList.toggle('active');
+          this.updateStemVolumes();
+        });
+      });
+      
+      // Master volume
+      const masterKnobContainer = this.container.querySelector('.master-knob-container');
+      const masterVolumeValue = this.container.querySelector('.master-volume-value');
+      const masterKnobIndicator = this.container.querySelector('.master-knob-indicator');
+      
+      let isDragging = false;
+      let startX = 0;
+      let startValue = 100;
+      
+      masterKnobContainer.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        startValue = parseInt(masterVolumeValue.textContent);
+        masterKnobContainer.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3)';
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        
+        const deltaX = e.clientX - startX;
+        let newValue = startValue + Math.round(deltaX * 0.5); // Smoother movement
+        newValue = Math.max(0, Math.min(100, newValue));
+        
+        masterVolumeValue.textContent = Math.round(newValue);
+        masterKnobIndicator.style.width = newValue + '%';
+        this.masterGain.gain.value = newValue / 100;
+        
+        // Add glow effect based on volume
+        const glowIntensity = (newValue / 100) * 20;
+        masterKnobIndicator.style.boxShadow = `0 0 ${glowIntensity}px rgba(255, 255, 255, 0.8)`;
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (isDragging) {
+          masterKnobContainer.style.boxShadow = 'none';
+          isDragging = false;
+        }
+      });
+    }
+    
+    updateStemVolumes() {
+      const anySoloed = Object.values(this.stems).some(stem => stem.soloed);
+      
+      Object.entries(this.stems).forEach(([name, stem]) => {
+        if (!stem.gainNode) return;
+        
+        let volume = 1;
+        
+        if (stem.muted) {
+          volume = 0;
+        } else if (anySoloed) {
+          volume = stem.soloed ? 1 : 0;
+        }
+        
+        stem.gainNode.gain.value = volume;
+      });
+    }
+    
+    togglePlay() {
+      if (this.isPlaying) {
+        this.pause();
+      } else {
+        this.play();
+      }
+    }
+    
+    play() {
+      if (this.isPlaying) return;
+      
+      // Resume audio context if suspended
+      if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume();
+      }
+      
+      // Create and start sources
+      const offset = this.pauseTime;
+      this.startTime = this.audioContext.currentTime - offset;
+      
+      Object.entries(this.stems).forEach(([name, stem]) => {
+        if (stem.buffer) {
+          const source = this.audioContext.createBufferSource();
+          source.buffer = stem.buffer;
+          source.connect(stem.gainNode);
+          source.start(0, offset);
+          
+          stem.source = source;
+          
+          // Auto-stop when finished
+          source.onended = () => {
+            if (this.audioContext.currentTime - this.startTime >= this.getDuration()) {
+              this.stop();
+            }
+          };
+        }
+      });
+      
+      this.isPlaying = true;
+      this.playBtn.classList.add('playing'); // Use class instead of changing innerHTML
+      this.updateProgress();
+      this.startVisualizer();
+      
+      // Update waveform display
+      const trackTitle = this.container.querySelector('.track-title').textContent;
+      updateWaveformDisplay(trackTitle, this.currentTimeDisplay.textContent, this.totalTimeDisplay.textContent);
+    }
+    
+    pause() {
+      if (!this.isPlaying) return;
+      
+      this.pauseTime = this.audioContext.currentTime - this.startTime;
+      
+      Object.values(this.stems).forEach(stem => {
+        if (stem.source) {
+          stem.source.stop();
+          stem.source = null;
+        }
+      });
+      
+      this.isPlaying = false;
+      this.playBtn.classList.remove('playing'); // Use class instead of changing innerHTML
+      cancelAnimationFrame(this.progressAnimation);
+      cancelAnimationFrame(this.visualizerAnimation);
+    }
+    
+    stop() {
+      this.pause();
+      this.pauseTime = 0;
+      this.currentTimeDisplay.textContent = '0:00';
+      this.progressFill.style.width = '0%';
+      updateWaveformDisplay(null, '0:00', '0:00');
+    }
+    
+    seek(percent) {
+      const duration = this.getDuration();
+      const wasPlaying = this.isPlaying;
+      
+      if (wasPlaying) {
+        this.pause();
+      }
+      
+      this.pauseTime = duration * percent;
+      this.currentTimeDisplay.textContent = this.formatTime(this.pauseTime);
+      this.progressFill.style.width = (percent * 100) + '%';
+      
+      if (wasPlaying) {
+        this.play();
+      }
+    }
+    
+    getDuration() {
+      return this.stems.rhythm?.buffer?.duration || 
+             this.stems.voice?.buffer?.duration || 
+             this.stems.signal?.buffer?.duration || 0;
+    }
+    
+    updateProgress() {
+      if (!this.isPlaying) return;
+      
+      const currentTime = this.audioContext.currentTime - this.startTime;
+      const duration = this.getDuration();
+      
+      if (currentTime >= duration) {
+        this.stop();
+        return;
+      }
+      
+      const percent = (currentTime / duration) * 100;
+      this.progressFill.style.width = percent + '%';
+      this.currentTimeDisplay.textContent = this.formatTime(currentTime);
+      
+      // Update waveform time
+      if (globalWaveformVisible && currentPlayingTrack) {
+        waveformTime.textContent = `${this.formatTime(currentTime)} / ${this.formatTime(duration)}`;
+      }
+      
+      this.progressAnimation = requestAnimationFrame(() => this.updateProgress());
+    }
+    
+    startVisualizer() {
+      const canvas = this.visualizerCanvas;
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      
+      // Draw initial static waveform
+      this.drawStaticWaveform();
+      
+      const draw = () => {
+        if (!this.isPlaying) return;
+        
+        // Clear canvas
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Get audio buffer to generate waveform
+        const buffer = this.stems.rhythm?.buffer || 
+                       this.stems.voice?.buffer || 
+                       this.stems.signal?.buffer;
+        
+        // Get real-time analyzer data
+        const analyser = this.stems.rhythm?.analyser || 
+                        this.stems.voice?.analyser || 
+                        this.stems.signal?.analyser;
+        
+        if (buffer && analyser) {
+          const data = buffer.getChannelData(0);
+          const bars = 200; // More bars for more detail
+          const barWidth = canvas.width / bars;
+          const step = Math.floor(data.length / bars);
+          
+          // Calculate current progress
+          const currentTime = this.audioContext.currentTime - this.startTime;
+          const duration = this.getDuration();
+          const progress = currentTime / duration;
+          
+          // Get real-time frequency data for glow effect
+          const frequencyData = new Uint8Array(analyser.frequencyBinCount);
+          analyser.getByteFrequencyData(frequencyData);
+          const averageFrequency = frequencyData.reduce((a, b) => a + b) / frequencyData.length;
+          const intensity = averageFrequency / 255;
+          
+          for (let i = 0; i < bars; i++) {
+            let sum = 0;
+            for (let j = 0; j < step; j++) {
+              sum += Math.abs(data[i * step + j] || 0);
+            }
+            const average = sum / step;
+            const barHeight = Math.min(average * canvas.height * 2.5, canvas.height);
+            const x = i * barWidth;
+            const y = (canvas.height - barHeight) / 2;
+            
+            // Color based on playback progress with gradient
+            if (i / bars <= progress) {
+              // Played portion - white with glow based on current audio intensity
+              const glowAmount = Math.floor(intensity * 100);
+              ctx.fillStyle = '#fff';
+              ctx.shadowColor = `rgba(255, 255, 255, ${intensity * 0.8})`;
+              ctx.shadowBlur = glowAmount;
+              ctx.fillRect(x, y, barWidth - 1, barHeight);
+            } else {
+              // Unplayed portion - dark gray
+              ctx.fillStyle = '#333';
+              ctx.shadowBlur = 0;
+              ctx.fillRect(x, y, barWidth - 1, barHeight);
+            }
+          }
+          
+          // Draw playhead position line
+          const playheadX = canvas.width * progress;
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.5 + intensity * 0.5})`;
+          ctx.lineWidth = 2;
+          ctx.shadowColor = `rgba(255, 255, 255, ${intensity})`;
+          ctx.shadowBlur = 20 * intensity;
+          ctx.beginPath();
+          ctx.moveTo(playheadX, 0);
+          ctx.lineTo(playheadX, canvas.height);
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+        }
+        
+        this.visualizerAnimation = requestAnimationFrame(draw);
+      };
+      
+      draw();
+    }
+    
+    drawStaticWaveform() {
+      const canvas = this.visualizerCanvas;
+      const ctx = canvas.getContext('2d');
+      
+      // Clear canvas
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Get audio buffer to generate waveform
+      const buffer = this.stems.rhythm?.buffer || 
+                     this.stems.voice?.buffer || 
+                     this.stems.signal?.buffer;
+      
+      if (!buffer) return;
+      
+      const data = buffer.getChannelData(0);
+      const bars = 200; // More bars for more detail
+      const barWidth = canvas.width / bars;
+      const step = Math.floor(data.length / bars);
+      
+      ctx.fillStyle = '#333';
+      
+      for (let i = 0; i < bars; i++) {
+        let sum = 0;
+        for (let j = 0; j < step; j++) {
+          sum += Math.abs(data[i * step + j] || 0);
+        }
+        const average = sum / step;
+        const barHeight = Math.min(average * canvas.height * 2.5, canvas.height);
+        const x = i * barWidth;
+        const y = (canvas.height - barHeight) / 2;
+        
+        ctx.fillRect(x, y, barWidth - 1, barHeight);
+      }
+    }
+    
+    formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+  }
+
+  // Initialize all track players
+  document.querySelectorAll('.track-item').forEach(item => {
+    const trackNumber = parseInt(item.dataset.track);
+    const container = item.querySelector('.track-player .container');
+    audioPlayers[trackNumber] = new TrackPlayer(trackNumber, container);
+  });
+
+  // ========================================
+  // LANDING PAGE & UI INTERACTIONS
+  // ========================================
+  
+  // Landing page interaction with mouse proximity effect
+  const landingPage = document.getElementById('landingPage');
+  const signalText = document.getElementById('signalText');
+  const trackListPage = document.getElementById('trackListPage');
+
+  // Mouse proximity effect for SIGNAL text
+  landingPage.addEventListener('mousemove', (e) => {
+    const rect = signalText.getBoundingClientRect();
+    const textCenterX = rect.left + rect.width / 2;
+    const textCenterY = rect.top + rect.height / 2;
+    
+    const deltaX = e.clientX - textCenterX;
+    const deltaY = e.clientY - textCenterY;
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    
+    const maxDistance = 400;
+    const opacity = Math.max(0, 1 - (distance / maxDistance));
+    const glowIntensity = opacity * 60;
+    
+    signalText.style.opacity = opacity;
+    signalText.style.textShadow = `
+      0 0 ${glowIntensity}px rgba(255, 255, 255, ${opacity * 0.8}),
+      0 0 ${glowIntensity * 2}px rgba(255, 255, 255, ${opacity * 0.5}),
+      0 0 ${glowIntensity * 3}px rgba(255, 255, 255, ${opacity * 0.3})
+    `;
+  });
+
+  landingPage.addEventListener('click', () => {
+    landingPage.classList.add('hidden');
+    setTimeout(() => {
+      trackListPage.classList.add('visible');
+    }, 500);
+  });
+
+  // Track dropdown functionality
+  const trackHeaders = document.querySelectorAll('.track-header');
+  
+  trackHeaders.forEach(header => {
+    header.addEventListener('click', () => {
+      const trackItem = header.parentElement;
+      const isExpanded = trackItem.classList.contains('expanded');
+      
+      // Close all other tracks
+      document.querySelectorAll('.track-item').forEach(item => {
+        item.classList.remove('expanded');
+      });
+      
+      // Toggle current track
+      if (!isExpanded) {
+        trackItem.classList.add('expanded');
+      }
+    });
+  });
+
+  // ========================================
+  // GLOBAL CONTROLS
+  // ========================================
+  
+  let globalWaveformVisible = false;
+  let currentPlayingTrack = null;
+  let globalOutputDevice = null;
+  let waveformAnimationFrame = null;
+
+  // Global output device synchronization
+  const globalOutputSelect = document.getElementById('globalOutputSelect');
+  const allOutputSelects = document.querySelectorAll('.output-select');
+
+  // Populate all output selects when devices are available
+  if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+      const audioOutputs = devices.filter(device => device.kind === 'audiooutput');
+      audioOutputs.forEach(device => {
+        const option = document.createElement('option');
+        option.value = device.deviceId;
+        option.textContent = device.label || `Speaker ${device.deviceId.substr(0, 5)}`;
+        globalOutputSelect.appendChild(option);
+      });
+    });
+  }
+
+  // Sync global output to all track outputs
+  globalOutputSelect.addEventListener('change', (e) => {
+    globalOutputDevice = e.target.value;
+    allOutputSelects.forEach(select => {
+      select.value = globalOutputDevice;
+      select.dispatchEvent(new Event('change'));
+    });
+  });
+
+  // Sync individual track outputs back to global
+  allOutputSelects.forEach(select => {
+    select.addEventListener('change', (e) => {
+      globalOutputDevice = e.target.value;
+      globalOutputSelect.value = globalOutputDevice;
+      allOutputSelects.forEach(otherSelect => {
+        if (otherSelect !== select) {
+          otherSelect.value = globalOutputDevice;
+        }
+      });
+    });
+  });
+
+  // ========================================
+  // WAVEFORM DISPLAY
+  // ========================================
+  
+  const waveformPopup = document.getElementById('waveformPopup');
+  const waveformClose = document.getElementById('waveformClose');
+  const waveformHeader = document.getElementById('waveformHeader');
+  const waveformCanvas = document.getElementById('waveformCanvas');
+  const waveformTrack = document.getElementById('waveformTrack');
+  const waveformTime = document.getElementById('waveformTime');
+  let isDraggingPopup = false;
+  let startX, startY, initialX, initialY;
+
+  waveformClose.addEventListener('click', () => {
+    globalWaveformVisible = false;
+    waveformPopup.classList.remove('visible');
+    stopWaveformAnimation();
+  });
+
+  // Draggable waveform window
+  waveformHeader.addEventListener('mousedown', (e) => {
+    isDraggingPopup = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    const rect = waveformPopup.getBoundingClientRect();
+    initialX = rect.left;
+    initialY = rect.top;
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDraggingPopup) return;
+    const deltaX = e.clientX - startX;
+    const deltaY = e.clientY - startY;
+    waveformPopup.style.left = initialX + deltaX + 'px';
+    waveformPopup.style.top = initialY + deltaY + 'px';
+    waveformPopup.style.transform = 'none';
+  });
+
+  document.addEventListener('mouseup', () => {
+    isDraggingPopup = false;
+  });
+
+  function startWaveformAnimation() {
+    const ctx = waveformCanvas.getContext('2d');
+    waveformCanvas.width = waveformCanvas.offsetWidth * window.devicePixelRatio;
+    waveformCanvas.height = waveformCanvas.offsetHeight * window.devicePixelRatio;
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    
+    function animate() {
+      if (!globalWaveformVisible) return;
+      
+      const width = waveformCanvas.offsetWidth;
+      const height = waveformCanvas.offsetHeight;
+      
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillRect(0, 0, width, height);
+      
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      
+      const bars = 64;
+      const barWidth = width / bars;
+      
+      for (let i = 0; i < bars; i++) {
+        const barHeight = Math.random() * height * 0.8;
+        const x = i * barWidth;
+        const y = (height - barHeight) / 2;
+        
+        ctx.moveTo(x, y);
+        ctx.lineTo(x, y + barHeight);
+      }
+      
+      ctx.stroke();
+      
+      waveformAnimationFrame = requestAnimationFrame(animate);
+    }
+    
+    animate();
+  }
+
+  function stopWaveformAnimation() {
+    if (waveformAnimationFrame) {
+      cancelAnimationFrame(waveformAnimationFrame);
+      waveformAnimationFrame = null;
+    }
+  }
+
+  function updateWaveformDisplay(trackName, currentTime, totalTime) {
+    currentPlayingTrack = trackName;
+    waveformTrack.textContent = trackName ? trackName.toUpperCase() : 'NO TRACK PLAYING';
+    waveformTime.textContent = `${currentTime || '0:00'} / ${totalTime || '0:00'}`;
+  }
+</script>
+
+</body>
+</html>
