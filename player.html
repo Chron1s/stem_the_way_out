@@ -177,9 +177,11 @@
       height: 15px;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, #252525, #0a0a0a);
-      transition: all 0.08s ease-out;
+      transition: all 0.15s ease-out;
       position: relative;
       opacity: 0.5;
+      aspect-ratio: 1 / 1;
+      flex-shrink: 0;
     }
 
     .led-segment.active {
@@ -376,8 +378,11 @@
     .progress-container {
       width: 100%;
       max-width: 320px;
-      margin-top: 20px;
+      margin: 20px auto 0 auto;
       padding: 0 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .time-display {
@@ -524,6 +529,9 @@
       .led-segment {
         width: 14px;
         height: 14px;
+        min-width: 14px;
+        min-height: 14px;
+        aspect-ratio: 1 / 1;
       }
 
       .play-button {
@@ -571,7 +579,7 @@
 
       .progress-container {
         max-width: 260px;
-        margin-top: 15px;
+        margin: 15px auto 0 auto;
         flex-shrink: 0;
       }
 
@@ -615,6 +623,9 @@
       .led-segment {
         width: 12px;
         height: 12px;
+        min-width: 12px;
+        min-height: 12px;
+        aspect-ratio: 1 / 1;
       }
 
       .play-button {
@@ -629,7 +640,7 @@
 
       .progress-container {
         max-width: 220px;
-        margin-top: 12px;
+        margin: 12px auto 0 auto;
       }
     }
 
@@ -930,21 +941,20 @@
 
   class StemPlayer {
     constructor() {
-      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      this.audioContext = null;
       this.isPlaying = false;
       this.startTime = 0;
       this.pauseTime = 0;
       this.duration = 0;
 
       this.stems = {
-        vocals: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null },
-        drums: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null },
-        bass: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null },
-        other: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null }
+        vocals: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastPulseTime: 0 },
+        drums: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastPulseTime: 0 },
+        bass: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastPulseTime: 0 },
+        other: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastPulseTime: 0 }
       };
 
-      this.masterGain = this.audioContext.createGain();
-      this.masterGain.connect(this.audioContext.destination);
+      this.masterGain = null;
 
       this.loadingProgress = document.getElementById('loadingProgress');
       this.loadingOverlay = document.getElementById('loadingOverlay');
@@ -956,39 +966,105 @@
       this.init();
     }
 
-    async init() {
-      await this.loadStems();
-      this.setupUI();
-      this.setupProgressBar();
-      this.setupSkipControls();
+    // Initialize audio context on user interaction to bypass silent mode
+    initAudioContext() {
+      if (this.audioContext) return;
       
-      // Initialize all sliders to full
-      Object.keys(this.stems).forEach(stem => {
-        updateLightBar(stem, 100);
-      });
-
-      // Get duration from first stem
-      for (const stem of Object.values(this.stems)) {
-        if (stem.buffer) {
-          this.duration = stem.buffer.duration;
-          this.totalTimeEl.textContent = this.formatTime(this.duration);
-          break;
-        }
+      // Create audio context
+      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      
+      // Create master gain
+      this.masterGain = this.audioContext.createGain();
+      this.masterGain.connect(this.audioContext.destination);
+      
+      // iOS silent mode bypass - play a silent sound to unlock audio
+      if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume();
       }
-
-      // Start progress update loop
-      this.updateProgress();
       
-      // Hide loading
-      this.loadingOverlay.classList.add('hidden');
+      // Create and play a silent buffer to unlock audio on iOS
+      const silentBuffer = this.audioContext.createBuffer(1, 1, 22050);
+      const silentSource = this.audioContext.createBufferSource();
+      silentSource.buffer = silentBuffer;
+      silentSource.connect(this.audioContext.destination);
+      silentSource.start(0);
+    }
+
+    async init() {
+      // Set up play button to initialize audio context on first tap
+      const playButton = document.getElementById('playButton');
+      const initAndPlay = async () => {
+        this.initAudioContext();
+        await this.loadStems();
+        this.setupUI();
+        this.setupProgressBar();
+        this.setupSkipControls();
+        
+        // Initialize all sliders to full
+        Object.keys(this.stems).forEach(stem => {
+          updateLightBar(stem, 100);
+        });
+
+        // Get duration from first stem
+        for (const stem of Object.values(this.stems)) {
+          if (stem.buffer) {
+            this.duration = stem.buffer.duration;
+            this.totalTimeEl.textContent = this.formatTime(this.duration);
+            break;
+          }
+        }
+
+        // Start progress update loop
+        this.updateProgress();
+        
+        // Hide loading
+        this.loadingOverlay.classList.add('hidden');
+        
+        // Auto-play after loading
+        this.play();
+        
+        // Remove this listener after first use
+        playButton.removeEventListener('click', initAndPlay);
+      };
+      
+      // Show loading immediately but wait for tap to actually load audio
+      playButton.addEventListener('click', initAndPlay, { once: true });
+      
+      // Also try to preload without user interaction (works on desktop)
+      try {
+        this.initAudioContext();
+        await this.loadStems();
+        this.setupUI();
+        this.setupProgressBar();
+        this.setupSkipControls();
+        
+        Object.keys(this.stems).forEach(stem => {
+          updateLightBar(stem, 100);
+        });
+
+        for (const stem of Object.values(this.stems)) {
+          if (stem.buffer) {
+            this.duration = stem.buffer.duration;
+            this.totalTimeEl.textContent = this.formatTime(this.duration);
+            break;
+          }
+        }
+
+        this.updateProgress();
+        this.loadingOverlay.classList.add('hidden');
+        playButton.removeEventListener('click', initAndPlay);
+      } catch (e) {
+        console.log('Waiting for user interaction to load audio');
+      }
     }
 
     async loadStems() {
+      if (!this.audioContext) return;
+      
       const stemsToLoad = Object.entries(TRACK_CONFIG.stems).filter(([_, stem]) => stem !== null);
       const totalStems = stemsToLoad.length;
       let loaded = 0;
 
-      // Load all stems in parallel for faster loading
       const loadPromises = stemsToLoad.map(async ([stemName, stemData]) => {
         if (stemData && stemData.file) {
           try {
@@ -999,10 +1075,9 @@
 
             const gainNode = this.audioContext.createGain();
             
-            // Create analyser node for rhythmic visualization
             const analyser = this.audioContext.createAnalyser();
             analyser.fftSize = 256;
-            analyser.smoothingTimeConstant = 0.3;
+            analyser.smoothingTimeConstant = 0.5;
             
             gainNode.connect(analyser);
             analyser.connect(this.masterGain);
@@ -1024,7 +1099,6 @@
         return false;
       });
 
-      // Wait for all stems to load in parallel
       await Promise.all(loadPromises);
     }
 
@@ -1276,6 +1350,11 @@
     play() {
       if (this.isPlaying) return;
 
+      // Ensure audio context is initialized and resumed
+      if (!this.audioContext) {
+        this.initAudioContext();
+      }
+      
       if (this.audioContext.state === 'suspended') {
         this.audioContext.resume();
       }
@@ -1343,39 +1422,44 @@
     }
 
     updateRhythmicPulse() {
+      const now = Date.now();
+      
       Object.entries(this.stems).forEach(([stemName, stem]) => {
         if (stem.analyser && stem.volume > 0 && stem.buffer) {
           const dataArray = new Uint8Array(stem.analyser.frequencyBinCount);
           stem.analyser.getByteFrequencyData(dataArray);
           
-          // Calculate RMS (root mean square) for smoother level detection
+          // Calculate RMS
           let sum = 0;
           for (let i = 0; i < dataArray.length; i++) {
             sum += dataArray[i] * dataArray[i];
           }
           const rms = Math.sqrt(sum / dataArray.length);
           
-          // Lower thresholds for different stem types
-          let threshold = 25; // Default - very sensitive
+          // Higher thresholds - less sensitive
+          let threshold = 45;
           
           if (stemName === 'drums') {
-            threshold = 35; // Drums are loud, need higher threshold
+            threshold = 55;
           } else if (stemName === 'bass') {
-            threshold = 20; // Bass can be quiet
+            threshold = 40;
           } else if (stemName === 'vocals') {
-            threshold = 18; // Vocals/Instruments need low threshold
+            threshold = 38;
           } else if (stemName === 'other') {
-            threshold = 18; // Other elements need low threshold
+            threshold = 38;
           }
           
-          // Trigger pulse if level exceeds threshold
+          // Add cooldown to prevent tremolo effect (minimum 200ms between pulses)
+          const cooldown = 200;
+          
           const control = document.querySelector(`.stem-control[data-stem="${stemName}"]`);
-          if (control && rms > threshold) {
+          if (control && rms > threshold && (now - stem.lastPulseTime) > cooldown) {
+            stem.lastPulseTime = now;
             const activeSegments = control.querySelectorAll('.led-segment.active');
             activeSegments.forEach(seg => {
               if (!seg.classList.contains('pulsing')) {
                 seg.classList.add('pulsing');
-                setTimeout(() => seg.classList.remove('pulsing'), 120);
+                setTimeout(() => seg.classList.remove('pulsing'), 150);
               }
             });
           }
