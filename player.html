@@ -1241,30 +1241,52 @@
 
     updateRhythmicPulse() {
       Object.entries(this.stems).forEach(([stemName, stem]) => {
-        if (stem.analyser && stem.volume > 0) {
+        if (stem.analyser && stem.volume > 0 && stem.buffer) {
           const dataArray = new Uint8Array(stem.analyser.frequencyBinCount);
           stem.analyser.getByteFrequencyData(dataArray);
           
-          // Calculate average level
+          // Calculate average level with frequency weighting based on stem type
           let sum = 0;
-          for (let i = 0; i < dataArray.length; i++) {
-            sum += dataArray[i];
-          }
-          const average = sum / dataArray.length;
+          let count = 0;
           
-          // Trigger pulse if level exceeds threshold
+          // Different frequency ranges for different stems
+          let startBin = 0;
+          let endBin = dataArray.length;
+          
+          if (stemName === 'bass') {
+            // Bass: focus on low frequencies (0-200Hz)
+            startBin = 0;
+            endBin = Math.min(20, dataArray.length);
+          } else if (stemName === 'drums') {
+            // Drums: focus on low-mid frequencies (50-500Hz)
+            startBin = 2;
+            endBin = Math.min(40, dataArray.length);
+          } else if (stemName === 'vocals') {
+            // Vocals: focus on mid frequencies (200-4000Hz)
+            startBin = 10;
+            endBin = Math.min(80, dataArray.length);
+          } else {
+            // Other: full range
+            startBin = 0;
+            endBin = dataArray.length;
+          }
+          
+          for (let i = startBin; i < endBin; i++) {
+            sum += dataArray[i];
+            count++;
+          }
+          const average = count > 0 ? sum / count : 0;
+          
+          // Higher threshold to prevent random pulsing (was 60, now 85)
           const control = document.querySelector(`.stem-control[data-stem="${stemName}"]`);
-          if (control) {
+          if (control && average > 85) {
             const activeSegments = control.querySelectorAll('.led-segment.active');
-            if (average > 60) {
-              activeSegments.forEach(seg => {
-                if (!seg.classList.contains('pulsing')) {
-                  seg.classList.add('pulsing');
-                  // Remove pulsing class after animation completes
-                  setTimeout(() => seg.classList.remove('pulsing'), 150);
-                }
-              });
-            }
+            activeSegments.forEach(seg => {
+              if (!seg.classList.contains('pulsing')) {
+                seg.classList.add('pulsing');
+                setTimeout(() => seg.classList.remove('pulsing'), 150);
+              }
+            });
           }
         }
       });
