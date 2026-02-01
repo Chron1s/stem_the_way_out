@@ -1242,42 +1242,27 @@
     updateRhythmicPulse() {
       Object.entries(this.stems).forEach(([stemName, stem]) => {
         if (stem.analyser && stem.volume > 0 && stem.buffer) {
-          const bufferLength = stem.analyser.frequencyBinCount;
-          const dataArray = new Uint8Array(bufferLength);
+          const dataArray = new Uint8Array(stem.analyser.frequencyBinCount);
+          stem.analyser.getByteFrequencyData(dataArray);
           
-          // Use time domain data for better transient detection (drums, percussive hits)
-          stem.analyser.getByteTimeDomainData(dataArray);
-          
-          // Calculate peak amplitude (deviation from center 128)
-          let maxDeviation = 0;
-          for (let i = 0; i < bufferLength; i++) {
-            const deviation = Math.abs(dataArray[i] - 128);
-            if (deviation > maxDeviation) {
-              maxDeviation = deviation;
-            }
+          // Calculate RMS (root mean square) for smoother level detection
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i] * dataArray[i];
           }
+          const rms = Math.sqrt(sum / dataArray.length);
           
-          // Different thresholds for different stem types
-          let threshold = 40; // Default threshold
+          // Single threshold for all stems - simple and reliable
+          const threshold = 50;
           
-          if (stemName === 'drums') {
-            threshold = 35; // Lower threshold for drums - more sensitive to hits
-          } else if (stemName === 'bass') {
-            threshold = 45; // Bass needs slightly higher threshold
-          } else if (stemName === 'vocals') {
-            threshold = 38;
-          } else {
-            threshold = 42;
-          }
-          
-          // Trigger pulse if amplitude exceeds threshold
+          // Trigger pulse if level exceeds threshold
           const control = document.querySelector(`.stem-control[data-stem="${stemName}"]`);
-          if (control && maxDeviation > threshold) {
+          if (control && rms > threshold) {
             const activeSegments = control.querySelectorAll('.led-segment.active');
             activeSegments.forEach(seg => {
               if (!seg.classList.contains('pulsing')) {
                 seg.classList.add('pulsing');
-                setTimeout(() => seg.classList.remove('pulsing'), 150);
+                setTimeout(() => seg.classList.remove('pulsing'), 120);
               }
             });
           }
