@@ -3,17 +3,21 @@
 <head>
   <title>SIGNAL - Player</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
     * {
       box-sizing: border-box;
       user-select: none;
       -webkit-user-select: none;
       -webkit-tap-highlight-color: transparent;
+      margin: 0;
+      padding: 0;
     }
 
     @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
 
-    html, body {
+    html {
       height: 100%;
       overflow: hidden;
     }
@@ -24,35 +28,40 @@
       font-family: 'Space Mono', monospace;
       margin: 0;
       padding: 0;
+      height: 100%;
       height: 100vh;
       height: -webkit-fill-available;
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      align-items: center;
     }
 
     /* Header */
     .header {
+      width: 100%;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 15px 20px;
+      justify-content: center;
+      padding: 12px 20px;
       border-bottom: 1px solid #1a1a1a;
+      position: relative;
+      flex-shrink: 0;
     }
 
     .back-btn {
+      position: absolute;
+      left: 15px;
       display: flex;
       align-items: center;
-      gap: 8px;
       color: #555;
       text-decoration: none;
-      font-size: 11px;
+      font-size: 10px;
       letter-spacing: 1px;
       text-transform: uppercase;
-      transition: color 0.2s ease;
-      padding: 8px 12px;
-      border: 1px solid #222;
-      border-radius: 20px;
+      padding: 6px 10px;
+      border: 1px solid #333;
+      border-radius: 15px;
       background: transparent;
       cursor: pointer;
       font-family: 'Space Mono', monospace;
@@ -60,18 +69,15 @@
 
     .back-btn:hover {
       color: #fff;
-      border-color: #444;
+      border-color: #555;
     }
 
     .track-title {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       letter-spacing: 2px;
       text-transform: uppercase;
-    }
-
-    .header-spacer {
-      flex: 1;
+      text-align: center;
     }
 
     /* Main Player Area */
@@ -81,31 +87,31 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 15px;
+      width: 100%;
       overflow: hidden;
     }
 
-    /* Stem Control Grid - Cross Pattern */
+    /* Stem Control Grid */
     .stem-grid {
       display: grid;
-      grid-template-columns: auto 70px auto;
-      grid-template-rows: auto 70px auto;
-      gap: 6px;
+      grid-template-columns: 1fr 60px 1fr;
+      grid-template-rows: auto 60px auto;
+      gap: 8px;
       align-items: center;
       justify-items: center;
+      width: 280px;
     }
 
-    /* Individual Stem Controllers */
     .stem-control {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
     .stem-control.horizontal {
       flex-direction: row;
-      gap: 8px;
+      gap: 6px;
     }
 
     .stem-control.top { grid-column: 2; grid-row: 1; }
@@ -115,72 +121,59 @@
     .stem-control.bottom { grid-column: 2; grid-row: 3; }
 
     .stem-label {
-      font-size: 11px;
-      letter-spacing: 3px;
+      font-size: 8px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       color: #555;
-      transition: color 0.2s ease;
     }
 
-    .stem-control:hover .stem-label {
-      color: #fff;
-    }
-
-    /* Futuristic Light Bar Slider */
+    /* Light Bar Slider */
     .light-bar {
       display: flex;
-      gap: 10px;
-      padding: 14px;
+      gap: 6px;
+      padding: 10px;
       background: linear-gradient(145deg, #0d0d0d, #151515);
-      border-radius: 30px;
-      box-shadow: 
-        inset 0 2px 10px rgba(0,0,0,0.9),
-        0 1px 0 rgba(255,255,255,0.03);
-      border: 1px solid #1a1a1a;
-      position: relative;
+      border-radius: 25px;
+      border: none;
       cursor: pointer;
       touch-action: none;
     }
 
     .light-bar.horizontal {
-      width: 120px;
-      height: 38px;
+      width: 90px;
+      height: 32px;
       flex-direction: row;
       align-items: center;
       justify-content: center;
-      gap: 5px;
-      padding: 8px;
+      gap: 4px;
+      padding: 6px 10px;
     }
 
-    /* Left slider (Other) - fills from right to left (inside to outside) */
     .stem-control.left .light-bar.horizontal {
       flex-direction: row-reverse;
     }
 
     .light-bar.vertical {
-      width: 38px;
-      height: 120px;
+      width: 32px;
+      height: 90px;
       flex-direction: column-reverse;
       align-items: center;
       justify-content: center;
-      gap: 5px;
-      padding: 8px;
+      gap: 4px;
+      padding: 10px 6px;
     }
 
-    /* Bottom slider (Bass) - fills from top to bottom (inside to outside) */
     .stem-control.bottom .light-bar.vertical {
       flex-direction: column;
     }
 
+    /* LED Orbs - perfectly round, no outlines */
     .led-segment {
-      width: 15px;
-      height: 15px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #252525, #0a0a0a);
-      transition: all 0.15s ease-out;
-      position: relative;
-      opacity: 0.5;
-      aspect-ratio: 1 / 1;
+      background: #1a1a1a;
+      opacity: 0.4;
       flex-shrink: 0;
     }
 
@@ -188,165 +181,46 @@
       opacity: 1;
     }
 
-    /* Stem-specific LED colors - Dark blue shades */
     .stem-control[data-stem="drums"] .led-segment.active {
-      background: radial-gradient(circle at 30% 30%, #5dade2, #2e86de 40%, #1a5276);
-      box-shadow: 
-        0 0 8px #2e86de,
-        0 0 16px rgba(46, 134, 222, 0.6),
-        0 0 24px rgba(46, 134, 222, 0.3),
-        inset 0 1px 2px rgba(255,255,255,0.4);
-    }
-
-    .stem-control[data-stem="drums"] .led-segment.active.pulsing {
-      animation: pulseDrums 0.15s ease-out;
+      background: radial-gradient(circle at 35% 35%, #5dade2, #2e86de);
+      box-shadow: 0 0 8px rgba(46, 134, 222, 0.6);
     }
 
     .stem-control[data-stem="bass"] .led-segment.active {
-      background: radial-gradient(circle at 30% 30%, #3498db, #1a5276 40%, #0d2840);
-      box-shadow: 
-        0 0 8px #1a5276,
-        0 0 16px rgba(26, 82, 118, 0.6),
-        0 0 24px rgba(26, 82, 118, 0.3),
-        inset 0 1px 2px rgba(255,255,255,0.4);
-    }
-
-    .stem-control[data-stem="bass"] .led-segment.active.pulsing {
-      animation: pulseBass 0.15s ease-out;
+      background: radial-gradient(circle at 35% 35%, #3498db, #1a5276);
+      box-shadow: 0 0 8px rgba(26, 82, 118, 0.6);
     }
 
     .stem-control[data-stem="other"] .led-segment.active {
-      background: radial-gradient(circle at 30% 30%, #85c1e9, #5dade2 40%, #2874a6);
-      box-shadow: 
-        0 0 8px #5dade2,
-        0 0 16px rgba(93, 173, 226, 0.6),
-        0 0 24px rgba(93, 173, 226, 0.3),
-        inset 0 1px 2px rgba(255,255,255,0.4);
-    }
-
-    .stem-control[data-stem="other"] .led-segment.active.pulsing {
-      animation: pulseOther 0.15s ease-out;
+      background: radial-gradient(circle at 35% 35%, #85c1e9, #5dade2);
+      box-shadow: 0 0 8px rgba(93, 173, 226, 0.6);
     }
 
     .stem-control[data-stem="vocals"] .led-segment.active {
-      background: radial-gradient(circle at 30% 30%, #aed6f1, #85c1e9 40%, #3498db);
-      box-shadow: 
-        0 0 8px #85c1e9,
-        0 0 16px rgba(133, 193, 233, 0.6),
-        0 0 24px rgba(133, 193, 233, 0.3),
-        inset 0 1px 2px rgba(255,255,255,0.4);
+      background: radial-gradient(circle at 35% 35%, #aed6f1, #85c1e9);
+      box-shadow: 0 0 8px rgba(133, 193, 233, 0.6);
     }
 
-    .stem-control[data-stem="vocals"] .led-segment.active.pulsing {
-      animation: pulseVocals 0.15s ease-out;
+    .led-segment.active.pulsing {
+      animation: pulse 0.15s ease-out;
     }
 
-    /* Rhythmic pulse animations for each stem */
-    @keyframes pulseDrums {
-      0% {
-        transform: scale(1.15);
-        box-shadow: 
-          0 0 10px #2e86de,
-          0 0 18px rgba(46, 134, 222, 0.7),
-          0 0 28px rgba(46, 134, 222, 0.4),
-          inset 0 1px 2px rgba(255,255,255,0.5);
-        filter: brightness(1.25);
-      }
-      100% {
-        transform: scale(1);
-        filter: brightness(1);
-      }
+    @keyframes pulse {
+      0% { transform: scale(1.2); filter: brightness(1.3); }
+      100% { transform: scale(1); filter: brightness(1); }
     }
 
-    @keyframes pulseBass {
-      0% {
-        transform: scale(1.15);
-        box-shadow: 
-          0 0 10px #1a5276,
-          0 0 18px rgba(26, 82, 118, 0.7),
-          0 0 28px rgba(26, 82, 118, 0.4),
-          inset 0 1px 2px rgba(255,255,255,0.5);
-        filter: brightness(1.25);
-      }
-      100% {
-        transform: scale(1);
-        filter: brightness(1);
-      }
-    }
-
-    @keyframes pulseOther {
-      0% {
-        transform: scale(1.15);
-        box-shadow: 
-          0 0 10px #5dade2,
-          0 0 18px rgba(93, 173, 226, 0.7),
-          0 0 28px rgba(93, 173, 226, 0.4),
-          inset 0 1px 2px rgba(255,255,255,0.5);
-        filter: brightness(1.25);
-      }
-      100% {
-        transform: scale(1);
-        filter: brightness(1);
-      }
-    }
-
-    @keyframes pulseVocals {
-      0% {
-        transform: scale(1.15);
-        box-shadow: 
-          0 0 10px #85c1e9,
-          0 0 18px rgba(133, 193, 233, 0.7),
-          0 0 28px rgba(133, 193, 233, 0.4),
-          inset 0 1px 2px rgba(255,255,255,0.5);
-        filter: brightness(1.25);
-      }
-      100% {
-        transform: scale(1);
-        filter: brightness(1);
-      }
-    }
-
-    /* Hover glow effect on slider */
-    .light-bar:hover {
-      border-color: #2a2a2a;
-    }
-
-    .stem-control[data-stem="drums"] .light-bar:hover {
-      box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 30px rgba(46, 134, 222, 0.2);
-    }
-    .stem-control[data-stem="bass"] .light-bar:hover {
-      box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 30px rgba(26, 82, 118, 0.2);
-    }
-    .stem-control[data-stem="other"] .light-bar:hover {
-      box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 30px rgba(93, 173, 226, 0.2);
-    }
-    .stem-control[data-stem="vocals"] .light-bar:hover {
-      box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 30px rgba(133, 193, 233, 0.2);
-    }
-
-    /* Center Play Button */
+    /* Play Button */
     .play-button {
-      width: 60px;
-      height: 60px;
+      width: 54px;
+      height: 54px;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, #1a1a1a, #0a0a0a);
-      border: 2px solid #2a2a2a;
+      border: 2px solid #333;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s ease;
-      box-shadow: 
-        0 4px 20px rgba(0,0,0,0.5),
-        inset 0 2px 4px rgba(255,255,255,0.05);
-    }
-
-    .play-button:hover {
-      border-color: #fff;
-      transform: scale(1.05);
-      box-shadow: 
-        0 4px 35px rgba(255,255,255,0.15),
-        inset 0 1px 0 rgba(255,255,255,0.1);
     }
 
     .play-button:active {
@@ -357,50 +231,50 @@
       width: 0;
       height: 0;
       border-style: solid;
-      border-width: 10px 0 10px 16px;
+      border-width: 8px 0 8px 14px;
       border-color: transparent transparent transparent #fff;
       margin-left: 3px;
-      transition: all 0.2s ease;
     }
 
     .play-button.playing .play-icon {
       border: none;
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       margin-left: 0;
-      background: linear-gradient(to right, 
-        #fff 0%, #fff 35%, 
-        transparent 35%, transparent 65%, 
-        #fff 65%, #fff 100%);
+      background: linear-gradient(to right, #fff 0%, #fff 35%, transparent 35%, transparent 65%, #fff 65%, #fff 100%);
     }
 
-    /* Progress Bar */
-    .progress-container {
+    /* Progress Section */
+    .progress-section {
       width: 100%;
-      max-width: 320px;
-      margin: 20px auto 0 auto;
-      padding: 0 10px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      padding: 20px 0;
+      flex-shrink: 0;
     }
 
-    .time-display {
+    .time-row {
+      width: 240px;
       display: flex;
       justify-content: space-between;
-      font-size: 9px;
+      margin-bottom: 6px;
+    }
+
+    .time-text {
+      font-size: 10px;
       letter-spacing: 1px;
-      color: #444;
-      margin-bottom: 5px;
+      color: #666;
+      font-family: 'Space Mono', monospace;
     }
 
     .progress-bar {
-      width: 100%;
+      width: 240px;
       height: 3px;
-      background: #1a1a1a;
+      background: #222;
       border-radius: 2px;
       cursor: pointer;
-      position: relative;
+      overflow: hidden;
     }
 
     .progress-fill {
@@ -408,39 +282,31 @@
       background: linear-gradient(90deg, #3498db, #85c1e9);
       border-radius: 2px;
       width: 0%;
-      transition: width 0.1s linear;
     }
 
-    /* Skip Controls */
     .skip-controls {
       display: flex;
       justify-content: center;
-      align-items: center;
-      gap: 16px;
-      margin-top: 10px;
+      gap: 20px;
+      margin-top: 12px;
     }
 
     .skip-btn {
       width: 28px;
       height: 28px;
       background: transparent;
-      border: 1px solid #2a2a2a;
+      border: 1px solid #333;
       border-radius: 50%;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s ease;
-      color: #444;
-    }
-
-    .skip-btn:hover {
-      border-color: #fff;
-      color: #fff;
+      color: #555;
     }
 
     .skip-btn:active {
-      transform: scale(0.95);
+      border-color: #fff;
+      color: #fff;
     }
 
     .skip-btn svg {
@@ -449,7 +315,7 @@
       fill: currentColor;
     }
 
-    /* Loading State */
+    /* Loading */
     .loading-overlay {
       position: fixed;
       top: 0;
@@ -462,24 +328,22 @@
       align-items: center;
       justify-content: center;
       z-index: 100;
-      transition: opacity 0.5s ease;
     }
 
     .loading-overlay.hidden {
-      opacity: 0;
-      pointer-events: none;
+      display: none;
     }
 
     .loading-text {
-      font-size: 12px;
-      letter-spacing: 4px;
+      font-size: 11px;
+      letter-spacing: 3px;
       text-transform: uppercase;
-      color: #444;
-      margin-bottom: 20px;
+      color: #555;
+      margin-bottom: 15px;
     }
 
     .loading-bar {
-      width: 200px;
+      width: 150px;
       height: 2px;
       background: #222;
       border-radius: 1px;
@@ -490,368 +354,38 @@
       height: 100%;
       background: #fff;
       width: 0%;
-      transition: width 0.3s ease;
     }
 
-    /* Responsive */
-    @media (max-width: 500px) {
-      body {
-        height: 100vh;
-        height: -webkit-fill-available;
-      }
-
-      .player-container {
-        padding: 10px;
-        justify-content: center;
-      }
-
-      .stem-grid {
-        grid-template-columns: 1fr 70px 1fr;
-        grid-template-rows: auto 70px auto;
-        max-width: 320px;
-        gap: 5px;
-      }
-
-      .light-bar.horizontal {
-        width: 100px;
-        height: 40px;
-        gap: 4px;
-        padding: 8px;
-      }
-
-      .light-bar.vertical {
-        width: 40px;
-        height: 100px;
-        gap: 4px;
-        padding: 8px;
-      }
-
-      .led-segment {
-        width: 14px;
-        height: 14px;
-        min-width: 14px;
-        min-height: 14px;
-        aspect-ratio: 1 / 1;
-      }
-
-      .play-button {
-        width: 60px;
-        height: 60px;
-      }
-
-      .play-icon {
-        border-width: 10px 0 10px 16px;
-        margin-left: 4px;
-      }
-
-      .play-button.playing .play-icon {
-        width: 16px;
-        height: 16px;
-      }
-
-      .header {
-        padding: 10px 15px;
-        flex-shrink: 0;
-      }
-
-      .back-btn {
-        font-size: 9px;
-        padding: 6px 10px;
-      }
-
-      .track-title {
-        font-size: 10px;
-        letter-spacing: 1.5px;
-      }
-
-      .stem-label {
-        font-size: 7px;
-        letter-spacing: 1.5px;
-      }
-
-      .stem-control {
-        gap: 4px;
-      }
-
-      .stem-control.horizontal {
-        gap: 5px;
-      }
-
-      .progress-container {
-        max-width: 260px;
-        margin: 15px auto 0 auto;
-        flex-shrink: 0;
-      }
-
-      .skip-controls {
-        margin-top: 8px;
-      }
-
-      .skip-btn {
-        width: 24px;
-        height: 24px;
-      }
-
-      .time-display {
-        font-size: 8px;
-      }
-    }
-
-    /* Extra small phones */
-    @media (max-width: 380px) {
-      .stem-grid {
-        grid-template-columns: 1fr 60px 1fr;
-        grid-template-rows: auto 60px auto;
-        max-width: 280px;
-        gap: 4px;
-      }
-
-      .light-bar.horizontal {
-        width: 85px;
-        height: 36px;
-        gap: 3px;
-        padding: 6px;
-      }
-
-      .light-bar.vertical {
-        width: 36px;
-        height: 85px;
-        gap: 3px;
-        padding: 6px;
-      }
-
-      .led-segment {
-        width: 12px;
-        height: 12px;
-        min-width: 12px;
-        min-height: 12px;
-        aspect-ratio: 1 / 1;
-      }
-
-      .play-button {
-        width: 52px;
-        height: 52px;
-      }
-
-      .play-icon {
-        border-width: 8px 0 8px 14px;
-        margin-left: 3px;
-      }
-
-      .progress-container {
-        max-width: 220px;
-        margin: 12px auto 0 auto;
-      }
-    }
-
-    /* Landscape mode on phones */
-    @media (max-height: 500px) and (orientation: landscape) {
-      .player-container {
-        padding: 5px;
-      }
-
-      .stem-grid {
-        grid-template-columns: 1fr 50px 1fr;
-        grid-template-rows: auto 50px auto;
-        max-width: 350px;
-        gap: 3px;
-      }
-
-      .light-bar.horizontal {
-        width: 90px;
-        height: 30px;
-      }
-
-      .light-bar.vertical {
-        width: 30px;
-        height: 70px;
-      }
-
-      .play-button {
-        width: 44px;
-        height: 44px;
-      }
-
-      .header {
-        padding: 5px 12px;
-      }
-
-      .led-segment {
-        width: 10px;
-        height: 10px;
-      }
-
-      .progress-container {
-        margin-top: 5px;
-      }
-
-      .skip-controls {
-        margin-top: 3px;
-      }
-    }
-
-    /* iPhone 17 Pro and large modern phones (430px width, tall screens) */
-    @media (min-width: 410px) and (max-width: 450px) and (min-height: 800px) {
-      .player-container {
-        padding: 15px;
-        transform: scale(0.9);
-        transform-origin: center center;
-      }
-
-      .stem-grid {
-        grid-template-columns: auto 65px auto;
-        grid-template-rows: auto 65px auto;
-        gap: 6px;
-      }
-
-      .light-bar.horizontal {
-        width: 115px;
-        height: 42px;
-        gap: 6px;
-        padding: 10px;
-      }
-
-      .light-bar.vertical {
-        width: 42px;
-        height: 115px;
-        gap: 6px;
-        padding: 10px;
-      }
-
-      .led-segment {
-        width: 15px;
-        height: 15px;
-      }
-
-      .play-button {
-        width: 58px;
-        height: 58px;
-      }
-
-      .play-icon {
-        border-width: 10px 0 10px 16px;
-        margin-left: 4px;
-      }
-
-      .play-button.playing .play-icon {
-        width: 16px;
-        height: 16px;
-      }
-
-      .stem-label {
-        font-size: 9px;
-        letter-spacing: 2px;
-      }
-
-      .progress-container {
-        max-width: 280px;
-        margin-top: 15px;
-      }
-    }
-
-    /* iPhone Pro/Max and modern tall phones */
-    @media (min-width: 390px) and (max-width: 450px) {
-      .player-container {
-        padding: 15px 10px;
-      }
-
-      .stem-grid {
-        grid-template-columns: 1fr 65px 1fr;
-        grid-template-rows: auto 65px auto;
-        max-width: 300px;
-        gap: 5px;
-      }
-
-      .light-bar.horizontal {
-        width: 95px;
-        height: 38px;
-        gap: 4px;
-        padding: 7px;
-      }
-
-      .light-bar.vertical {
-        width: 38px;
-        height: 95px;
-        gap: 4px;
-        padding: 7px;
-      }
-
-      .led-segment {
-        width: 13px;
-        height: 13px;
-      }
-
-      .play-button {
-        width: 56px;
-        height: 56px;
-      }
-
-      .stem-label {
-        font-size: 7px;
-        letter-spacing: 1.5px;
-      }
-
-      .progress-container {
-        max-width: 240px;
-        margin-top: 12px;
-      }
-    }
-
-    /* Safe area for iPhone notch */
+    /* Safe areas */
     @supports (padding-top: env(safe-area-inset-top)) {
       .header {
-        padding-top: calc(10px + env(safe-area-inset-top));
+        padding-top: calc(12px + env(safe-area-inset-top));
       }
-      
-      .progress-container {
-        padding-bottom: env(safe-area-inset-bottom);
-      }
-    }
-
-    /* Prevent zoom on iOS */
-    input, select, textarea, button {
-      font-size: 16px;
-    }
-
-    /* Prevent zoom issues on iOS */
-    @media screen and (-webkit-min-device-pixel-ratio: 3) and (max-width: 500px) {
-      html {
-        -webkit-text-size-adjust: 100%;
-      }
-      
-      .player-container {
-        min-height: auto;
+      .progress-section {
+        padding-bottom: calc(20px + env(safe-area-inset-bottom));
       }
     }
   </style>
 </head>
 <body>
 
-<!-- Loading Overlay -->
+<!-- Loading -->
 <div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-info">
-    <div class="loading-text">Loading Stems</div>
-    <div class="loading-bar">
-      <div class="loading-progress" id="loadingProgress"></div>
-    </div>
+  <div class="loading-text">Loading Stems</div>
+  <div class="loading-bar">
+    <div class="loading-progress" id="loadingProgress"></div>
   </div>
 </div>
 
 <!-- Header -->
 <div class="header">
-  <button onclick="window.location.href='index.html?menu=open'" class="back-btn">
-    Tracks
-  </button>
+  <button onclick="window.location.href='index.html'" class="back-btn">Tracks</button>
   <div class="track-title" id="trackTitle">Loading...</div>
-  <div class="header-spacer"></div>
 </div>
 
 <!-- Player -->
 <div class="player-container">
-
-  <!-- Stem Control Grid -->
   <div class="stem-grid">
-
     <!-- Vocals (Top) -->
     <div class="stem-control top" data-stem="vocals">
       <span class="stem-label">Vocals</span>
@@ -910,34 +444,64 @@
       </div>
       <span class="stem-label">Bass</span>
     </div>
-
   </div>
-
-  <!-- Progress Bar with Skip Controls -->
-  <div class="progress-container">
-    <div class="time-display">
-      <span id="currentTime">0:00</span>
-      <span id="totalTime">0:00</span>
-    </div>
-    <div class="progress-bar" id="progressBar">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
-    <div class="skip-controls">
-      <button class="skip-btn" id="skipBack">
-        <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
-      </button>
-      <button class="skip-btn" id="skipForward">
-        <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
-      </button>
-    </div>
-  </div>
-
 </div>
 
+<!-- Progress Section -->
+<div class="progress-section">
+  <div class="time-row">
+    <span class="time-text" id="currentTime">0:00</span>
+    <span class="time-text" id="totalTime">0:00</span>
+  </div>
+  <div class="progress-bar" id="progressBar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="skip-controls">
+    <button class="skip-btn" id="skipBack">
+      <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
+    </button>
+    <button class="skip-btn" id="skipForward">
+      <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Silent audio element to bypass iOS silent mode -->
+<audio id="silentAudio" src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwmHAAAAAAD/+1DEAAAGAAGn9AAAIwAANP8AAABM//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+1DELwPAAAGkAAAAIAAANIAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" loop playsinline></audio>
+
 <script>
-  // ========================================
-  // AUDIO ENGINE
-  // ========================================
+  // Unlock audio on iOS - must happen on user interaction
+  function unlockAudio() {
+    const silentAudio = document.getElementById('silentAudio');
+    silentAudio.play().catch(() => {});
+    silentAudio.pause();
+    silentAudio.currentTime = 0;
+    
+    // Also try with AudioContext
+    if (window.audioContextUnlocked) return;
+    
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) {
+      const ctx = new AudioContext();
+      const buffer = ctx.createBuffer(1, 1, 22050);
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(ctx.destination);
+      source.start(0);
+      source.stop(0.001);
+      
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+      
+      window.audioContextUnlocked = true;
+    }
+  }
+
+  // Add unlock listeners to body
+  document.body.addEventListener('touchstart', unlockAudio, { once: true });
+  document.body.addEventListener('touchend', unlockAudio, { once: true });
+  document.body.addEventListener('click', unlockAudio, { once: true });
 
   class StemPlayer {
     constructor() {
@@ -955,7 +519,6 @@
       };
 
       this.masterGain = null;
-
       this.loadingProgress = document.getElementById('loadingProgress');
       this.loadingOverlay = document.getElementById('loadingOverlay');
       this.progressBar = document.getElementById('progressBar');
@@ -966,71 +529,20 @@
       this.init();
     }
 
-    // Initialize audio context on user interaction to bypass silent mode
     initAudioContext() {
       if (this.audioContext) return;
       
-      // Create audio context
-      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      
-      // Create master gain
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      this.audioContext = new AudioContext();
       this.masterGain = this.audioContext.createGain();
       this.masterGain.connect(this.audioContext.destination);
       
-      // iOS silent mode bypass - play a silent sound to unlock audio
       if (this.audioContext.state === 'suspended') {
         this.audioContext.resume();
       }
-      
-      // Create and play a silent buffer to unlock audio on iOS
-      const silentBuffer = this.audioContext.createBuffer(1, 1, 22050);
-      const silentSource = this.audioContext.createBufferSource();
-      silentSource.buffer = silentBuffer;
-      silentSource.connect(this.audioContext.destination);
-      silentSource.start(0);
     }
 
     async init() {
-      // Set up play button to initialize audio context on first tap
-      const playButton = document.getElementById('playButton');
-      const initAndPlay = async () => {
-        this.initAudioContext();
-        await this.loadStems();
-        this.setupUI();
-        this.setupProgressBar();
-        this.setupSkipControls();
-        
-        // Initialize all sliders to full
-        Object.keys(this.stems).forEach(stem => {
-          updateLightBar(stem, 100);
-        });
-
-        // Get duration from first stem
-        for (const stem of Object.values(this.stems)) {
-          if (stem.buffer) {
-            this.duration = stem.buffer.duration;
-            this.totalTimeEl.textContent = this.formatTime(this.duration);
-            break;
-          }
-        }
-
-        // Start progress update loop
-        this.updateProgress();
-        
-        // Hide loading
-        this.loadingOverlay.classList.add('hidden');
-        
-        // Auto-play after loading
-        this.play();
-        
-        // Remove this listener after first use
-        playButton.removeEventListener('click', initAndPlay);
-      };
-      
-      // Show loading immediately but wait for tap to actually load audio
-      playButton.addEventListener('click', initAndPlay, { once: true });
-      
-      // Also try to preload without user interaction (works on desktop)
       try {
         this.initAudioContext();
         await this.loadStems();
@@ -1038,9 +550,7 @@
         this.setupProgressBar();
         this.setupSkipControls();
         
-        Object.keys(this.stems).forEach(stem => {
-          updateLightBar(stem, 100);
-        });
+        Object.keys(this.stems).forEach(stem => updateLightBar(stem, 100));
 
         for (const stem of Object.values(this.stems)) {
           if (stem.buffer) {
@@ -1052,9 +562,8 @@
 
         this.updateProgress();
         this.loadingOverlay.classList.add('hidden');
-        playButton.removeEventListener('click', initAndPlay);
       } catch (e) {
-        console.log('Waiting for user interaction to load audio');
+        console.log('Waiting for user interaction');
       }
     }
 
@@ -1068,16 +577,14 @@
       const loadPromises = stemsToLoad.map(async ([stemName, stemData]) => {
         if (stemData && stemData.file) {
           try {
-            console.log(`Loading ${stemName}: ${stemData.file}`);
             const response = await fetch(stemData.file);
             const arrayBuffer = await response.arrayBuffer();
             const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
 
             const gainNode = this.audioContext.createGain();
-            
             const analyser = this.audioContext.createAnalyser();
             analyser.fftSize = 256;
-            analyser.smoothingTimeConstant = 0.5;
+            analyser.smoothingTimeConstant = 0.6;
             
             gainNode.connect(analyser);
             analyser.connect(this.masterGain);
@@ -1088,8 +595,6 @@
 
             loaded++;
             this.loadingProgress.style.width = (loaded / totalStems * 100) + '%';
-
-            console.log(`✓ Loaded ${stemName} (${loaded}/${totalStems})`);
             return true;
           } catch (error) {
             console.error(`Failed to load ${stemName}:`, error);
@@ -1103,10 +608,15 @@
     }
 
     setupUI() {
-      // Play button
-      document.getElementById('playButton').addEventListener('click', () => this.togglePlay());
+      document.getElementById('playButton').addEventListener('click', () => {
+        unlockAudio();
+        this.initAudioContext();
+        if (this.audioContext.state === 'suspended') {
+          this.audioContext.resume();
+        }
+        this.togglePlay();
+      });
 
-      // Stem sliders with improved touch/mouse handling
       document.querySelectorAll('.stem-control[data-stem]').forEach(control => {
         const stemName = control.dataset.stem;
         const slider = control.querySelector('.light-bar');
@@ -1119,15 +629,10 @@
         const updateVolume = (percent) => {
           percent = Math.max(0, Math.min(100, percent));
           this.stems[stemName].volume = percent;
-
           updateLightBar(stemName, percent);
 
           if (this.stems[stemName].gainNode) {
-            this.stems[stemName].gainNode.gain.setTargetAtTime(
-              percent / 100, 
-              this.audioContext.currentTime, 
-              0.02
-            );
+            this.stems[stemName].gainNode.gain.setTargetAtTime(percent / 100, this.audioContext.currentTime, 0.02);
           }
         };
 
@@ -1136,191 +641,85 @@
           let percent;
           
           if (isHorizontal) {
-            if (isLeftSlider) {
-              percent = 100 - ((clientX - rect.left) / rect.width) * 100;
-            } else {
-              percent = ((clientX - rect.left) / rect.width) * 100;
-            }
+            percent = isLeftSlider 
+              ? 100 - ((clientX - rect.left) / rect.width) * 100
+              : ((clientX - rect.left) / rect.width) * 100;
           } else {
             const isBottomSlider = control.classList.contains('bottom');
-            if (isBottomSlider) {
-              percent = ((clientY - rect.top) / rect.height) * 100;
-            } else {
-              percent = 100 - ((clientY - rect.top) / rect.height) * 100;
-            }
+            percent = isBottomSlider
+              ? ((clientY - rect.top) / rect.height) * 100
+              : 100 - ((clientY - rect.top) / rect.height) * 100;
           }
           
           updateVolume(percent);
         };
 
-        // Solo function - single click
         const soloStem = () => {
-          const allMuted = Object.entries(this.stems)
-            .filter(([name]) => name !== stemName)
-            .every(([, stem]) => stem.volume === 0);
-          
-          const thisStemFull = this.stems[stemName].volume === 100;
+          const allMuted = Object.entries(this.stems).filter(([n]) => n !== stemName).every(([, s]) => s.volume === 0);
+          const thisFull = this.stems[stemName].volume === 100;
 
-          if (allMuted && thisStemFull) {
-            // Unsolo - restore all stems to 100
+          if (allMuted && thisFull) {
             Object.keys(this.stems).forEach(name => {
               this.stems[name].volume = 100;
-              if (this.stems[name].gainNode) {
-                this.stems[name].gainNode.gain.setTargetAtTime(1, this.audioContext.currentTime, 0.02);
-              }
+              if (this.stems[name].gainNode) this.stems[name].gainNode.gain.setTargetAtTime(1, this.audioContext.currentTime, 0.02);
               updateLightBar(name, 100);
             });
           } else {
-            // Solo - mute others, max this one
             Object.keys(this.stems).forEach(name => {
-              if (name === stemName) {
-                this.stems[name].volume = 100;
-                if (this.stems[name].gainNode) {
-                  this.stems[name].gainNode.gain.setTargetAtTime(1, this.audioContext.currentTime, 0.02);
-                }
-                updateLightBar(name, 100);
-              } else {
-                this.stems[name].volume = 0;
-                if (this.stems[name].gainNode) {
-                  this.stems[name].gainNode.gain.setTargetAtTime(0, this.audioContext.currentTime, 0.02);
-                }
-                updateLightBar(name, 0);
-              }
+              const vol = name === stemName ? 100 : 0;
+              this.stems[name].volume = vol;
+              if (this.stems[name].gainNode) this.stems[name].gainNode.gain.setTargetAtTime(vol / 100, this.audioContext.currentTime, 0.02);
+              updateLightBar(name, vol);
             });
           }
         };
 
-        // Mouse events
-        slider.addEventListener('mousedown', (e) => {
-          e.preventDefault();
-          isDragging = true;
-          dragStarted = false;
-        });
+        slider.addEventListener('mousedown', (e) => { e.preventDefault(); isDragging = true; dragStarted = false; });
+        document.addEventListener('mousemove', (e) => { if (isDragging) { dragStarted = true; handleMove(e.clientX, e.clientY); } });
+        document.addEventListener('mouseup', () => { if (isDragging && !dragStarted) soloStem(); isDragging = false; });
 
-        document.addEventListener('mousemove', (e) => {
-          if (isDragging) {
-            dragStarted = true;
-            e.preventDefault();
-            handleMove(e.clientX, e.clientY);
-          }
-        });
-
-        document.addEventListener('mouseup', (e) => {
-          if (isDragging && !dragStarted) {
-            // Was a click, not a drag - solo the stem
-            soloStem();
-          }
-          isDragging = false;
-          dragStarted = false;
-        });
-
-        // Touch events
         let touchMoved = false;
-        slider.addEventListener('touchstart', (e) => {
-          e.preventDefault();
-          isDragging = true;
-          touchMoved = false;
-        }, { passive: false });
-
-        slider.addEventListener('touchmove', (e) => {
-          if (isDragging) {
-            touchMoved = true;
-            e.preventDefault();
-            handleMove(e.touches[0].clientX, e.touches[0].clientY);
-          }
-        }, { passive: false });
-
-        slider.addEventListener('touchend', (e) => {
-          if (isDragging && !touchMoved) {
-            // Was a tap, not a drag - solo the stem
-            soloStem();
-          }
-          isDragging = false;
-          touchMoved = false;
-        });
-
-        // Double-click/tap to mute/unmute
-        slider.addEventListener('dblclick', () => {
-          const current = this.stems[stemName].volume;
-          if (current > 0) {
-            this.stems[stemName].prevVolume = current;
-            updateVolume(0);
-          } else {
-            updateVolume(this.stems[stemName].prevVolume || 100);
-          }
-        });
+        slider.addEventListener('touchstart', (e) => { e.preventDefault(); isDragging = true; touchMoved = false; }, { passive: false });
+        slider.addEventListener('touchmove', (e) => { if (isDragging) { touchMoved = true; handleMove(e.touches[0].clientX, e.touches[0].clientY); } }, { passive: false });
+        slider.addEventListener('touchend', () => { if (isDragging && !touchMoved) soloStem(); isDragging = false; });
       });
     }
 
     setupProgressBar() {
       let isDragging = false;
-
       const seek = (clientX) => {
         const rect = this.progressBar.getBoundingClientRect();
         const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
         this.seekTo(percent * this.duration);
       };
 
-      this.progressBar.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        seek(e.clientX);
-      });
+      this.progressBar.addEventListener('mousedown', (e) => { isDragging = true; seek(e.clientX); });
+      document.addEventListener('mousemove', (e) => { if (isDragging) seek(e.clientX); });
+      document.addEventListener('mouseup', () => { isDragging = false; });
 
-      document.addEventListener('mousemove', (e) => {
-        if (isDragging) seek(e.clientX);
-      });
-
-      document.addEventListener('mouseup', () => {
-        isDragging = false;
-      });
-
-      // Touch support
-      this.progressBar.addEventListener('touchstart', (e) => {
-        isDragging = true;
-        seek(e.touches[0].clientX);
-      }, { passive: true });
-
-      this.progressBar.addEventListener('touchmove', (e) => {
-        if (isDragging) seek(e.touches[0].clientX);
-      }, { passive: true });
-
-      this.progressBar.addEventListener('touchend', () => {
-        isDragging = false;
-      });
+      this.progressBar.addEventListener('touchstart', (e) => { isDragging = true; seek(e.touches[0].clientX); }, { passive: true });
+      this.progressBar.addEventListener('touchmove', (e) => { if (isDragging) seek(e.touches[0].clientX); }, { passive: true });
+      this.progressBar.addEventListener('touchend', () => { isDragging = false; });
     }
 
     setupSkipControls() {
-      document.getElementById('skipBack').addEventListener('click', () => {
-        this.seekTo(Math.max(0, this.getCurrentTime() - 10));
-      });
-
-      document.getElementById('skipForward').addEventListener('click', () => {
-        this.seekTo(Math.min(this.duration, this.getCurrentTime() + 10));
-      });
+      document.getElementById('skipBack').addEventListener('click', () => this.seekTo(Math.max(0, this.getCurrentTime() - 10)));
+      document.getElementById('skipForward').addEventListener('click', () => this.seekTo(Math.min(this.duration, this.getCurrentTime() + 10)));
     }
 
     getCurrentTime() {
-      if (this.isPlaying) {
-        return this.audioContext.currentTime - this.startTime;
-      }
-      return this.pauseTime;
+      if (!this.audioContext) return 0;
+      return this.isPlaying ? this.audioContext.currentTime - this.startTime : this.pauseTime;
     }
 
     seekTo(time) {
+      if (!this.audioContext) return;
       time = Math.max(0, Math.min(time, this.duration));
       
       if (this.isPlaying) {
-        // Stop and restart at new position
-        Object.values(this.stems).forEach(stem => {
-          if (stem.source) {
-            stem.source.stop();
-            stem.source = null;
-          }
-        });
-
+        Object.values(this.stems).forEach(stem => { if (stem.source) { stem.source.stop(); stem.source = null; } });
         this.startTime = this.audioContext.currentTime - time;
-
-        Object.entries(this.stems).forEach(([name, stem]) => {
+        Object.entries(this.stems).forEach(([_, stem]) => {
           if (stem.buffer) {
             const source = this.audioContext.createBufferSource();
             source.buffer = stem.buffer;
@@ -1333,43 +732,29 @@
         this.pauseTime = time;
       }
 
-      // Update UI
-      const percent = (time / this.duration) * 100;
-      this.progressFill.style.width = percent + '%';
+      this.progressFill.style.width = (time / this.duration) * 100 + '%';
       this.currentTimeEl.textContent = this.formatTime(time);
     }
 
     togglePlay() {
-      if (this.isPlaying) {
-        this.pause();
-      } else {
-        this.play();
-      }
+      if (this.isPlaying) this.pause(); else this.play();
     }
 
     play() {
-      if (this.isPlaying) return;
+      if (this.isPlaying || !this.audioContext) return;
 
-      // Ensure audio context is initialized and resumed
-      if (!this.audioContext) {
-        this.initAudioContext();
-      }
-      
-      if (this.audioContext.state === 'suspended') {
-        this.audioContext.resume();
-      }
+      if (this.audioContext.state === 'suspended') this.audioContext.resume();
 
       const offset = this.pauseTime;
       this.startTime = this.audioContext.currentTime - offset;
 
-      Object.entries(this.stems).forEach(([name, stem]) => {
+      Object.entries(this.stems).forEach(([_, stem]) => {
         if (stem.buffer) {
           const source = this.audioContext.createBufferSource();
           source.buffer = stem.buffer;
           source.connect(stem.gainNode);
           source.start(0, offset);
           stem.source = source;
-
           stem.gainNode.gain.value = stem.volume / 100;
         }
       });
@@ -1380,16 +765,8 @@
 
     pause() {
       if (!this.isPlaying) return;
-
       this.pauseTime = this.audioContext.currentTime - this.startTime;
-
-      Object.values(this.stems).forEach(stem => {
-        if (stem.source) {
-          stem.source.stop();
-          stem.source = null;
-        }
-      });
-
+      Object.values(this.stems).forEach(stem => { if (stem.source) { stem.source.stop(); stem.source = null; } });
       this.isPlaying = false;
       document.getElementById('playButton').classList.remove('playing');
     }
@@ -1403,17 +780,11 @@
 
     updateProgress() {
       const update = () => {
-        if (this.isPlaying) {
+        if (this.isPlaying && this.audioContext) {
           const currentTime = this.getCurrentTime();
-          const percent = (currentTime / this.duration) * 100;
-          this.progressFill.style.width = Math.min(percent, 100) + '%';
+          this.progressFill.style.width = Math.min((currentTime / this.duration) * 100, 100) + '%';
           this.currentTimeEl.textContent = this.formatTime(currentTime);
-
-          if (currentTime >= this.duration) {
-            this.stop();
-          }
-          
-          // Update rhythmic pulse visualization
+          if (currentTime >= this.duration) this.stop();
           this.updateRhythmicPulse();
         }
         requestAnimationFrame(update);
@@ -1429,38 +800,19 @@
           const dataArray = new Uint8Array(stem.analyser.frequencyBinCount);
           stem.analyser.getByteFrequencyData(dataArray);
           
-          // Calculate RMS
           let sum = 0;
-          for (let i = 0; i < dataArray.length; i++) {
-            sum += dataArray[i] * dataArray[i];
-          }
+          for (let i = 0; i < dataArray.length; i++) sum += dataArray[i] * dataArray[i];
           const rms = Math.sqrt(sum / dataArray.length);
           
-          // Higher thresholds - less sensitive
-          let threshold = 45;
-          
-          if (stemName === 'drums') {
-            threshold = 55;
-          } else if (stemName === 'bass') {
-            threshold = 40;
-          } else if (stemName === 'vocals') {
-            threshold = 38;
-          } else if (stemName === 'other') {
-            threshold = 38;
-          }
-          
-          // Add cooldown to prevent tremolo effect (minimum 200ms between pulses)
-          const cooldown = 200;
+          const threshold = stemName === 'drums' ? 60 : stemName === 'bass' ? 50 : 45;
+          const cooldown = 250;
           
           const control = document.querySelector(`.stem-control[data-stem="${stemName}"]`);
           if (control && rms > threshold && (now - stem.lastPulseTime) > cooldown) {
             stem.lastPulseTime = now;
-            const activeSegments = control.querySelectorAll('.led-segment.active');
-            activeSegments.forEach(seg => {
-              if (!seg.classList.contains('pulsing')) {
-                seg.classList.add('pulsing');
-                setTimeout(() => seg.classList.remove('pulsing'), 150);
-              }
+            control.querySelectorAll('.led-segment.active').forEach(seg => {
+              seg.classList.add('pulsing');
+              setTimeout(() => seg.classList.remove('pulsing'), 150);
             });
           }
         }
@@ -1468,170 +820,50 @@
     }
 
     formatTime(seconds) {
+      if (!seconds || isNaN(seconds)) return '0:00';
       const mins = Math.floor(seconds / 60);
       const secs = Math.floor(seconds % 60);
       return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
   }
 
-  // Update LED visualization
   function updateLightBar(stemName, volume) {
     const control = document.querySelector(`.stem-control[data-stem="${stemName}"]`);
     if (!control) return;
     
     const segments = control.querySelectorAll('.led-segment');
-    const totalSegments = segments.length;
-    const activeSegments = Math.round((volume / 100) * totalSegments);
+    const activeCount = Math.round((volume / 100) * segments.length);
     
-    segments.forEach((seg, index) => {
-      if (index < activeSegments) {
-        seg.classList.add('active');
-      } else {
-        seg.classList.remove('active');
-      }
+    segments.forEach((seg, i) => {
+      if (i < activeCount) seg.classList.add('active');
+      else seg.classList.remove('active');
     });
   }
 
-  // ========================================
-  // TRACK CONFIGURATION
-  // ========================================
-
   const TRACKS = {
-    'script': {
-      name: 'Script (Intro)',
-      stems: {
-        vocals: { file: 'audio/01_SC_Instruments.mp3', label: 'Instruments' },
-        drums: { file: 'audio/01_SC_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/01_SC_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/01_SC_Other.mp3', label: 'Other' }
-      }
-    },
-    'neon': {
-      name: 'Neon',
-      stems: {
-        vocals: { file: 'audio/02_NE_Instruments.mp3', label: 'Instruments' },
-        drums: { file: 'audio/02_NE_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/02_NE_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/02_NE_Other.mp3', label: 'Other' }
-      }
-    },
-    'smoke-show': {
-      name: 'Smoke Show',
-      stems: {
-        vocals: { file: 'audio/03_SMS_Vocals.mp3', label: 'Vocals' },
-        drums: { file: 'audio/03_SMS_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/03_SMS_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/03_SMS_Other.mp3', label: 'Other' }
-      }
-    },
-    'godless-idols': {
-      name: 'Godless Idols',
-      stems: {
-        vocals: { file: 'audio/GI_Voice.mp3', label: 'Voice' },
-        drums: { file: 'audio/GI_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/GI_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/GI_Other.mp3', label: 'Other' }
-      }
-    },
-    'printer-brain': {
-      name: 'Printer Brain',
-      stems: {
-        vocals: { file: 'audio/05_PB_Vocals.mp3', label: 'Vocals' },
-        drums: { file: 'audio/05_PB_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/05_PB_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/05_PB_Other.mp3', label: 'Other' }
-      }
-    },
-    'ash-and-gold': {
-      name: 'Ash and Gold',
-      stems: {
-        vocals: { file: 'audio/06_AG_Vocals.mp3', label: 'Vocals' },
-        drums: { file: 'audio/06_AG_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/06_AG_Instruments.mp3', label: 'Instruments' },
-        other: { file: 'audio/06_AG_Other.mp3', label: 'Other' }
-      }
-    },
-    'production-line': {
-      name: 'Production Line',
-      stems: {
-        vocals: { file: 'audio/07_PL_Vocals.mp3', label: 'Vocals' },
-        drums: { file: 'audio/07_PL_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/07_PL_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/07_PL_Other.mp3', label: 'Other' }
-      }
-    },
-    'byd3s1gn': {
-      name: 'ByD3s1Gn',
-      stems: {
-        vocals: { file: 'audio/08_BD_Vocals.mp3', label: 'Vocals' },
-        drums: { file: 'audio/08_BD_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/08_BD_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/08_BD_Instruments.mp3', label: 'Instruments' }
-      }
-    },
-    'youre-meant-to-forget-this': {
-      name: "You're Meant to Forget This",
-      stems: {
-        vocals: { file: 'audio/09_YAMTFT_Instrument.mp3', label: 'Instrument' },
-        drums: { file: 'audio/09_YAMTFT_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/09_YAMTFT_Bass.mp3', label: 'Bass' },
-        other: null
-      }
-    },
-    'broken-blueprints': {
-      name: 'Broken Blueprints',
-      stems: {
-        vocals: { file: 'audio/10_BL_Instruments.mp3', label: 'Instruments' },
-        drums: { file: 'audio/10_BL_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/10_BL_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/10_BL_Other.mp3', label: 'Other' }
-      }
-    },
-    'blurred-lines': {
-      name: 'Blurred Lines (Interlude)',
-      stems: {
-        vocals: { file: 'audio/11_BLI_Sample.mp3', label: 'Sample' },
-        drums: { file: 'audio/11_BLI_Noise.mp3', label: 'Noise' },
-        bass: null,
-        other: { file: 'audio/11_BLI_Other.mp3', label: 'Other' }
-      }
-    },
-    'synthetic-dream': {
-      name: 'Synthetic Dream',
-      stems: {
-        vocals: { file: 'audio/12_SF_Pads.mp3', label: 'Pads' },
-        drums: { file: 'audio/12_SF_Druma.mp3', label: 'Drums' },
-        bass: { file: 'audio/12_SF_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/12_SF_Arp.mp3', label: 'Arp' }
-      }
-    },
-    'glass-walls': {
-      name: 'Glass Walls (Outro)',
-      stems: {
-        vocals: { file: 'audio/13_GW_Vocals.mp3', label: 'Vocals' },
-        drums: { file: 'audio/13_GW_Instruments.mp3', label: 'Instruments' },
-        bass: null,
-        other: { file: 'audio/13_GW_Other.mp3', label: 'Other' }
-      }
-    }
+    'script': { name: 'Script (Intro)', stems: { vocals: { file: 'audio/01_SC_Instruments.mp3', label: 'Instruments' }, drums: { file: 'audio/01_SC_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/01_SC_Bass.mp3', label: 'Bass' }, other: { file: 'audio/01_SC_Other.mp3', label: 'Other' } } },
+    'neon': { name: 'Neon', stems: { vocals: { file: 'audio/02_NE_Instruments.mp3', label: 'Instruments' }, drums: { file: 'audio/02_NE_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/02_NE_Bass.mp3', label: 'Bass' }, other: { file: 'audio/02_NE_Other.mp3', label: 'Other' } } },
+    'smoke-show': { name: 'Smoke Show', stems: { vocals: { file: 'audio/03_SMS_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/03_SMS_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/03_SMS_Bass.mp3', label: 'Bass' }, other: { file: 'audio/03_SMS_Other.mp3', label: 'Other' } } },
+    'godless-idols': { name: 'Godless Idols', stems: { vocals: { file: 'audio/GI_Voice.mp3', label: 'Voice' }, drums: { file: 'audio/GI_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/GI_Bass.mp3', label: 'Bass' }, other: { file: 'audio/GI_Other.mp3', label: 'Other' } } },
+    'printer-brain': { name: 'Printer Brain', stems: { vocals: { file: 'audio/05_PB_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/05_PB_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/05_PB_Bass.mp3', label: 'Bass' }, other: { file: 'audio/05_PB_Other.mp3', label: 'Other' } } },
+    'ash-and-gold': { name: 'Ash and Gold', stems: { vocals: { file: 'audio/06_AG_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/06_AG_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/06_AG_Instruments.mp3', label: 'Instruments' }, other: { file: 'audio/06_AG_Other.mp3', label: 'Other' } } },
+    'production-line': { name: 'Production Line', stems: { vocals: { file: 'audio/07_PL_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/07_PL_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/07_PL_Bass.mp3', label: 'Bass' }, other: { file: 'audio/07_PL_Other.mp3', label: 'Other' } } },
+    'byd3s1gn': { name: 'ByD3s1Gn', stems: { vocals: { file: 'audio/08_BD_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/08_BD_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/08_BD_Bass.mp3', label: 'Bass' }, other: { file: 'audio/08_BD_Instruments.mp3', label: 'Instruments' } } },
+    'youre-meant-to-forget-this': { name: "You're Meant to Forget This", stems: { vocals: { file: 'audio/09_YAMTFT_Instrument.mp3', label: 'Instrument' }, drums: { file: 'audio/09_YAMTFT_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/09_YAMTFT_Bass.mp3', label: 'Bass' }, other: null } },
+    'broken-blueprints': { name: 'Broken Blueprints', stems: { vocals: { file: 'audio/10_BL_Instruments.mp3', label: 'Instruments' }, drums: { file: 'audio/10_BL_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/10_BL_Bass.mp3', label: 'Bass' }, other: { file: 'audio/10_BL_Other.mp3', label: 'Other' } } },
+    'blurred-lines': { name: 'Blurred Lines (Interlude)', stems: { vocals: { file: 'audio/11_BLI_Sample.mp3', label: 'Sample' }, drums: { file: 'audio/11_BLI_Noise.mp3', label: 'Noise' }, bass: null, other: { file: 'audio/11_BLI_Other.mp3', label: 'Other' } } },
+    'synthetic-dream': { name: 'Synthetic Dream', stems: { vocals: { file: 'audio/12_SF_Pads.mp3', label: 'Pads' }, drums: { file: 'audio/12_SF_Druma.mp3', label: 'Drums' }, bass: { file: 'audio/12_SF_Bass.mp3', label: 'Bass' }, other: { file: 'audio/12_SF_Arp.mp3', label: 'Arp' } } },
+    'glass-walls': { name: 'Glass Walls (Outro)', stems: { vocals: { file: 'audio/13_GW_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/13_GW_Instruments.mp3', label: 'Instruments' }, bass: null, other: { file: 'audio/13_GW_Other.mp3', label: 'Other' } } }
   };
 
-  // Get track from URL or default to godless-idols
   const urlParams = new URLSearchParams(window.location.search);
   const trackId = urlParams.get('track') || 'godless-idols';
   const TRACK_CONFIG = TRACKS[trackId] || TRACKS['godless-idols'];
 
-  // Set track title
   document.getElementById('trackTitle').textContent = TRACK_CONFIG.name;
   document.title = `SIGNAL - ${TRACK_CONFIG.name}`;
 
-  // Update stem labels and hide unused sliders
-  const stemPositions = {
-    vocals: '.stem-control.top',
-    drums: '.stem-control.right',
-    bass: '.stem-control.bottom',
-    other: '.stem-control.left'
-  };
+  const stemPositions = { vocals: '.stem-control.top', drums: '.stem-control.right', bass: '.stem-control.bottom', other: '.stem-control.left' };
 
   Object.entries(stemPositions).forEach(([stem, selector]) => {
     const control = document.querySelector(selector);
@@ -1643,7 +875,6 @@
     }
   });
 
-  // Auto-load stems on page load
   new StemPlayer();
 </script>
 
