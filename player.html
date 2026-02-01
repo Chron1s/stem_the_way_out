@@ -1252,8 +1252,18 @@
           }
           const rms = Math.sqrt(sum / dataArray.length);
           
-          // Single threshold for all stems - simple and reliable
-          const threshold = 50;
+          // Lower thresholds for different stem types
+          let threshold = 25; // Default - very sensitive
+          
+          if (stemName === 'drums') {
+            threshold = 35; // Drums are loud, need higher threshold
+          } else if (stemName === 'bass') {
+            threshold = 20; // Bass can be quiet
+          } else if (stemName === 'vocals') {
+            threshold = 18; // Vocals/Instruments need low threshold
+          } else if (stemName === 'other') {
+            threshold = 18; // Other elements need low threshold
+          }
           
           // Trigger pulse if level exceeds threshold
           const control = document.querySelector(`.stem-control[data-stem="${stemName}"]`);
