@@ -98,50 +98,31 @@
       font-family: 'Inter', sans-serif;
     }
 
-    /* Line 1: NO solid white, WAY OUT gray */
+    /* Line 1: NO solid white, WAY OUT faded */
     .line-1 .word-solid { color: #fff; }
-    .line-1 .word-outline { 
-      color: rgba(255,255,255,0.5);
-    }
+    .line-1 .word-outline { color: rgba(255,255,255,0.35); }
 
-    /* Line 2: NO WAY outlined thin, OUT solid white offset right */
-    .line-2 { 
-      position: relative;
-    }
-    .line-2 .word-outline { 
-      color: transparent; 
-      -webkit-text-stroke: 1px rgba(255,255,255,0.35);
-    }
+    /* Line 2: NO WAY faded, OUT solid white offset right */
+    .line-2 { position: relative; }
+    .line-2 .word-outline { color: rgba(255,255,255,0.25); }
     .line-2 .word-solid-right {
       position: absolute;
       left: 380px;
       color: #fff;
     }
 
-    /* Line 3: Very faded outline */
-    .line-3 {
-      color: transparent;
-      -webkit-text-stroke: 1px rgba(255,255,255,0.15);
-    }
+    /* Line 3: Very faded */
+    .line-3 { color: rgba(255,255,255,0.12); }
 
-    /* Line 4: NO outlined, WAY solid white, OUT outlined */
-    .line-4 .word-outline { 
-      color: transparent; 
-      -webkit-text-stroke: 1px rgba(255,255,255,0.2);
-    }
+    /* Line 4: NO faded, WAY solid white, OUT faded */
+    .line-4 .word-outline { color: rgba(255,255,255,0.18); }
     .line-4 .word-solid { color: #fff; }
 
-    /* Line 5: Faded outline */
-    .line-5 {
-      color: transparent;
-      -webkit-text-stroke: 1px rgba(255,255,255,0.25);
-    }
+    /* Line 5: Faded */
+    .line-5 { color: rgba(255,255,255,0.15); }
 
-    /* Line 6: Slightly more visible outline */
-    .line-6 {
-      color: transparent;
-      -webkit-text-stroke: 1px rgba(255,255,255,0.3);
-    }
+    /* Line 6: Slightly more visible */
+    .line-6 { color: rgba(255,255,255,0.22); }
 
     @keyframes subtleHint {
       0%, 100% { opacity: 0.5; }
