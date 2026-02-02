@@ -403,11 +403,13 @@
     hintText.classList.add('visible');
   }, 3000);
 
-  // Check if coming back from player (has menu=open param)
+  // Check if coming back from player (has #tracks hash)
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('menu') === 'open' || window.location.hash === '#tracks') {
-    landingPage.classList.add('hidden');
+    // Skip landing page, go directly to track menu
+    landingPage.style.display = 'none';
     popupOverlay.classList.add('visible');
+    clearTimeout(hintTimeout);
   }
 
   let isVisible = false;

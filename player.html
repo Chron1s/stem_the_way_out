@@ -164,14 +164,13 @@
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, #2a2a2a 0%, #151515 60%, #0a0a0a 100%);
       flex-shrink: 0;
-      transition: opacity 0.08s ease-out, filter 0.08s ease-out;
       box-shadow: none;
       border: none;
       outline: none;
     }
 
     .led-segment.active {
-      opacity: 0.4;
+      opacity: 1;
     }
 
     .stem-control[data-stem="drums"] .led-segment.active {
@@ -188,22 +187,6 @@
 
     .stem-control[data-stem="vocals"] .led-segment.active {
       background: radial-gradient(circle at 35% 35%, #d4efff 0%, #85c1e9 50%, #5dade2 100%);
-    }
-
-    /* Glow intensity based on audio level - subtle but visible, synced to beat */
-    .led-segment.active.glow-low {
-      opacity: 0.5;
-      filter: brightness(0.8);
-    }
-
-    .led-segment.active.glow-mid {
-      opacity: 0.75;
-      filter: brightness(1.0);
-    }
-
-    .led-segment.active.glow-high {
-      opacity: 1.0;
-      filter: brightness(1.2);
     }
 
     /* Play Button */
@@ -364,7 +347,7 @@
 </div>
 
 <div class="header">
-  <button onclick="window.location.href='index.html'" class="back-btn">Tracks</button>
+  <button onclick="window.location.href='index.html#tracks'" class="back-btn">Tracks</button>
   <div class="track-title" id="trackTitle">Loading...</div>
 </div>
 
@@ -742,35 +725,25 @@
           const dataArray = new Uint8Array(stem.analyser.frequencyBinCount);
           stem.analyser.getByteFrequencyData(dataArray);
           
-          // Calculate RMS energy from low-mid frequencies (better for beat detection)
+          // Calculate RMS energy
           let sum = 0;
-          const relevantBins = Math.floor(dataArray.length * 0.6);
-          for (let i = 0; i < relevantBins; i++) {
+          for (let i = 0; i < dataArray.length; i++) {
             sum += dataArray[i] * dataArray[i];
           }
-          const rms = Math.sqrt(sum / relevantBins);
+          const rms = Math.sqrt(sum / dataArray.length);
           
-          // Fast attack, medium release - responsive to beats
-          if (rms > stem.smoothedRms) {
-            stem.smoothedRms = rms * 0.6 + stem.smoothedRms * 0.4; // Fast attack
-          } else {
-            stem.smoothedRms = rms * 0.15 + stem.smoothedRms * 0.85; // Medium release
-          }
+          // Normalize to 0-1 range (max RMS is around 180)
+          const normalizedLevel = Math.min(rms / 80, 1);
           
-          // Apply glow based on audio level
+          // Map to opacity: 0.3 (quiet) to 1.0 (loud)
+          const opacity = 0.3 + (normalizedLevel * 0.7);
+          
+          // Apply directly to LED segments for real-time reactivity
           const control = document.querySelector(`.stem-control[data-stem="${stemName}"]`);
           if (control) {
             const segments = control.querySelectorAll('.led-segment.active');
             segments.forEach(seg => {
-              seg.classList.remove('glow-low', 'glow-mid', 'glow-high');
-              
-              if (stem.smoothedRms > 30) {
-                seg.classList.add('glow-high');
-              } else if (stem.smoothedRms > 12) {
-                seg.classList.add('glow-mid');
-              } else if (stem.smoothedRms > 3) {
-                seg.classList.add('glow-low');
-              }
+              seg.style.opacity = opacity.toFixed(2);
             });
           }
         }
