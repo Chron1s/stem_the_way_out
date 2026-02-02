@@ -560,6 +560,31 @@
     body.fullscreen:hover .progress-section {
       opacity: 1;
     }
+
+    .help-note {
+      font-size: 10px;
+      color: #555;
+      padding: 4px 0 8px 0;
+    }
+
+    /* Show mobile help by default, hide desktop */
+    .help-desktop {
+      display: none;
+    }
+
+    .help-mobile {
+      display: block;
+    }
+
+    /* On desktop (hover capable devices), show desktop help, hide mobile */
+    @media (hover: hover) and (pointer: fine) {
+      .help-desktop {
+        display: block;
+      }
+      .help-mobile {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -665,34 +690,102 @@
 <!-- Help Modal -->
 <div class="help-overlay" id="helpOverlay">
   <div class="help-modal">
-    <div class="help-title">Before You Start</div>
-    
-    <div class="help-section" style="margin-bottom: 25px;">
-      <div class="help-item" style="border-bottom: none; justify-content: center;">
-        <span class="help-action" style="color: #fff; font-size: 12px; text-align: center;">Turn off Silent Mode or no sound will play</span>
+    <!-- Mobile Help -->
+    <div class="help-mobile">
+      <div class="help-title">Mobile Controls</div>
+      
+      <div class="help-section">
+        <div class="help-section-title">Sound</div>
+        <div class="help-item">
+          <span class="help-action">Turn OFF Silent Mode</span>
+        </div>
+        <div class="help-note">Audio will not play if Silent Mode is enabled</div>
+      </div>
+      
+      <div class="help-section">
+        <div class="help-section-title">Playback</div>
+        <div class="help-item">
+          <span class="help-action">Tap Play Button</span>
+          <span class="help-key">Play / Pause</span>
+        </div>
+      </div>
+      
+      <div class="help-section">
+        <div class="help-section-title">Stem Mixing</div>
+        <div class="help-item">
+          <span class="help-action">Tap once</span>
+          <span class="help-key">Solo stem</span>
+        </div>
+        <div class="help-item">
+          <span class="help-action">Drag orbs</span>
+          <span class="help-key">Adjust volume</span>
+        </div>
+      </div>
+      
+      <div class="help-section">
+        <div class="help-section-title">Navigation</div>
+        <div class="help-item">
+          <span class="help-action">Tap advancement buttons</span>
+          <span class="help-key">Next / Prev track</span>
+        </div>
+        <div class="help-item">
+          <span class="help-action">Tap skip buttons</span>
+          <span class="help-key">Skip ±10 seconds</span>
+        </div>
       </div>
     </div>
     
-    <div class="help-section" style="border-top: 1px solid #222; padding-top: 15px;">
-      <div class="help-item">
-        <span class="help-action">Tap orbs</span>
-        <span class="help-key">Solo stem</span>
+    <!-- Desktop Help -->
+    <div class="help-desktop">
+      <div class="help-title">Desktop Controls</div>
+      
+      <div class="help-section">
+        <div class="help-section-title">Sound</div>
+        <div class="help-note">Make sure system audio is enabled</div>
       </div>
-      <div class="help-item">
-        <span class="help-action">Drag orbs</span>
-        <span class="help-key">Adjust volume</span>
+      
+      <div class="help-section">
+        <div class="help-section-title">Playback</div>
+        <div class="help-item">
+          <span class="help-action">Space</span>
+          <span class="help-key">Play / Pause</span>
+        </div>
+        <div class="help-item">
+          <span class="help-action">F</span>
+          <span class="help-key">Fullscreen</span>
+        </div>
       </div>
-      <div class="help-item">
-        <span class="help-action">Space / F</span>
-        <span class="help-key">Play / Fullscreen</span>
+      
+      <div class="help-section">
+        <div class="help-section-title">Stem Mixing</div>
+        <div class="help-item">
+          <span class="help-action">Click orbs</span>
+          <span class="help-key">Solo stem</span>
+        </div>
+        <div class="help-item">
+          <span class="help-action">Drag orbs</span>
+          <span class="help-key">Adjust volume</span>
+        </div>
+        <div class="help-item">
+          <span class="help-action">1 2 3 4</span>
+          <span class="help-key">Solo stems</span>
+        </div>
+        <div class="help-item">
+          <span class="help-action">0</span>
+          <span class="help-key">Reset all</span>
+        </div>
       </div>
-      <div class="help-item">
-        <span class="help-action">1 2 3 4</span>
-        <span class="help-key">Solo stems</span>
-      </div>
-      <div class="help-item" style="border-bottom: none;">
-        <span class="help-action">← →</span>
-        <span class="help-key">Skip 10s</span>
+      
+      <div class="help-section">
+        <div class="help-section-title">Navigation</div>
+        <div class="help-item">
+          <span class="help-action">↑ ↓</span>
+          <span class="help-key">Prev / Next track</span>
+        </div>
+        <div class="help-item">
+          <span class="help-action">← →</span>
+          <span class="help-key">Skip ±10 seconds</span>
+        </div>
       </div>
     </div>
     
