@@ -279,10 +279,20 @@
 
     .progress-bar {
       width: 220px;
+      height: 20px;
+      background: transparent;
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .progress-track {
+      width: 100%;
       height: 3px;
       background: #222;
       border-radius: 2px;
-      cursor: pointer;
       overflow: hidden;
     }
 
@@ -292,6 +302,44 @@
       border-radius: 2px;
       width: 0%;
       transition: width 0.1s linear;
+    }
+
+    .progress-scrubber {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      left: 0%;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.15s;
+      pointer-events: none;
+      box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+    }
+
+    .progress-bar.dragging .progress-scrubber {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.5);
+    }
+
+    .progress-time-tooltip {
+      position: absolute;
+      bottom: 25px;
+      background: #1a1a1a;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      transform: translateX(-50%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .progress-bar.dragging .progress-time-tooltip {
+      opacity: 1;
     }
 
     .skip-controls {
@@ -666,7 +714,11 @@
     <span class="time-text" id="totalTime">0:00</span>
   </div>
   <div class="progress-bar" id="progressBar">
-    <div class="progress-fill" id="progressFill"></div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-scrubber" id="progressScrubber"></div>
+    <div class="progress-time-tooltip" id="progressTooltip">0:00</div>
   </div>
   <div class="skip-controls">
     <button class="track-nav-btn" id="prevTrack" title="Previous Track">
@@ -793,7 +845,7 @@
   </div>
 </div>
 
-<audio id="silentAudio" src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwmHAAAAAAD/+1DEAAAGAAGn9AAAIwAANP8AAABM" loop playsinline></audio>
+<audio id="silentAudio" src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwmHAAAAAAD/+1DEAAAGAAGn9AAAIwAANP8AAABM" loop playsinline></audio>
 
 <script>
   // iOS Silent Mode Bypass - must be triggered by user interaction
@@ -877,24 +929,20 @@
     window.location.href = `player.html?track=${TRACK_ORDER[newIndex]}`;
   }
 
-  // Save position to localStorage
+  // Save position to localStorage - DISABLED
   function savePosition() {
-    if (window.player && window.player.duration > 0) {
-      const position = window.player.getCurrentTime();
-      localStorage.setItem(`signal_position_${trackId}`, position.toString());
-    }
+    // Position saving disabled - tracks start from beginning
   }
 
-  // Load saved position
+  // Load saved position - DISABLED
   function loadPosition() {
-    const saved = localStorage.getItem(`signal_position_${trackId}`);
-    return saved ? parseFloat(saved) : 0;
+    return 0; // Always start from beginning
   }
 
-  // Save position periodically and on page unload
-  setInterval(savePosition, 5000);
-  window.addEventListener('beforeunload', savePosition);
-  window.addEventListener('pagehide', savePosition);
+  // Save position periodically and on page unload - DISABLED
+  // setInterval(savePosition, 5000);
+  // window.addEventListener('beforeunload', savePosition);
+  // window.addEventListener('pagehide', savePosition);
 
   document.getElementById('trackTitle').textContent = TRACK_CONFIG.name;
   document.title = `CHRONIS - ${TRACK_CONFIG.name}`;
@@ -917,6 +965,8 @@
       this.loadingOverlay = document.getElementById('loadingOverlay');
       this.progressBar = document.getElementById('progressBar');
       this.progressFill = document.getElementById('progressFill');
+      this.progressScrubber = document.getElementById('progressScrubber');
+      this.progressTooltip = document.getElementById('progressTooltip');
       this.currentTimeEl = document.getElementById('currentTime');
       this.totalTimeEl = document.getElementById('totalTime');
       this.init();
@@ -1119,13 +1169,16 @@
         const rect = this.progressBar.getBoundingClientRect();
         const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
         this.seekTo(percent * this.duration);
+        this.progressScrubber.style.left = `${percent * 100}%`;
+        this.progressTooltip.style.left = `${percent * 100}%`;
+        this.progressTooltip.textContent = this.formatTime(percent * this.duration);
       };
-      this.progressBar.addEventListener('mousedown', (e) => { isDragging = true; seek(e.clientX); });
+      this.progressBar.addEventListener('mousedown', (e) => { isDragging = true; this.progressBar.classList.add('dragging'); seek(e.clientX); });
       document.addEventListener('mousemove', (e) => { if (isDragging) seek(e.clientX); });
-      document.addEventListener('mouseup', () => { isDragging = false; });
-      this.progressBar.addEventListener('touchstart', (e) => { isDragging = true; seek(e.touches[0].clientX); }, { passive: true });
+      document.addEventListener('mouseup', () => { isDragging = false; this.progressBar.classList.remove('dragging'); });
+      this.progressBar.addEventListener('touchstart', (e) => { isDragging = true; this.progressBar.classList.add('dragging'); seek(e.touches[0].clientX); }, { passive: true });
       this.progressBar.addEventListener('touchmove', (e) => { if (isDragging) seek(e.touches[0].clientX); }, { passive: true });
-      this.progressBar.addEventListener('touchend', () => { isDragging = false; });
+      this.progressBar.addEventListener('touchend', () => { isDragging = false; this.progressBar.classList.remove('dragging'); });
     }
 
     setupSkipControls() {
@@ -1157,6 +1210,7 @@
         this.pauseTime = time;
       }
       this.progressFill.style.width = (time / this.duration) * 100 + '%';
+      this.progressScrubber.style.left = (time / this.duration) * 100 + '%';
       this.currentTimeEl.textContent = this.formatTime(time);
     }
 
@@ -1193,6 +1247,7 @@
       this.pause();
       this.pauseTime = 0;
       this.progressFill.style.width = '0%';
+      this.progressScrubber.style.left = '0%';
       this.currentTimeEl.textContent = '0:00';
     }
 
@@ -1201,6 +1256,7 @@
         if (this.isPlaying && this.audioContext) {
           const currentTime = this.getCurrentTime();
           this.progressFill.style.width = Math.min((currentTime / this.duration) * 100, 100) + '%';
+          this.progressScrubber.style.left = Math.min((currentTime / this.duration) * 100, 100) + '%';
           this.currentTimeEl.textContent = this.formatTime(currentTime);
           if (currentTime >= this.duration) this.stop();
           this.updateRhythmicPulse();
