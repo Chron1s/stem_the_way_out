@@ -926,6 +926,7 @@
     if (newIndex >= TRACK_ORDER.length) newIndex = 0;
     // Save current position before leaving
     savePosition();
+    sessionStorage.setItem('nwo_swipe_nav', 'true');
     window.location.href = `player.html?track=${TRACK_ORDER[newIndex]}`;
   }
 
@@ -1380,7 +1381,6 @@
 
   function hideHelp() {
     helpOverlay.classList.remove('visible');
-    localStorage.setItem('nwo_help_seen', 'true');
   }
 
   helpBtn.addEventListener('click', showHelp);
@@ -1389,17 +1389,19 @@
     if (e.target === helpOverlay) hideHelp();
   });
 
-  // Show help only when coming from menu (not from swipe/track navigation)
-  const cameFromMenu = document.referrer.includes('index.html') || !document.referrer || sessionStorage.getItem('showHelp') === 'true';
-  const helpSeenKey = 'nwo_help_seen';
+  // Show help only ONCE ever, when coming from track menu (index.html)
+  // Use sessionStorage to mark that we're navigating between tracks (swipe)
+  const isSwipeNavigation = sessionStorage.getItem('nwo_swipe_nav') === 'true';
+  const hasSeenHelp = localStorage.getItem('nwo_help_seen') === 'true';
   
-  if (cameFromMenu && !localStorage.getItem(helpSeenKey)) {
+  if (!isSwipeNavigation && !hasSeenHelp) {
+    // First time from menu - show help
     showHelp();
-    localStorage.setItem(helpSeenKey, 'true');
+    localStorage.setItem('nwo_help_seen', 'true');
   }
   
-  // Clear the showHelp flag
-  sessionStorage.removeItem('showHelp');
+  // Mark future navigations as swipe (will be set before goToTrack)
+  sessionStorage.removeItem('nwo_swipe_nav');
 
   // Fullscreen
   const fullscreenBtn = document.getElementById('fullscreenBtn');
