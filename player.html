@@ -1389,16 +1389,17 @@
     if (e.target === helpOverlay) hideHelp();
   });
 
-  // Show help immediately when entering a track for the first time
-  // Clear old help seen flag to test - remove this line after testing
-  // localStorage.removeItem('nwo_help_seen');
+  // Show help only when coming from menu (not from swipe/track navigation)
+  const cameFromMenu = document.referrer.includes('index.html') || !document.referrer || sessionStorage.getItem('showHelp') === 'true';
+  const helpSeenKey = 'nwo_help_seen';
   
-  // Always show help on first visit to this specific track
-  const helpSeenKey = `nwo_help_seen_${trackId}`;
-  if (!localStorage.getItem(helpSeenKey)) {
+  if (cameFromMenu && !localStorage.getItem(helpSeenKey)) {
     showHelp();
     localStorage.setItem(helpSeenKey, 'true');
   }
+  
+  // Clear the showHelp flag
+  sessionStorage.removeItem('showHelp');
 
   // Fullscreen
   const fullscreenBtn = document.getElementById('fullscreenBtn');
