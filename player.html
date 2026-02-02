@@ -267,7 +267,7 @@
     .skip-controls {
       display: flex;
       justify-content: center;
-      gap: 25px;
+      gap: 15px;
       margin-top: 12px;
     }
 
@@ -282,11 +282,43 @@
       align-items: center;
       justify-content: center;
       color: #555;
+      transition: all 0.2s ease;
+    }
+
+    .skip-btn:hover {
+      border-color: #666;
+      color: #888;
     }
 
     .skip-btn svg {
       width: 10px;
       height: 10px;
+      fill: currentColor;
+    }
+
+    .track-nav-btn {
+      width: 26px;
+      height: 26px;
+      background: transparent;
+      border: 1px solid #333;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      transition: all 0.2s ease;
+      font-size: 10px;
+    }
+
+    .track-nav-btn:hover {
+      border-color: #666;
+      color: #888;
+    }
+
+    .track-nav-btn svg {
+      width: 8px;
+      height: 8px;
       fill: currentColor;
     }
 
@@ -418,11 +450,17 @@
     <div class="progress-fill" id="progressFill"></div>
   </div>
   <div class="skip-controls">
-    <button class="skip-btn" id="skipBack">
+    <button class="track-nav-btn" id="prevTrack" title="Previous Track">
+      <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+    </button>
+    <button class="skip-btn" id="skipBack" title="Back 10s">
       <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
     </button>
-    <button class="skip-btn" id="skipForward">
+    <button class="skip-btn" id="skipForward" title="Forward 10s">
       <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
+    </button>
+    <button class="track-nav-btn" id="nextTrack" title="Next Track">
+      <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm2 0h2V6h-2v12z"/></svg>
     </button>
   </div>
 </div>
@@ -471,6 +509,50 @@
   ['touchstart', 'touchend', 'click', 'keydown'].forEach(event => {
     document.addEventListener(event, unlockAudio, { once: false, passive: true });
   });
+
+  // Track list for navigation
+  const TRACK_ORDER = [
+    'script', 'neon', 'smoke-show', 'godless-idols', 'printer-brain',
+    'ash-and-gold', 'production-line', 'byd3s1gn', 'youre-meant-to-forget-this',
+    'broken-blueprints', 'blurred-lines', 'synthetic-dream', 'glass-walls'
+  ];
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const trackId = urlParams.get('track') || 'godless-idols';
+  const TRACK_CONFIG = TRACKS[trackId] || TRACKS['godless-idols'];
+  const currentTrackIndex = TRACK_ORDER.indexOf(trackId);
+
+  // Navigate to previous/next track
+  function goToTrack(direction) {
+    let newIndex = currentTrackIndex + direction;
+    if (newIndex < 0) newIndex = TRACK_ORDER.length - 1;
+    if (newIndex >= TRACK_ORDER.length) newIndex = 0;
+    // Save current position before leaving
+    savePosition();
+    window.location.href = `player.html?track=${TRACK_ORDER[newIndex]}`;
+  }
+
+  // Save position to localStorage
+  function savePosition() {
+    if (window.player && window.player.duration > 0) {
+      const position = window.player.getCurrentTime();
+      localStorage.setItem(`signal_position_${trackId}`, position.toString());
+    }
+  }
+
+  // Load saved position
+  function loadPosition() {
+    const saved = localStorage.getItem(`signal_position_${trackId}`);
+    return saved ? parseFloat(saved) : 0;
+  }
+
+  // Save position periodically and on page unload
+  setInterval(savePosition, 5000);
+  window.addEventListener('beforeunload', savePosition);
+  window.addEventListener('pagehide', savePosition);
+
+  document.getElementById('trackTitle').textContent = TRACK_CONFIG.name;
+  document.title = `SIGNAL - ${TRACK_CONFIG.name}`;
 
   class StemPlayer {
     constructor() {
@@ -619,6 +701,70 @@
         slider.addEventListener('touchstart', (e) => { e.preventDefault(); isDragging = true; dragStarted = false; }, { passive: false });
         slider.addEventListener('touchmove', (e) => { if (isDragging) { dragStarted = true; handleMove(e.touches[0].clientX, e.touches[0].clientY); } }, { passive: false });
         slider.addEventListener('touchend', () => { if (isDragging && !dragStarted) soloStem(); isDragging = false; });
+      });
+
+      // Setup track navigation buttons
+      document.getElementById('prevTrack').addEventListener('click', () => goToTrack(-1));
+      document.getElementById('nextTrack').addEventListener('click', () => goToTrack(1));
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (!window.player) return;
+        
+        switch(e.code) {
+          case 'Space':
+            e.preventDefault();
+            window.player.togglePlay();
+            break;
+          case 'ArrowLeft':
+            e.preventDefault();
+            window.player.seekTo(Math.max(0, window.player.getCurrentTime() - 10));
+            break;
+          case 'ArrowRight':
+            e.preventDefault();
+            window.player.seekTo(Math.min(window.player.duration, window.player.getCurrentTime() + 10));
+            break;
+          case 'ArrowUp':
+            e.preventDefault();
+            goToTrack(-1);
+            break;
+          case 'ArrowDown':
+            e.preventDefault();
+            goToTrack(1);
+            break;
+          case 'Digit1':
+          case 'Numpad1':
+            e.preventDefault();
+            soloStemByKey('vocals');
+            break;
+          case 'Digit2':
+          case 'Numpad2':
+            e.preventDefault();
+            soloStemByKey('drums');
+            break;
+          case 'Digit3':
+          case 'Numpad3':
+            e.preventDefault();
+            soloStemByKey('bass');
+            break;
+          case 'Digit4':
+          case 'Numpad4':
+            e.preventDefault();
+            soloStemByKey('other');
+            break;
+          case 'Digit0':
+          case 'Numpad0':
+            e.preventDefault();
+            // Reset all stems to 100%
+            Object.keys(window.player.stems).forEach(name => {
+              window.player.stems[name].volume = 100;
+              if (window.player.stems[name].gainNode) {
+                window.player.stems[name].gainNode.gain.setTargetAtTime(1, window.player.audioContext.currentTime, 0.02);
+              }
+              updateLightBar(name, 100);
+            });
+            break;
+        }
       });
     }
 
@@ -769,6 +915,35 @@
     });
   }
 
+  function soloStemByKey(stemName) {
+    if (!window.player || !window.player.stems[stemName].buffer) return;
+    const allMuted = Object.entries(window.player.stems)
+      .filter(([n]) => n !== stemName)
+      .every(([, s]) => s.volume === 0);
+    const thisFull = window.player.stems[stemName].volume === 100;
+    
+    if (allMuted && thisFull) {
+      // Restore all
+      Object.keys(window.player.stems).forEach(name => {
+        window.player.stems[name].volume = 100;
+        if (window.player.stems[name].gainNode) {
+          window.player.stems[name].gainNode.gain.setTargetAtTime(1, window.player.audioContext.currentTime, 0.02);
+        }
+        updateLightBar(name, 100);
+      });
+    } else {
+      // Solo this stem
+      Object.keys(window.player.stems).forEach(name => {
+        const vol = name === stemName ? 100 : 0;
+        window.player.stems[name].volume = vol;
+        if (window.player.stems[name].gainNode) {
+          window.player.stems[name].gainNode.gain.setTargetAtTime(vol / 100, window.player.audioContext.currentTime, 0.02);
+        }
+        updateLightBar(name, vol);
+      });
+    }
+  }
+
   const TRACKS = {
     'script': { name: 'Script (Intro)', stems: { vocals: { file: 'audio/01_SC_Instruments.mp3', label: 'Instruments' }, drums: { file: 'audio/01_SC_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/01_SC_Bass.mp3', label: 'Bass' }, other: { file: 'audio/01_SC_Other.mp3', label: 'Other' } } },
     'neon': { name: 'Neon', stems: { vocals: { file: 'audio/02_NE_Instruments.mp3', label: 'Instruments' }, drums: { file: 'audio/02_NE_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/02_NE_Bass.mp3', label: 'Bass' }, other: { file: 'audio/02_NE_Other.mp3', label: 'Other' } } },
@@ -785,13 +960,6 @@
     'glass-walls': { name: 'Glass Walls (Outro)', stems: { vocals: { file: 'audio/13_GW_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/13_GW_Instruments.mp3', label: 'Instruments' }, bass: null, other: { file: 'audio/13_GW_Other.mp3', label: 'Other' } } }
   };
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const trackId = urlParams.get('track') || 'godless-idols';
-  const TRACK_CONFIG = TRACKS[trackId] || TRACKS['godless-idols'];
-
-  document.getElementById('trackTitle').textContent = TRACK_CONFIG.name;
-  document.title = `SIGNAL - ${TRACK_CONFIG.name}`;
-
   const stemPositions = { vocals: '.stem-control.top', drums: '.stem-control.right', bass: '.stem-control.bottom', other: '.stem-control.left' };
 
   Object.entries(stemPositions).forEach(([stem, selector]) => {
@@ -804,7 +972,17 @@
     }
   });
 
-  new StemPlayer();
+  // Create player and restore position
+  const player = new StemPlayer();
+  window.player = player;
+  
+  // Restore saved position after a short delay
+  setTimeout(() => {
+    const savedPosition = loadPosition();
+    if (savedPosition > 0 && savedPosition < player.duration - 1) {
+      player.seekTo(savedPosition);
+    }
+  }, 500);
 </script>
 
 </body>
