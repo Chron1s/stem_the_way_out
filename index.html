@@ -54,50 +54,80 @@
       width: 100%;
       height: 100%;
       pointer-events: none;
-    }
-
-    .landing-word {
-      position: absolute;
-      font-size: 50px;
-      font-weight: 900;
-      letter-spacing: 8px;
-      text-transform: uppercase;
-      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding-left: 8%;
+      gap: 0;
       opacity: 0;
       transition: opacity 2s ease;
     }
 
-    .landing-words.visible .landing-word {
-      opacity: 0.7;
+    .landing-words.visible {
+      opacity: 1;
     }
 
-    .landing-words.hint .landing-word {
+    .landing-words.hint {
       animation: subtleHint 4s ease-in-out infinite;
     }
 
-    .word-no {
-      top: 38%;
-      left: 15%;
+    .landing-line {
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      line-height: 1.1;
+      white-space: nowrap;
     }
 
-    .word-way {
-      top: 48%;
-      left: 50%;
-      transform: translateX(-50%);
+    /* Line 1: NO solid white, WAY OUT outlined */
+    .line-1 .word-solid { color: #fff; }
+    .line-1 .word-outline { 
+      color: transparent; 
+      -webkit-text-stroke: 1px rgba(255,255,255,0.6);
     }
 
-    .word-out {
-      top: 42%;
-      right: 15%;
+    /* Line 2: All outlined, OUT solid white offset right */
+    .line-2 { position: relative; }
+    .line-2 .word-outline { 
+      color: transparent; 
+      -webkit-text-stroke: 1px rgba(255,255,255,0.4);
+    }
+    .line-2 .word-solid-right {
+      position: absolute;
+      right: -180px;
+      color: #fff;
+    }
+
+    /* Line 3: Faded/blurred */
+    .line-3 {
+      color: rgba(255,255,255,0.15);
+      filter: blur(1px);
+    }
+
+    /* Line 4: WAY solid white in middle */
+    .line-4 .word-outline { 
+      color: transparent; 
+      -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+    }
+    .line-4 .word-solid { color: #fff; }
+
+    /* Line 5: Very faded */
+    .line-5 {
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.15);
+    }
+
+    /* Line 6: Outlined bottom */
+    .line-6 {
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.3);
     }
 
     @keyframes subtleHint {
-      0%, 100% { 
-        opacity: 0.3;
-      }
-      50% { 
-        opacity: 0.6;
-      }
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.9; }
     }
 
     @keyframes slowPulse {
@@ -290,23 +320,15 @@
 
     /* Responsive */
     @media (max-width: 600px) {
-      .landing-word {
+      .landing-line {
         font-size: 28px;
-        letter-spacing: 5px;
+        letter-spacing: 1px;
       }
-
-      .word-no {
-        top: 40%;
-        left: 10%;
+      .landing-words {
+        padding-left: 5%;
       }
-
-      .word-way {
-        top: 48%;
-      }
-
-      .word-out {
-        top: 44%;
-        right: 10%;
+      .line-2 .word-solid-right {
+        right: -100px;
       }
 
       #hintText {
@@ -357,9 +379,11 @@
 
     /* Extra small phones */
     @media (max-width: 380px) {
-      .landing-word {
-        font-size: 24px;
-        letter-spacing: 4px;
+      .landing-line {
+        font-size: 22px;
+      }
+      .line-2 .word-solid-right {
+        right: -80px;
       }
 
       #signalText {
@@ -422,9 +446,18 @@
   </svg>
   <h1 id="signalText">NO WAY OUT</h1>
   <div class="landing-words">
-    <div class="landing-word word-no">NO</div>
-    <div class="landing-word word-way">WAY</div>
-    <div class="landing-word word-out">OUT</div>
+    <div class="landing-line line-1">
+      <span class="word-solid">NO</span> <span class="word-outline">WAY OUT</span>
+    </div>
+    <div class="landing-line line-2">
+      <span class="word-outline">NO WAY</span> <span class="word-solid-right">OUT</span>
+    </div>
+    <div class="landing-line line-3">NO WAY OUT</div>
+    <div class="landing-line line-4">
+      <span class="word-outline">NO</span> <span class="word-solid">WAY</span> <span class="word-outline">OUT</span>
+    </div>
+    <div class="landing-line line-5">NO WAY OUT</div>
+    <div class="landing-line line-6">NO WAY OUT</div>
   </div>
   <div class="footer">
     <p class="footer-text">© 2026 Signal</p>
