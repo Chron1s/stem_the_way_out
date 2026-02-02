@@ -118,15 +118,17 @@
       color: #555;
     }
 
-    /* Light Bar Slider - no borders */
+    /* Light Bar Slider - no borders, no outlines */
     .light-bar {
       display: flex;
       gap: 5px;
       padding: 8px;
-      background: rgba(15, 15, 15, 0.8);
+      background: transparent;
       border-radius: 20px;
       cursor: pointer;
       touch-action: none;
+      border: none;
+      outline: none;
     }
 
     .light-bar.horizontal {
@@ -162,8 +164,10 @@
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, #2a2a2a 0%, #151515 60%, #0a0a0a 100%);
       flex-shrink: 0;
-      transition: filter 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: inset 0 1px 2px rgba(0,0,0,0.5), 0 1px 1px rgba(255,255,255,0.03);
+      transition: filter 0.4s ease, box-shadow 0.4s ease;
+      box-shadow: none;
+      border: none;
+      outline: none;
     }
 
     .led-segment.active {
@@ -172,27 +176,27 @@
 
     .stem-control[data-stem="drums"] .led-segment.active {
       background: radial-gradient(circle at 35% 35%, #5dade2 0%, #2e86de 50%, #1a5276 100%);
-      box-shadow: 0 0 4px rgba(46, 134, 222, 0.4), inset 0 1px 2px rgba(255,255,255,0.2);
+      box-shadow: none;
     }
 
     .stem-control[data-stem="bass"] .led-segment.active {
       background: radial-gradient(circle at 35% 35%, #3498db 0%, #1a5276 50%, #0d2840 100%);
-      box-shadow: 0 0 4px rgba(26, 82, 118, 0.4), inset 0 1px 2px rgba(255,255,255,0.2);
+      box-shadow: none;
     }
 
     .stem-control[data-stem="other"] .led-segment.active {
       background: radial-gradient(circle at 35% 35%, #aed6f1 0%, #5dade2 50%, #2980b9 100%);
-      box-shadow: 0 0 4px rgba(93, 173, 226, 0.4), inset 0 1px 2px rgba(255,255,255,0.2);
+      box-shadow: none;
     }
 
     .stem-control[data-stem="vocals"] .led-segment.active {
       background: radial-gradient(circle at 35% 35%, #d4efff 0%, #85c1e9 50%, #5dade2 100%);
-      box-shadow: 0 0 4px rgba(133, 193, 233, 0.4), inset 0 1px 2px rgba(255,255,255,0.2);
+      box-shadow: none;
     }
 
-    /* Subtle glow intensity based on audio level - more noticeable but still discrete */
+    /* Subtle glow intensity based on audio level - visible but calm */
     .led-segment.active.glow-low {
-      filter: brightness(0.7);
+      filter: brightness(0.75);
     }
 
     .led-segment.active.glow-mid {
@@ -200,7 +204,7 @@
     }
 
     .led-segment.active.glow-high {
-      filter: brightness(1.25);
+      filter: brightness(1.2);
     }
 
     /* Smooth pulse animation - reactive to audio */
@@ -843,3 +847,4 @@
 
 </body>
 </html>
+``` 
