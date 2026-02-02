@@ -665,6 +665,13 @@
     <div class="help-title">Controls</div>
     
     <div class="help-section">
+      <div class="help-section-title" style="color: #e74c3c;">⚠️ No Sound?</div>
+      <div class="help-item">
+        <span class="help-action" style="color: #888;">Turn off Silent Mode on iPhone</span>
+      </div>
+    </div>
+    
+    <div class="help-section">
       <div class="help-section-title">Touch / Click</div>
       <div class="help-item">
         <span class="help-action">Tap stem orbs</span>
@@ -768,6 +775,23 @@
   ['touchstart', 'touchend', 'click', 'keydown'].forEach(event => {
     document.addEventListener(event, unlockAudio, { once: false, passive: true });
   });
+
+  // TRACKS must be defined first before being used
+  const TRACKS = {
+    'script': { name: 'Script (Intro)', stems: { vocals: { file: 'audio/01_SC_Instruments.mp3', label: 'Instruments' }, drums: { file: 'audio/01_SC_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/01_SC_Bass.mp3', label: 'Bass' }, other: { file: 'audio/01_SC_Other.mp3', label: 'Other' } } },
+    'neon': { name: 'Neon', stems: { vocals: { file: 'audio/02_NE_Instruments.mp3', label: 'Instruments' }, drums: { file: 'audio/02_NE_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/02_NE_Bass.mp3', label: 'Bass' }, other: { file: 'audio/02_NE_Other.mp3', label: 'Other' } } },
+    'smoke-show': { name: 'Smoke Show', stems: { vocals: { file: 'audio/03_SMS_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/03_SMS_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/03_SMS_Bass.mp3', label: 'Bass' }, other: { file: 'audio/03_SMS_Other.mp3', label: 'Other' } } },
+    'godless-idols': { name: 'Godless Idols', stems: { vocals: { file: 'audio/GI_Voice.mp3', label: 'Voice' }, drums: { file: 'audio/GI_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/GI_Bass.mp3', label: 'Bass' }, other: { file: 'audio/GI_Other.mp3', label: 'Other' } } },
+    'printer-brain': { name: 'Printer Brain', stems: { vocals: { file: 'audio/05_PB_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/05_PB_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/05_PB_Bass.mp3', label: 'Bass' }, other: { file: 'audio/05_PB_Other.mp3', label: 'Other' } } },
+    'ash-and-gold': { name: 'Ash and Gold', stems: { vocals: { file: 'audio/06_AG_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/06_AG_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/06_AG_Instruments.mp3', label: 'Instruments' }, other: { file: 'audio/06_AG_Other.mp3', label: 'Other' } } },
+    'production-line': { name: 'Production Line', stems: { vocals: { file: 'audio/07_PL_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/07_PL_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/07_PL_Bass.mp3', label: 'Bass' }, other: { file: 'audio/07_PL_Other.mp3', label: 'Other' } } },
+    'byd3s1gn': { name: 'ByD3s1Gn', stems: { vocals: { file: 'audio/08_BD_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/08_BD_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/08_BD_Bass.mp3', label: 'Bass' }, other: { file: 'audio/08_BD_Instruments.mp3', label: 'Instruments' } } },
+    'youre-meant-to-forget-this': { name: "You're Meant to Forget This", stems: { vocals: { file: 'audio/09_YAMTFT_Instrument.mp3', label: 'Instrument' }, drums: { file: 'audio/09_YAMTFT_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/09_YAMTFT_Bass.mp3', label: 'Bass' }, other: null } },
+    'broken-blueprints': { name: 'Broken Blueprints', stems: { vocals: { file: 'audio/10_BL_Instruments.mp3', label: 'Instruments' }, drums: { file: 'audio/10_BL_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/10_BL_Bass.mp3', label: 'Bass' }, other: { file: 'audio/10_BL_Other.mp3', label: 'Other' } } },
+    'blurred-lines': { name: 'Blurred Lines (Interlude)', stems: { vocals: { file: 'audio/11_BLI_Sample.mp3', label: 'Sample' }, drums: { file: 'audio/11_BLI_Noise.mp3', label: 'Noise' }, bass: null, other: { file: 'audio/11_BLI_Other.mp3', label: 'Other' } } },
+    'synthetic-dream': { name: 'Synthetic Dream', stems: { vocals: { file: 'audio/12_SF_Pads.mp3', label: 'Pads' }, drums: { file: 'audio/12_SF_Druma.mp3', label: 'Drums' }, bass: { file: 'audio/12_SF_Bass.mp3', label: 'Bass' }, other: { file: 'audio/12_SF_Arp.mp3', label: 'Arp' } } },
+    'glass-walls': { name: 'Glass Walls (Outro)', stems: { vocals: { file: 'audio/13_GW_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/13_GW_Instruments.mp3', label: 'Instruments' }, bass: null, other: { file: 'audio/13_GW_Other.mp3', label: 'Other' } } }
+  };
 
   // Track list for navigation
   const TRACK_ORDER = [
@@ -1202,22 +1226,6 @@
       });
     }
   }
-
-  const TRACKS = {
-    'script': { name: 'Script (Intro)', stems: { vocals: { file: 'audio/01_SC_Instruments.mp3', label: 'Instruments' }, drums: { file: 'audio/01_SC_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/01_SC_Bass.mp3', label: 'Bass' }, other: { file: 'audio/01_SC_Other.mp3', label: 'Other' } } },
-    'neon': { name: 'Neon', stems: { vocals: { file: 'audio/02_NE_Instruments.mp3', label: 'Instruments' }, drums: { file: 'audio/02_NE_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/02_NE_Bass.mp3', label: 'Bass' }, other: { file: 'audio/02_NE_Other.mp3', label: 'Other' } } },
-    'smoke-show': { name: 'Smoke Show', stems: { vocals: { file: 'audio/03_SMS_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/03_SMS_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/03_SMS_Bass.mp3', label: 'Bass' }, other: { file: 'audio/03_SMS_Other.mp3', label: 'Other' } } },
-    'godless-idols': { name: 'Godless Idols', stems: { vocals: { file: 'audio/GI_Voice.mp3', label: 'Voice' }, drums: { file: 'audio/GI_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/GI_Bass.mp3', label: 'Bass' }, other: { file: 'audio/GI_Other.mp3', label: 'Other' } } },
-    'printer-brain': { name: 'Printer Brain', stems: { vocals: { file: 'audio/05_PB_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/05_PB_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/05_PB_Bass.mp3', label: 'Bass' }, other: { file: 'audio/05_PB_Other.mp3', label: 'Other' } } },
-    'ash-and-gold': { name: 'Ash and Gold', stems: { vocals: { file: 'audio/06_AG_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/06_AG_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/06_AG_Instruments.mp3', label: 'Instruments' }, other: { file: 'audio/06_AG_Other.mp3', label: 'Other' } } },
-    'production-line': { name: 'Production Line', stems: { vocals: { file: 'audio/07_PL_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/07_PL_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/07_PL_Bass.mp3', label: 'Bass' }, other: { file: 'audio/07_PL_Other.mp3', label: 'Other' } } },
-    'byd3s1gn': { name: 'ByD3s1Gn', stems: { vocals: { file: 'audio/08_BD_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/08_BD_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/08_BD_Bass.mp3', label: 'Bass' }, other: { file: 'audio/08_BD_Instruments.mp3', label: 'Instruments' } } },
-    'youre-meant-to-forget-this': { name: "You're Meant to Forget This", stems: { vocals: { file: 'audio/09_YAMTFT_Instrument.mp3', label: 'Instrument' }, drums: { file: 'audio/09_YAMTFT_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/09_YAMTFT_Bass.mp3', label: 'Bass' }, other: null } },
-    'broken-blueprints': { name: 'Broken Blueprints', stems: { vocals: { file: 'audio/10_BL_Instruments.mp3', label: 'Instruments' }, drums: { file: 'audio/10_BL_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/10_BL_Bass.mp3', label: 'Bass' }, other: { file: 'audio/10_BL_Other.mp3', label: 'Other' } } },
-    'blurred-lines': { name: 'Blurred Lines (Interlude)', stems: { vocals: { file: 'audio/11_BLI_Sample.mp3', label: 'Sample' }, drums: { file: 'audio/11_BLI_Noise.mp3', label: 'Noise' }, bass: null, other: { file: 'audio/11_BLI_Other.mp3', label: 'Other' } } },
-    'synthetic-dream': { name: 'Synthetic Dream', stems: { vocals: { file: 'audio/12_SF_Pads.mp3', label: 'Pads' }, drums: { file: 'audio/12_SF_Druma.mp3', label: 'Drums' }, bass: { file: 'audio/12_SF_Bass.mp3', label: 'Bass' }, other: { file: 'audio/12_SF_Arp.mp3', label: 'Arp' } } },
-    'glass-walls': { name: 'Glass Walls (Outro)', stems: { vocals: { file: 'audio/13_GW_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/13_GW_Instruments.mp3', label: 'Instruments' }, bass: null, other: { file: 'audio/13_GW_Other.mp3', label: 'Other' } } }
-  };
 
   const stemPositions = { vocals: '.stem-control.top', drums: '.stem-control.right', bass: '.stem-control.bottom', other: '.stem-control.left' };
 
