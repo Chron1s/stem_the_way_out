@@ -46,27 +46,43 @@
     }
 
     #signalText {
-      font-size: 60px;
+      display: none;
+    }
+
+    .landing-words {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .landing-word {
+      position: absolute;
+      font-size: 50px;
       font-weight: 900;
-      letter-spacing: 12px;
+      letter-spacing: 8px;
       text-transform: uppercase;
       color: #fff;
-      opacity: 0.8;
-      position: relative;
       animation: slowPulse 4s ease-in-out infinite;
     }
 
-    #signalText.visible {
-      opacity: 1;
-      filter: blur(0);
-      transform: scale(1);
+    .word-no {
+      top: 25%;
+      left: 12%;
+      animation-delay: 0s;
     }
 
-    #signalText.ghost {
-      animation: ghostFloat 4s ease-in-out infinite;
-      text-shadow: 
-        0 0 20px rgba(255,255,255,0.2),
-        0 0 40px rgba(255,255,255,0.1);
+    .word-way {
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%);
+      animation-delay: 0.5s;
+    }
+
+    .word-out {
+      top: 35%;
+      right: 10%;
+      animation-delay: 1s;
     }
 
     @keyframes slowPulse {
@@ -259,9 +275,23 @@
 
     /* Responsive */
     @media (max-width: 600px) {
-      #signalText {
-        font-size: 36px;
-        letter-spacing: 8px;
+      .landing-word {
+        font-size: 32px;
+        letter-spacing: 6px;
+      }
+
+      .word-no {
+        top: 28%;
+        left: 8%;
+      }
+
+      .word-way {
+        top: 48%;
+      }
+
+      .word-out {
+        top: 38%;
+        right: 8%;
       }
 
       #hintText {
@@ -312,6 +342,11 @@
 
     /* Extra small phones */
     @media (max-width: 380px) {
+      .landing-word {
+        font-size: 26px;
+        letter-spacing: 4px;
+      }
+
       #signalText {
         font-size: 28px;
         letter-spacing: 6px;
@@ -371,7 +406,11 @@
     </defs>
   </svg>
   <h1 id="signalText">NO WAY OUT</h1>
-  
+  <div class="landing-words">
+    <div class="landing-word word-no">NO</div>
+    <div class="landing-word word-way">WAY</div>
+    <div class="landing-word word-out">OUT</div>
+  </div>
   <div class="footer">
     <p class="footer-text">© 2026 Signal</p>
   </div>
