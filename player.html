@@ -1278,16 +1278,30 @@
 
   // Fullscreen
   const fullscreenBtn = document.getElementById('fullscreenBtn');
+  
+  // Check if fullscreen is supported
+  const fullscreenSupported = document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen;
+  
+  // Detect iOS
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
   function toggleFullscreen() {
+    // iOS doesn't support fullscreen API - show tip instead
+    if (isIOS) {
+      alert('To go fullscreen on iPhone:\n\n1. Tap the Share button\n2. Select "Add to Home Screen"\n3. Open from your home screen');
+      return;
+    }
+    
     if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-      } else if (document.documentElement.webkitRequestFullscreen) {
-        document.documentElement.webkitRequestFullscreen();
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(err => {
+          console.log('Fullscreen error:', err);
+        });
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
       }
       document.body.classList.add('fullscreen');
-      fullscreenBtn.textContent = '⛶';
     } else {
       if (document.exitFullscreen) {
         document.exitFullscreen();
@@ -1295,7 +1309,6 @@
         document.webkitExitFullscreen();
       }
       document.body.classList.remove('fullscreen');
-      fullscreenBtn.textContent = '⛶';
     }
   }
 
