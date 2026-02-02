@@ -130,12 +130,12 @@
     }
 
     .light-bar.horizontal {
-      width: 85px;
-      height: 30px;
+      width: 90px;
+      height: 34px;
       flex-direction: row;
       align-items: center;
       justify-content: center;
-      padding: 5px 8px;
+      padding: 5px 10px;
     }
 
     .stem-control.left .light-bar.horizontal {
@@ -143,12 +143,12 @@
     }
 
     .light-bar.vertical {
-      width: 30px;
-      height: 85px;
+      width: 34px;
+      height: 90px;
       flex-direction: column-reverse;
       align-items: center;
       justify-content: center;
-      padding: 8px 5px;
+      padding: 10px 5px;
     }
 
     .stem-control.bottom .light-bar.vertical {
@@ -157,12 +157,12 @@
 
     /* LED Orbs - refined texture with subtle depth */
     .led-segment {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, #2a2a2a 0%, #151515 60%, #0a0a0a 100%);
       flex-shrink: 0;
-      transition: all 0.3s ease;
+      transition: filter 0.2s ease, box-shadow 0.2s ease;
       box-shadow: inset 0 1px 2px rgba(0,0,0,0.5), 0 1px 1px rgba(255,255,255,0.03);
     }
 
@@ -172,27 +172,27 @@
 
     .stem-control[data-stem="drums"] .led-segment.active {
       background: radial-gradient(circle at 35% 35%, #5dade2 0%, #2e86de 50%, #1a5276 100%);
-      box-shadow: 0 0 6px rgba(46, 134, 222, 0.5), inset 0 1px 2px rgba(255,255,255,0.2);
+      box-shadow: 0 0 4px rgba(46, 134, 222, 0.4), inset 0 1px 2px rgba(255,255,255,0.2);
     }
 
     .stem-control[data-stem="bass"] .led-segment.active {
       background: radial-gradient(circle at 35% 35%, #3498db 0%, #1a5276 50%, #0d2840 100%);
-      box-shadow: 0 0 6px rgba(26, 82, 118, 0.5), inset 0 1px 2px rgba(255,255,255,0.2);
+      box-shadow: 0 0 4px rgba(26, 82, 118, 0.4), inset 0 1px 2px rgba(255,255,255,0.2);
     }
 
     .stem-control[data-stem="other"] .led-segment.active {
       background: radial-gradient(circle at 35% 35%, #aed6f1 0%, #5dade2 50%, #2980b9 100%);
-      box-shadow: 0 0 6px rgba(93, 173, 226, 0.5), inset 0 1px 2px rgba(255,255,255,0.2);
+      box-shadow: 0 0 4px rgba(93, 173, 226, 0.4), inset 0 1px 2px rgba(255,255,255,0.2);
     }
 
     .stem-control[data-stem="vocals"] .led-segment.active {
       background: radial-gradient(circle at 35% 35%, #d4efff 0%, #85c1e9 50%, #5dade2 100%);
-      box-shadow: 0 0 6px rgba(133, 193, 233, 0.5), inset 0 1px 2px rgba(255,255,255,0.2);
+      box-shadow: 0 0 4px rgba(133, 193, 233, 0.4), inset 0 1px 2px rgba(255,255,255,0.2);
     }
 
-    /* Subtle glow intensity based on audio level */
+    /* Subtle glow intensity based on audio level - more noticeable but still discrete */
     .led-segment.active.glow-low {
-      filter: brightness(0.85);
+      filter: brightness(0.7);
     }
 
     .led-segment.active.glow-mid {
@@ -200,8 +200,7 @@
     }
 
     .led-segment.active.glow-high {
-      filter: brightness(1.15);
-      box-shadow: 0 0 10px currentColor, inset 0 1px 2px rgba(255,255,255,0.3);
+      filter: brightness(1.25);
     }
 
     /* Smooth pulse animation - reactive to audio */
@@ -453,31 +452,50 @@
   </div>
 </div>
 
-<audio id="silentAudio" src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwmHAAAAAAD/+1DEAAAGAAGn9AAAIwAANP8AAABM" loop playsinline></audio>
+<audio id="silentAudio" src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwmHAAAAAAD/+1DEAAAGAAGn9AAAIwAANP8AAABM" loop playsinline></audio>
 
 <script>
+  // iOS Silent Mode Bypass - must be triggered by user interaction
+  let audioUnlocked = false;
+  
   function unlockAudio() {
-    const silentAudio = document.getElementById('silentAudio');
-    silentAudio.play().catch(() => {});
-    silentAudio.pause();
-    silentAudio.currentTime = 0;
+    if (audioUnlocked) return;
     
-    if (window.audioContextUnlocked) return;
+    // Create and play a silent HTML5 audio to unlock audio playback
+    const silentAudio = document.getElementById('silentAudio');
+    silentAudio.volume = 0.01;
+    const playPromise = silentAudio.play();
+    if (playPromise) {
+      playPromise.then(() => {
+        silentAudio.pause();
+        silentAudio.currentTime = 0;
+      }).catch(() => {});
+    }
+    
+    // Create AudioContext and play silent buffer
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (AudioContext) {
       const ctx = new AudioContext();
-      const buffer = ctx.createBuffer(1, 1, 22050);
-      const source = ctx.createBufferSource();
-      source.buffer = buffer;
-      source.connect(ctx.destination);
-      source.start(0);
-      if (ctx.state === 'suspended') ctx.resume();
-      window.audioContextUnlocked = true;
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      gainNode.gain.value = 0.001;
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      oscillator.start(0);
+      oscillator.stop(0.001);
+      ctx.close();
     }
+    
+    audioUnlocked = true;
   }
 
-  document.body.addEventListener('touchstart', unlockAudio, { once: true });
-  document.body.addEventListener('click', unlockAudio, { once: true });
+  // Attach to multiple events for better iOS coverage
+  ['touchstart', 'touchend', 'click', 'keydown'].forEach(event => {
+    document.addEventListener(event, unlockAudio, { once: false, passive: true });
+  });
 
   class StemPlayer {
     constructor() {
@@ -487,10 +505,10 @@
       this.pauseTime = 0;
       this.duration = 0;
       this.stems = {
-        vocals: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastPulseTime: 0, lastRms: 0 },
-        drums: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastPulseTime: 0, lastRms: 0 },
-        bass: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastPulseTime: 0, lastRms: 0 },
-        other: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastPulseTime: 0, lastRms: 0 }
+        vocals: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastRms: 0, smoothedRms: 0 },
+        drums: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastRms: 0, smoothedRms: 0 },
+        bass: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastRms: 0, smoothedRms: 0 },
+        other: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastRms: 0, smoothedRms: 0 }
       };
       this.masterGain = null;
       this.loadingProgress = document.getElementById('loadingProgress');
@@ -539,7 +557,8 @@
       const totalStems = stemsToLoad.length;
       let loaded = 0;
 
-      const loadPromises = stemsToLoad.map(async ([stemName, stemData]) => {
+      // Load stems sequentially to ensure sync
+      for (const [stemName, stemData] of stemsToLoad) {
         if (stemData && stemData.file) {
           try {
             const response = await fetch(stemData.file);
@@ -547,8 +566,8 @@
             const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
             const gainNode = this.audioContext.createGain();
             const analyser = this.audioContext.createAnalyser();
-            analyser.fftSize = 512;
-            analyser.smoothingTimeConstant = 0.4;
+            analyser.fftSize = 256;
+            analyser.smoothingTimeConstant = 0.3;
             gainNode.connect(analyser);
             analyser.connect(this.masterGain);
             this.stems[stemName].buffer = audioBuffer;
@@ -556,16 +575,11 @@
             this.stems[stemName].analyser = analyser;
             loaded++;
             this.loadingProgress.style.width = (loaded / totalStems * 100) + '%';
-            return true;
           } catch (error) {
             console.error(`Failed to load ${stemName}:`, error);
-            return false;
           }
         }
-        return false;
-      });
-
-      await Promise.all(loadPromises);
+      }
     }
 
     setupUI() {
@@ -736,28 +750,32 @@
           const dataArray = new Uint8Array(stem.analyser.frequencyBinCount);
           stem.analyser.getByteFrequencyData(dataArray);
           
-          // Calculate smoothed RMS
+          // Calculate RMS energy
           let sum = 0;
           for (let i = 0; i < dataArray.length; i++) {
             sum += dataArray[i] * dataArray[i];
           }
           const rms = Math.sqrt(sum / dataArray.length);
           
-          // Smooth the RMS value for gentle transitions
-          stem.lastRms = rms * 0.15 + stem.lastRms * 0.85;
+          // Use faster attack, slower release for more responsive but smooth feel
+          if (rms > stem.smoothedRms) {
+            stem.smoothedRms = rms * 0.4 + stem.smoothedRms * 0.6; // Fast attack
+          } else {
+            stem.smoothedRms = rms * 0.1 + stem.smoothedRms * 0.9; // Slow release
+          }
           
-          // Determine glow level based on smoothed audio level
+          // Determine glow level - lower thresholds for more visibility
           const control = document.querySelector(`.stem-control[data-stem="${stemName}"]`);
           if (control) {
             const segments = control.querySelectorAll('.led-segment.active');
             segments.forEach(seg => {
               seg.classList.remove('glow-low', 'glow-mid', 'glow-high');
               
-              if (stem.lastRms > 45) {
+              if (stem.smoothedRms > 35) {
                 seg.classList.add('glow-high');
-              } else if (stem.lastRms > 20) {
+              } else if (stem.smoothedRms > 15) {
                 seg.classList.add('glow-mid');
-              } else if (stem.lastRms > 8) {
+              } else if (stem.smoothedRms > 5) {
                 seg.classList.add('glow-low');
               }
             });
