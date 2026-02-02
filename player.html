@@ -723,14 +723,14 @@
       </div>
       
       <div class="help-section">
-        <div class="help-section-title">Navigation</div>
+        <div class="help-section-title">Gestures</div>
         <div class="help-item">
-          <span class="help-action">Tap advancement buttons</span>
+          <span class="help-action">Swipe left / right</span>
           <span class="help-key">Next / Prev track</span>
         </div>
         <div class="help-item">
-          <span class="help-action">Tap skip buttons</span>
-          <span class="help-key">Skip ±10 seconds</span>
+          <span class="help-action">Swipe up / down</span>
+          <span class="help-key">Volume up / down</span>
         </div>
       </div>
     </div>
@@ -793,7 +793,7 @@
   </div>
 </div>
 
-<audio id="silentAudio" src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwmHAAAAAAD/+1DEAAAGAAGn9AAAIwAANP8AAABM" loop playsinline></audio>
+<audio id="silentAudio" src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwmHAAAAAAD/+1DEAAAGAAGn9AAAIwAANP8AAABM" loop playsinline></audio>
 
 <script>
   // iOS Silent Mode Bypass - must be triggered by user interaction
@@ -1386,6 +1386,66 @@
       hideHelp();
     }
   });
+
+  // Update fullscreen state on change
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      document.body.classList.remove('fullscreen');
+    }
+  });
+  document.addEventListener('webkitfullscreenchange', () => {
+    if (!document.webkitFullscreenElement) {
+      document.body.classList.remove('fullscreen');
+    }
+  });
+
+  // Swipe Gestures
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchStartTime = 0;
+  const playerContainer = document.querySelector('.player-container');
+
+  playerContainer.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchStartTime = Date.now();
+  }, { passive: true });
+
+  playerContainer.addEventListener('touchend', (e) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const touchDuration = Date.now() - touchStartTime;
+    
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+    const absDeltaX = Math.abs(deltaX);
+    const absDeltaY = Math.abs(deltaY);
+    
+    // Only trigger if swipe is fast enough and long enough
+    if (touchDuration < 300 && (absDeltaX > 50 || absDeltaY > 50)) {
+      // Horizontal swipe - next/prev track
+      if (absDeltaX > absDeltaY && absDeltaX > 50) {
+        if (deltaX > 0) {
+          goToTrack(-1); // Swipe right = previous
+        } else {
+          goToTrack(1); // Swipe left = next
+        }
+      }
+      // Vertical swipe - master volume
+      else if (absDeltaY > absDeltaX && absDeltaY > 50) {
+        if (window.player && window.player.masterGain) {
+          const currentVol = window.player.masterGain.gain.value;
+          if (deltaY < 0) {
+            // Swipe up = volume up
+            window.player.masterGain.gain.value = Math.min(1, currentVol + 0.2);
+          } else {
+            // Swipe down = volume down
+            window.player.masterGain.gain.value = Math.max(0, currentVol - 0.2);
+          }
+        }
+      }
+    }
+  }, { passive: true });
 
   // Update fullscreen state on change
   document.addEventListener('fullscreenchange', () => {
