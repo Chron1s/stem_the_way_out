@@ -61,11 +61,24 @@
       padding-left: 8%;
       gap: 0;
       opacity: 0;
-      transition: opacity 2s ease;
     }
 
     .landing-words.visible {
-      opacity: 1;
+      animation: fadeInSlow 4s ease-out forwards;
+    }
+
+    .landing-words.breathing {
+      animation: fadeInSlow 4s ease-out forwards, breathe 6s ease-in-out 4s infinite;
+    }
+
+    @keyframes fadeInSlow {
+      0% { opacity: 0; }
+      100% { opacity: 0.7; }
+    }
+
+    @keyframes breathe {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.8; }
     }
 
     .landing-words.hint {
@@ -309,11 +322,17 @@
       left: 0;
       width: 100%;
       text-align: center;
+      opacity: 0;
+      transition: opacity 4s ease-out;
+    }
+
+    .footer.visible {
+      opacity: 1;
     }
 
     .footer-text {
       font-size: 9px;
-      color: #1a1a1a;
+      color: #444;
       letter-spacing: 3px;
       text-transform: uppercase;
     }
@@ -489,6 +508,7 @@
 <script>
   const landingPage = document.getElementById('landingPage');
   const landingWords = document.querySelector('.landing-words');
+  const footer = document.querySelector('.footer');
   const popupOverlay = document.getElementById('popupOverlay');
 
   // Check if coming back from player (has #tracks hash)
@@ -498,20 +518,22 @@
     popupOverlay.classList.add('visible');
   }
 
-  // Show words as hint after 3 seconds of no interaction
+  // Show words after 3 seconds - fade in slowly then breathe
   let hintTimeout = setTimeout(() => {
-    landingWords.classList.add('visible', 'hint');
+    landingWords.classList.add('breathing');
+    footer.classList.add('visible');
   }, 3000);
 
-  // Reset hint timer on any interaction
-  function resetHint() {
+  // On interaction - stop breathing, just stay visible
+  function onInteraction() {
     clearTimeout(hintTimeout);
-    landingWords.classList.remove('hint');
+    landingWords.classList.remove('breathing');
     landingWords.classList.add('visible');
+    footer.classList.add('visible');
   }
 
-  landingPage.addEventListener('mousemove', resetHint);
-  landingPage.addEventListener('touchstart', resetHint);
+  landingPage.addEventListener('mousemove', onInteraction);
+  landingPage.addEventListener('touchstart', onInteraction);
 
   // Click to open menu
   landingPage.addEventListener('click', () => {
