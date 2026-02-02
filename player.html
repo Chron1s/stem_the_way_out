@@ -164,62 +164,46 @@
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, #2a2a2a 0%, #151515 60%, #0a0a0a 100%);
       flex-shrink: 0;
-      transition: filter 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+      transition: opacity 0.08s ease-out, filter 0.08s ease-out;
       box-shadow: none;
       border: none;
       outline: none;
     }
 
     .led-segment.active {
-      opacity: 1;
+      opacity: 0.4;
     }
 
     .stem-control[data-stem="drums"] .led-segment.active {
       background: radial-gradient(circle at 35% 35%, #5dade2 0%, #2e86de 50%, #1a5276 100%);
-      box-shadow: 0 0 3px rgba(46, 134, 222, 0.3);
     }
 
     .stem-control[data-stem="bass"] .led-segment.active {
       background: radial-gradient(circle at 35% 35%, #3498db 0%, #1a5276 50%, #0d2840 100%);
-      box-shadow: 0 0 3px rgba(26, 82, 118, 0.3);
     }
 
     .stem-control[data-stem="other"] .led-segment.active {
       background: radial-gradient(circle at 35% 35%, #aed6f1 0%, #5dade2 50%, #2980b9 100%);
-      box-shadow: 0 0 3px rgba(93, 173, 226, 0.3);
     }
 
     .stem-control[data-stem="vocals"] .led-segment.active {
       background: radial-gradient(circle at 35% 35%, #d4efff 0%, #85c1e9 50%, #5dade2 100%);
-      box-shadow: 0 0 3px rgba(133, 193, 233, 0.3);
     }
 
-    /* Glow intensity based on audio level - much more visible */
+    /* Glow intensity based on audio level - subtle but visible, synced to beat */
     .led-segment.active.glow-low {
-      filter: brightness(0.5);
-      transform: scale(0.9);
+      opacity: 0.5;
+      filter: brightness(0.8);
     }
 
     .led-segment.active.glow-mid {
+      opacity: 0.75;
       filter: brightness(1.0);
-      transform: scale(1.0);
     }
 
     .led-segment.active.glow-high {
-      filter: brightness(1.5);
-      transform: scale(1.15);
-      box-shadow: 0 0 12px currentColor;
-    }
-
-    /* Smooth pulse animation - reactive to audio */
-    .led-segment.active.pulsing {
-      animation: smoothPulse 0.25s ease-out;
-    }
-
-    @keyframes smoothPulse {
-      0% { transform: scale(1.35); filter: brightness(1.4); }
-      50% { transform: scale(1.15); filter: brightness(1.2); }
-      100% { transform: scale(1); filter: brightness(1); }
+      opacity: 1.0;
+      filter: brightness(1.2);
     }
 
     /* Play Button */
@@ -758,28 +742,33 @@
           const dataArray = new Uint8Array(stem.analyser.frequencyBinCount);
           stem.analyser.getByteFrequencyData(dataArray);
           
-          // Calculate RMS energy
+          // Calculate RMS energy from low-mid frequencies (better for beat detection)
           let sum = 0;
-          for (let i = 0; i < dataArray.length; i++) {
+          const relevantBins = Math.floor(dataArray.length * 0.6);
+          for (let i = 0; i < relevantBins; i++) {
             sum += dataArray[i] * dataArray[i];
           }
-          const rms = Math.sqrt(sum / dataArray.length);
+          const rms = Math.sqrt(sum / relevantBins);
           
-          // Smooth but responsive - not too jumpy
-          stem.smoothedRms = rms * 0.25 + stem.smoothedRms * 0.75;
+          // Fast attack, medium release - responsive to beats
+          if (rms > stem.smoothedRms) {
+            stem.smoothedRms = rms * 0.6 + stem.smoothedRms * 0.4; // Fast attack
+          } else {
+            stem.smoothedRms = rms * 0.15 + stem.smoothedRms * 0.85; // Medium release
+          }
           
-          // Determine glow level - very low thresholds so it's always visible when playing
+          // Apply glow based on audio level
           const control = document.querySelector(`.stem-control[data-stem="${stemName}"]`);
           if (control) {
             const segments = control.querySelectorAll('.led-segment.active');
             segments.forEach(seg => {
               seg.classList.remove('glow-low', 'glow-mid', 'glow-high');
               
-              if (stem.smoothedRms > 25) {
+              if (stem.smoothedRms > 30) {
                 seg.classList.add('glow-high');
-              } else if (stem.smoothedRms > 8) {
+              } else if (stem.smoothedRms > 12) {
                 seg.classList.add('glow-mid');
-              } else if (stem.smoothedRms > 2) {
+              } else if (stem.smoothedRms > 3) {
                 seg.classList.add('glow-low');
               }
             });
