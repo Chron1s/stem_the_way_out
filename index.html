@@ -51,11 +51,9 @@
       letter-spacing: 12px;
       text-transform: uppercase;
       color: #fff;
-      opacity: 0;
+      opacity: 0.8;
       position: relative;
-      transition: opacity 1.2s ease, transform 1.2s ease, filter 1.2s ease;
-      filter: blur(15px);
-      transform: scale(0.98);
+      animation: slowPulse 4s ease-in-out infinite;
     }
 
     #signalText.visible {
@@ -69,6 +67,15 @@
       text-shadow: 
         0 0 20px rgba(255,255,255,0.2),
         0 0 40px rgba(255,255,255,0.1);
+    }
+
+    @keyframes slowPulse {
+      0%, 100% { 
+        opacity: 0.4;
+      }
+      50% { 
+        opacity: 0.9;
+      }
     }
 
     @keyframes ghostFloat {
@@ -364,7 +371,6 @@
     </defs>
   </svg>
   <h1 id="signalText">NO WAY OUT</h1>
-  <p id="hintText">Tap to enter</p>
   
   <div class="footer">
     <p class="footer-text">© 2026 Signal</p>
