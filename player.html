@@ -1390,8 +1390,14 @@
   });
 
   // Show help immediately when entering a track for the first time
-  if (!localStorage.getItem('nwo_help_seen')) {
+  // Clear old help seen flag to test - remove this line after testing
+  // localStorage.removeItem('nwo_help_seen');
+  
+  // Always show help on first visit to this specific track
+  const helpSeenKey = `nwo_help_seen_${trackId}`;
+  if (!localStorage.getItem(helpSeenKey)) {
     showHelp();
+    localStorage.setItem(helpSeenKey, 'true');
   }
 
   // Fullscreen
