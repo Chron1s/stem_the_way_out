@@ -1324,7 +1324,7 @@
 
   function hideHelp() {
     helpOverlay.classList.remove('visible');
-    localStorage.setItem('signal_help_seen', 'true');
+    localStorage.setItem('nwo_help_seen', 'true');
   }
 
   helpBtn.addEventListener('click', showHelp);
@@ -1333,9 +1333,9 @@
     if (e.target === helpOverlay) hideHelp();
   });
 
-  // Show help on first visit
-  if (!localStorage.getItem('signal_help_seen')) {
-    setTimeout(showHelp, 1000);
+  // Show help immediately when entering a track for the first time
+  if (!localStorage.getItem('nwo_help_seen')) {
+    showHelp();
   }
 
   // Fullscreen
