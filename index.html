@@ -62,7 +62,7 @@
       align-items: flex-start;
       justify-content: center;
       padding-left: 8%;
-      gap: 0;
+      gap: 2px;
       opacity: 0;
     }
 
@@ -89,56 +89,67 @@
     }
 
     .landing-line {
-      font-size: 48px;
+      font-size: 52px;
       font-weight: 900;
-      letter-spacing: 2px;
+      letter-spacing: 4px;
       text-transform: uppercase;
-      line-height: 1.1;
+      line-height: 1.05;
       white-space: nowrap;
+      font-family: 'Inter', sans-serif;
     }
 
     /* Line 1: NO solid white, WAY OUT outlined */
     .line-1 .word-solid { color: #fff; }
     .line-1 .word-outline { 
       color: transparent; 
-      -webkit-text-stroke: 1px rgba(255,255,255,0.6);
+      -webkit-text-stroke: 1.5px rgba(255,255,255,0.7);
     }
 
-    /* Line 2: All outlined, OUT solid white offset right */
-    .line-2 { position: relative; }
+    /* Line 2: NO WAY outlined, OUT solid white offset right */
+    .line-2 { 
+      position: relative;
+      margin-left: 20px;
+    }
     .line-2 .word-outline { 
       color: transparent; 
-      -webkit-text-stroke: 1px rgba(255,255,255,0.4);
+      -webkit-text-stroke: 1.5px rgba(255,255,255,0.5);
     }
     .line-2 .word-solid-right {
       position: absolute;
-      right: -180px;
+      left: 340px;
       color: #fff;
     }
 
-    /* Line 3: Faded/blurred */
+    /* Line 3: Faded/blurred outline */
     .line-3 {
-      color: rgba(255,255,255,0.15);
-      filter: blur(1px);
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+      filter: blur(0.5px);
+      margin-left: 10px;
     }
 
-    /* Line 4: WAY solid white in middle */
+    /* Line 4: NO outlined, WAY solid white, OUT outlined */
+    .line-4 {
+      margin-left: 5px;
+    }
     .line-4 .word-outline { 
       color: transparent; 
-      -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+      -webkit-text-stroke: 1px rgba(255,255,255,0.25);
     }
     .line-4 .word-solid { color: #fff; }
 
-    /* Line 5: Very faded */
+    /* Line 5: Very faded outline */
     .line-5 {
       color: transparent;
       -webkit-text-stroke: 1px rgba(255,255,255,0.15);
+      margin-left: 15px;
     }
 
     /* Line 6: Outlined bottom */
     .line-6 {
       color: transparent;
-      -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+      -webkit-text-stroke: 1.5px rgba(255,255,255,0.4);
+      margin-left: 0;
     }
 
     @keyframes subtleHint {
