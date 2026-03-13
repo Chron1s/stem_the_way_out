@@ -103,6 +103,28 @@
       text-align: center;
     }
 
+    /* Back Button */
+    .back-to-menu {
+      position: absolute;
+      left: 15px;
+      color: #555;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border: 1px solid #333;
+      border-radius: 15px;
+      background: transparent;
+      cursor: pointer;
+      font-family: 'Space Mono', monospace;
+      transition: all 0.2s ease;
+    }
+
+    .back-to-menu:hover {
+      border-color: #666;
+      color: #888;
+    }
+
     /* Main Player Area - perfectly centered */
     .player-container {
       flex: 1;
@@ -137,7 +159,7 @@
 
     .stem-control.top { grid-column: 2; grid-row: 1; }
     .stem-control.left { grid-column: 1; grid-row: 2; }
-    .stem-control.center { grid-column: 2; grid-row: 2; }
+    .stem-control.center { grid-column: 2; grid-row: 2; display: none; }
     .stem-control.right { grid-column: 3; grid-row: 2; }
     .stem-control.bottom { grid-column: 2; grid-row: 3; }
 
@@ -217,36 +239,6 @@
 
     .stem-control[data-stem="vocals"] .led-segment.active {
       background: radial-gradient(circle at 35% 35%, #d4efff 0%, #85c1e9 50%, #5dade2 100%);
-    }
-
-    /* Play Button */
-    .play-button {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      background: #111;
-      border: 2px solid #333;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .play-icon {
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 8px 0 8px 14px;
-      border-color: transparent transparent transparent #fff;
-      margin-left: 3px;
-    }
-
-    .play-button.playing .play-icon {
-      border: none;
-      width: 14px;
-      height: 14px;
-      margin-left: 0;
-      background: linear-gradient(to right, #fff 0%, #fff 35%, transparent 35%, transparent 65%, #fff 65%, #fff 100%);
     }
 
     /* Progress Section - centered */
@@ -623,7 +615,7 @@
 </div>
 
 <div class="header">
-  <button onclick="window.location.href='index.html#tracks'" class="back-btn">Tracks</button>
+  <button onclick="window.location.href='index.html'" class="back-btn">← Back</button>
   <div class="track-title" id="trackTitle">Loading...</div>
   <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
 </div>
@@ -651,12 +643,6 @@
         <div class="led-segment"></div>
         <div class="led-segment"></div>
         <div class="led-segment"></div>
-      </div>
-    </div>
-
-    <div class="stem-control center">
-      <div class="play-button" id="playButton">
-        <div class="play-icon"></div>
       </div>
     </div>
 
@@ -814,7 +800,7 @@
   </div>
 </div>
 
-<audio id="silentAudio" src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwmHAAAAAAD/+1DEAAAGAAGn9AAAIwAANP8AAABM" loop playsinline></audio>
+<audio id="silentAudio" src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwmHAAAAAAD/+1DEAAAGAAGn9AAAIwAANP8AAABM" loop playsinline></audio>
 
 <script>
   // iOS Silent Mode Bypass - must be triggered by user interaction
@@ -865,7 +851,7 @@
     'neon': { name: 'Neon', stems: { vocals: { file: 'audio/02_NE_Instruments.mp3', label: 'Instruments' }, drums: { file: 'audio/02_NE_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/02_NE_Bass.mp3', label: 'Bass' }, other: { file: 'audio/02_NE_Other.mp3', label: 'Other' } } },
     'smoke-show': { name: 'Smoke Show', stems: { vocals: { file: 'audio/03_SMS_Vocals.mp3', label: 'Groove' }, drums: { file: 'audio/03_SMS_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/03_SMS_Bass.mp3', label: 'Bass' }, other: { file: 'audio/03_SMS_Other.mp3', label: 'Other' } } },
     'godless-idols': { name: 'Godless Idols', stems: { vocals: { file: 'audio/GI_Voice.mp3', label: 'Vocals' }, drums: { file: 'audio/GI_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/GI_Bass.mp3', label: 'Bass' }, other: { file: 'audio/GI_Other.mp3', label: 'Other' } } },
-    'printer-brain': { name: 'Printer Brain', stems: { vocals: { file: 'audio/05_PB_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/05_PB_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/05_PB_Bass.mp3', label: 'Bass' }, other: { file: 'audio/05_PB_Other.mp3', label: 'Other' } } },
+    'printer-brain': { name: 'Printer Brain', stems: { vocals: { file: 'audio/05_PB_Vocals.wav', label: 'Vocals' }, drums: { file: 'audio/05_PB_Drums.wav', label: 'Drums' }, bass: { file: 'audio/05_PB_Bass.wav', label: 'Bass' }, other: { file: 'audio/05_PB_Other.wav', label: 'Other' } } },
     'ash-and-gold': { name: 'Ash and Gold', stems: { vocals: { file: 'audio/06_AG_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/06_AG_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/06_AG_Instruments.mp3', label: 'Instruments' }, other: { file: 'audio/06_AG_Other.mp3', label: 'Other' } } },
     'production-line': { name: 'Production Line', stems: { vocals: { file: 'audio/07_PL_Vocals.mp3', label: 'Texture' }, drums: { file: 'audio/07_PL_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/07_PL_Bass.mp3', label: 'Bass' }, other: { file: 'audio/07_PL_Other.mp3', label: 'Other' } } },
     'byd3s1gn': { name: 'ByD3s1Gn', stems: { vocals: { file: 'audio/08_BD_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/08_BD_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/08_BD_Bass.mp3', label: 'Bass' }, other: { file: 'audio/08_BD_Instruments.mp3', label: 'Synth' } } },
@@ -1005,13 +991,6 @@
     }
 
     setupUI() {
-      document.getElementById('playButton').addEventListener('click', () => {
-        unlockAudio();
-        this.initAudioContext();
-        if (this.audioContext.state === 'suspended') this.audioContext.resume();
-        this.togglePlay();
-      });
-
       document.querySelectorAll('.stem-control[data-stem]').forEach(control => {
         const stemName = control.dataset.stem;
         const slider = control.querySelector('.light-bar');
@@ -1198,7 +1177,6 @@
         }
       });
       this.isPlaying = true;
-      document.getElementById('playButton').classList.add('playing');
     }
 
     pause() {
@@ -1206,7 +1184,6 @@
       this.pauseTime = this.audioContext.currentTime - this.startTime;
       Object.values(this.stems).forEach(stem => { if (stem.source) { stem.source.stop(); stem.source = null; } });
       this.isPlaying = false;
-      document.getElementById('playButton').classList.remove('playing');
     }
 
     stop() {
