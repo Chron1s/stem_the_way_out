@@ -573,6 +573,18 @@
       filter: brightness(1.2);
     }
 
+    /* Disable animations on touch/mobile to prevent auto-trigger */
+    @media (hover: none) and (pointer: coarse) {
+      #stemPlayerBtn:hover .choice-text,
+      #experienceBtn:hover .choice-text {
+        animation: none;
+        font-size: 18px;
+        letter-spacing: 1px;
+        text-shadow: none;
+        filter: brightness(1);
+      }
+    }
+
     @keyframes stemGlow {
       0% {
         transform: scale(1);
