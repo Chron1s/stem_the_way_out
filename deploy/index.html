@@ -696,7 +696,7 @@
       grid-column: 1 / 8;
       position: relative;
       overflow: hidden;
-      aspect-ratio: 3 / 4;
+      aspect-ratio: 1;
       background: #fff;
       padding: 12px;
       box-shadow: 
@@ -1177,6 +1177,79 @@
     .experience-header {
       display: none;
     }
+
+    /* Tracklist Section */
+    .tracklist-section {
+      grid-column: 1 / -1;
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 25px;
+      box-shadow: 2px 4px 12px rgba(0,0,0,0.08);
+      transform: rotate(-0.5deg);
+      transition: all 0.3s ease;
+    }
+
+    .tracklist-section:hover {
+      transform: rotate(0.5deg);
+      box-shadow: 3px 6px 18px rgba(0,0,0,0.12);
+    }
+
+    .tracklist-title {
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #000;
+      margin-bottom: 18px;
+      font-family: 'Space Mono', monospace;
+      border-bottom: 2px solid #f5f5f5;
+      padding-bottom: 12px;
+    }
+
+    .tracklist-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .track-item {
+      border-left: 3px solid #000;
+      padding-left: 12px;
+      line-height: 1.5;
+    }
+
+    .track-number {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #999;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .track-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #000;
+      margin-bottom: 4px;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .track-artist {
+      font-size: 10px;
+      color: #666;
+      margin-bottom: 6px;
+      font-family: 'Inter', sans-serif;
+      font-style: italic;
+    }
+
+    .track-description {
+      font-size: 9px;
+      color: #888;
+      line-height: 1.4;
+      font-family: 'Inter', sans-serif;
+    }
   </style>
 </head>
 <body>
@@ -1280,6 +1353,89 @@
         <a href="https://chronis.bandcamp.com" target="_blank" class="stream-btn">Bandcamp</a>
       </div>
       <div class="collage-subtitle">Listen on all platforms</div>
+      <div class="tracklist-section">
+        <div class="tracklist-title">Tracklist</div>
+        <div class="tracklist-container">
+          <div class="track-item">
+            <div class="track-number">01</div>
+            <div class="track-name">Script (Intro)</div>
+            <div class="track-artist">Elsa Fiona (violin), Kalisch (trumpet)</div>
+            <div class="track-description">Dreamlike ambient opening</div>
+          </div>
+          <div class="track-item">
+            <div class="track-number">02</div>
+            <div class="track-name">Neon</div>
+            <div class="track-artist">Elsa Fiona</div>
+            <div class="track-description">Cold, synthetic pulse</div>
+          </div>
+          <div class="track-item">
+            <div class="track-number">03</div>
+            <div class="track-name">Smoke Show</div>
+            <div class="track-artist">—</div>
+            <div class="track-description">Glitched rhythms, instability</div>
+          </div>
+          <div class="track-item">
+            <div class="track-number">04</div>
+            <div class="track-name">Godless Idols</div>
+            <div class="track-artist">August Falls</div>
+            <div class="track-description">Explosive resistance</div>
+          </div>
+          <div class="track-item">
+            <div class="track-number">05</div>
+            <div class="track-name">Printer Brain</div>
+            <div class="track-artist">Habib</div>
+            <div class="track-description">Overwriting mind metaphor</div>
+          </div>
+          <div class="track-item">
+            <div class="track-number">06</div>
+            <div class="track-name">Ash and Gold</div>
+            <div class="track-artist">—</div>
+            <div class="track-description">Raw, stripped–down imperfection</div>
+          </div>
+          <div class="track-item">
+            <div class="track-number">07</div>
+            <div class="track-name">Production Line</div>
+            <div class="track-artist">—</div>
+            <div class="track-description">Memory vs. chaos push-pull</div>
+          </div>
+          <div class="track-item">
+            <div class="track-number">08</div>
+            <div class="track-name">ByD3s1Gn</div>
+            <div class="track-artist">SKAM2?</div>
+            <div class="track-description">Cinematic breaking point</div>
+          </div>
+          <div class="track-item">
+            <div class="track-number">09</div>
+            <div class="track-name">You're Meant to Forget This</div>
+            <div class="track-artist">—</div>
+            <div class="track-description">Intense, warning–like interlude</div>
+          </div>
+          <div class="track-item">
+            <div class="track-number">10</div>
+            <div class="track-name">Broken Blueprints</div>
+            <div class="track-artist">—</div>
+            <div class="track-description">Ambient aftermath</div>
+          </div>
+          <div class="track-item">
+            <div class="track-number">11</div>
+            <div class="track-name">Blurred Lines (Interlude)</div>
+            <div class="track-artist">—</div>
+            <div class="track-description">Reflection & ambiguity</div>
+          </div>
+          <div class="track-item">
+            <div class="track-number">12</div>
+            <div class="track-name">Synthetic Dream</div>
+            <div class="track-artist">—</div>
+            <div class="track-description">Altered humanity search</div>
+          </div>
+          <div class="track-item">
+            <div class="track-number">13</div>
+            <div class="track-name">Glass Walls (Outro)</div>
+            <div class="track-artist">Pijus</div>
+            <div class="track-description">Looping final whisper</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
