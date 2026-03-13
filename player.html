@@ -54,8 +54,9 @@
     }
 
     .back-btn {
-      position: absolute;
-      left: 15px;
+      position: fixed;
+      top: 15px;
+      right: 15px;
       color: #555;
       font-size: 10px;
       letter-spacing: 1px;
@@ -67,6 +68,7 @@
       cursor: pointer;
       font-family: 'Space Mono', monospace;
       transition: all 0.2s ease;
+      z-index: 100;
     }
 
     .back-btn:hover {
@@ -686,7 +688,7 @@
   </div>
   <div class="skip-controls">
     <button class="skip-btn" id="skipBack" title="Back 10s">-10</button>
-    <button class="skip-btn" id="playControl" title="Play/Pause">PLAY</button>
+    <button class="skip-btn" id="playControl" title="Play/Pause">▶</button>
     <button class="skip-btn" id="skipForward" title="Forward 10s">+10</button>
   </div>
 </div>
@@ -1129,6 +1131,7 @@
     setupSkipControls() {
       document.getElementById('skipBack').addEventListener('click', () => this.seekTo(Math.max(0, this.getCurrentTime() - 10)));
       document.getElementById('skipForward').addEventListener('click', () => this.seekTo(Math.min(this.duration, this.getCurrentTime() + 10)));
+      document.getElementById('playControl').addEventListener('click', () => this.togglePlay());
     }
 
     getCurrentTime() {
