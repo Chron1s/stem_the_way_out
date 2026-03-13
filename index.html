@@ -619,7 +619,7 @@
       }
     }
 
-    /* EXPERIENCE ALBUM PAGE - A$AP ROCKY AESTHETIC */
+    /* EXPERIENCE ALBUM PAGE - Cinematic Blue Palette */
     #experiencePage {
       position: fixed;
       top: 0;
@@ -668,7 +668,7 @@
       position: relative;
       width: 100%;
       height: 100vh;
-      background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 50%, #1a0a2e 100%);
+      background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 50%, #0a1a2e 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -682,7 +682,7 @@
       right: -20%;
       width: 800px;
       height: 800px;
-      background: radial-gradient(circle, rgba(100, 50, 200, 0.15) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(52, 152, 219, 0.15) 0%, transparent 70%);
       border-radius: 50%;
       animation: floatSlow 20s ease-in-out infinite;
     }
@@ -694,7 +694,7 @@
       left: -10%;
       width: 600px;
       height: 600px;
-      background: radial-gradient(circle, rgba(50, 100, 150, 0.1) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(93, 173, 226, 0.1) 0%, transparent 70%);
       border-radius: 50%;
       animation: floatSlow 25s ease-in-out infinite reverse;
     }
@@ -722,26 +722,16 @@
       line-height: 0.9;
       color: #fff;
       text-shadow: 
-        0 0 20px rgba(100, 50, 200, 0.3),
-        0 0 60px rgba(100, 50, 200, 0.1);
+        0 0 20px rgba(52, 152, 219, 0.3),
+        0 0 60px rgba(52, 152, 219, 0.1);
       animation: heroFadeIn 1.2s ease-out 0.3s backwards;
       font-family: 'Space Mono', monospace;
     }
 
-    .hero-subtitle {
-      font-size: 18px;
-      font-weight: 300;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #aaa;
-      animation: heroFadeIn 1.2s ease-out 0.6s backwards;
-      font-family: 'Inter', sans-serif;
-    }
-
     .hero-divider {
       width: 120px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #666, transparent);
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #3498db, transparent);
       animation: heroFadeIn 1.2s ease-out 0.9s backwards;
     }
 
@@ -769,24 +759,113 @@
     .scroll-dot {
       width: 8px;
       height: 8px;
-      background: #fff;
+      background: #3498db;
       border-radius: 50%;
-      opacity: 0.5;
+      opacity: 0.6;
     }
 
     @keyframes scrollPulse {
-      0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.5; }
+      0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
       50% { transform: translateX(-50%) translateY(12px); opacity: 1; }
+    }
+
+    /* ===== STICKY CTA SECTION (moved up, always accessible) ===== */
+    .cta-section {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      background: linear-gradient(180deg, rgba(10, 10, 10, 0.95) 0%, rgba(26, 25, 46, 0.95) 100%);
+      backdrop-filter: blur(10px);
+      padding: 40px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+      z-index: 50;
+      border-bottom: 1px solid rgba(52, 152, 219, 0.2);
+    }
+
+    .cta-title {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+      color: #fff;
+      font-family: 'Space Mono', monospace;
+      white-space: nowrap;
+    }
+
+    .streaming-links {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .streaming-link {
+      position: relative;
+      padding: 12px 24px;
+      background: transparent;
+      border: 1px solid rgba(52, 152, 219, 0.5);
+      color: #3498db;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      font-family: 'Space Mono', monospace;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .streaming-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.4), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .streaming-link::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+
+    .streaming-link:hover {
+      border-color: rgba(52, 152, 219, 0.8);
+      color: #85c1e9;
+      text-shadow: 0 0 15px rgba(52, 152, 219, 0.6);
+      box-shadow: 
+        0 0 20px rgba(52, 152, 219, 0.2),
+        inset 0 0 15px rgba(52, 152, 219, 0.1);
+    }
+
+    .streaming-link:hover::before {
+      left: 100%;
+    }
+
+    .streaming-link:hover::after {
+      opacity: 1;
     }
 
     /* ===== TRACKLIST INTERACTIVE SECTION ===== */
     .tracklist-hero {
       position: relative;
       width: 100%;
-      min-height: 120vh;
+      min-height: auto;
       background: #0a0a0a;
       display: flex;
-      padding: 120px 0;
+      padding: 80px 0;
     }
 
     .tracklist-background {
@@ -795,7 +874,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(180deg, #0a0a0a 0%, #1a0a2e 50%, #0a0a0a 100%);
+      background: linear-gradient(180deg, #0a0a0a 0%, #0a1a2e 50%, #0a0a0a 100%);
       z-index: 0;
     }
 
@@ -809,12 +888,12 @@
     }
 
     .section-title {
-      font-size: 64px;
+      font-size: 56px;
       font-weight: 900;
       letter-spacing: -2px;
       text-transform: uppercase;
       color: #fff;
-      margin-bottom: 80px;
+      margin-bottom: 60px;
       position: relative;
       display: inline-block;
       font-family: 'Space Mono', monospace;
@@ -827,22 +906,22 @@
       left: 0;
       width: 100%;
       height: 3px;
-      background: linear-gradient(90deg, #b366ff 0%, #6633cc 50%, transparent 100%);
-      opacity: 0.6;
+      background: linear-gradient(90deg, #3498db 0%, #5dade2 50%, transparent 100%);
+      opacity: 0.8;
     }
 
     .tracks-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 40px;
+      gap: 30px;
       margin-bottom: 60px;
     }
 
     .track-card {
       position: relative;
-      padding: 40px;
-      background: linear-gradient(135deg, rgba(51, 51, 51, 0.4) 0%, rgba(30, 30, 30, 0.4) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 32px;
+      background: linear-gradient(135deg, rgba(52, 80, 100, 0.2) 0%, rgba(30, 50, 70, 0.2) 100%);
+      border: 1px solid rgba(52, 152, 219, 0.2);
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -857,15 +936,15 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.15), transparent);
       transition: left 0.6s ease;
     }
 
     .track-card:hover {
-      background: linear-gradient(135deg, rgba(80, 30, 150, 0.5) 0%, rgba(50, 20, 100, 0.5) 100%);
-      border-color: rgba(179, 102, 255, 0.4);
-      transform: translateY(-12px);
-      box-shadow: 0 20px 60px rgba(179, 102, 255, 0.2);
+      background: linear-gradient(135deg, rgba(52, 152, 219, 0.3) 0%, rgba(93, 173, 226, 0.2) 100%);
+      border-color: rgba(52, 152, 219, 0.5);
+      transform: translateY(-8px);
+      box-shadow: 0 15px 50px rgba(52, 152, 219, 0.2);
     }
 
     .track-card:hover::before {
@@ -873,67 +952,68 @@
     }
 
     .track-card-number {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 700;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: #999;
-      margin-bottom: 12px;
+      color: #5dade2;
+      margin-bottom: 10px;
       font-family: 'Space Mono', monospace;
     }
 
     .track-card-title {
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 900;
       text-transform: uppercase;
       color: #fff;
-      margin-bottom: 8px;
-      letter-spacing: -1px;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
       font-family: 'Space Mono', monospace;
     }
 
     .track-card-artist {
-      font-size: 13px;
+      font-size: 12px;
       color: #aaa;
       font-style: italic;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       font-family: 'Inter', sans-serif;
     }
 
     .track-card-description {
-      font-size: 14px;
-      line-height: 1.6;
+      font-size: 13px;
+      line-height: 1.5;
       color: #bbb;
       font-family: 'Inter', sans-serif;
     }
 
     .track-card-meta {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      font-size: 11px;
-      letter-spacing: 2px;
+      top: 16px;
+      right: 16px;
+      font-size: 10px;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      color: #666;
+      color: #3498db;
       font-family: 'Space Mono', monospace;
+      opacity: 0.7;
     }
 
     /* ===== VISUAL GALLERY SECTION ===== */
     .gallery-section {
       position: relative;
       width: 100%;
-      min-height: 150vh;
+      min-height: auto;
       background: #000;
-      padding: 120px 60px;
+      padding: 80px 60px;
     }
 
     .gallery-title {
-      font-size: 64px;
+      font-size: 56px;
       font-weight: 900;
       letter-spacing: -2px;
       text-transform: uppercase;
       color: #fff;
-      margin-bottom: 80px;
+      margin-bottom: 60px;
       font-family: 'Space Mono', monospace;
       position: relative;
       display: inline-block;
@@ -946,22 +1026,22 @@
       left: 0;
       width: 100%;
       height: 3px;
-      background: linear-gradient(90deg, #b366ff 0%, #6633cc 50%, transparent 100%);
-      opacity: 0.6;
+      background: linear-gradient(90deg, #3498db 0%, #5dade2 50%, transparent 100%);
+      opacity: 0.8;
     }
 
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 30px;
+      gap: 25px;
       margin-bottom: 60px;
     }
 
     .gallery-item {
       position: relative;
       aspect-ratio: 1;
-      background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: linear-gradient(135deg, #2a3a4a 0%, #1a2a3a 100%);
+      border: 1px solid rgba(52, 152, 219, 0.2);
       border-radius: 4px;
       overflow: hidden;
       cursor: pointer;
@@ -976,7 +1056,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(179, 102, 255, 0.2) 0%, transparent 100%);
+      background: linear-gradient(135deg, rgba(52, 152, 219, 0.2) 0%, transparent 100%);
       opacity: 0;
       transition: opacity 0.4s ease;
     }
@@ -990,10 +1070,10 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      padding: 20px;
-      background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.9));
-      color: #fff;
-      font-size: 13px;
+      padding: 16px;
+      background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.95));
+      color: #3498db;
+      font-size: 12px;
       letter-spacing: 1px;
       text-transform: uppercase;
       opacity: 0;
@@ -1010,9 +1090,8 @@
     .credits-section {
       position: relative;
       width: 100%;
-      min-height: 100vh;
-      background: linear-gradient(180deg, #0a0a0a 0%, #1a0a2e 100%);
-      padding: 120px 60px;
+      background: linear-gradient(180deg, #0a0a0a 0%, #0a1a2e 100%);
+      padding: 80px 60px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1021,121 +1100,36 @@
 
     .credits-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 80px;
-      max-width: 1200px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 60px;
+      max-width: 1400px;
       width: 100%;
-      margin-bottom: 80px;
+      margin-bottom: 40px;
     }
 
     .credits-column h3 {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 900;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
-      color: #b366ff;
-      margin-bottom: 30px;
+      color: #3498db;
+      margin-bottom: 20px;
       font-family: 'Space Mono', monospace;
+      border-bottom: 1px solid rgba(52, 152, 219, 0.3);
+      padding-bottom: 12px;
     }
 
     .credits-column p {
-      font-size: 14px;
+      font-size: 12px;
       color: #aaa;
-      line-height: 2;
+      line-height: 1.8;
       font-family: 'Inter', sans-serif;
+      margin-bottom: 8px;
     }
 
     .credits-column .credit-name {
-      color: #fff;
+      color: #3498db;
       font-weight: 600;
-    }
-
-    /* ===== CTA SECTION ===== */
-    .cta-section {
-      position: relative;
-      width: 100%;
-      height: 60vh;
-      background: linear-gradient(135deg, #1a0a2e 0%, #0a0a0a 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 60px;
-      padding: 80px 60px;
-    }
-
-    .cta-title {
-      font-size: 56px;
-      font-weight: 900;
-      letter-spacing: -2px;
-      text-transform: uppercase;
-      color: #fff;
-      text-align: center;
-      font-family: 'Space Mono', monospace;
-    }
-
-    .streaming-links {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .streaming-link {
-      position: relative;
-      padding: 16px 32px;
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: #fff;
-      text-decoration: none;
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      font-family: 'Space Mono', monospace;
-      overflow: hidden;
-      backdrop-filter: blur(10px);
-    }
-
-    .streaming-link::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(179, 102, 255, 0.5), transparent);
-      transition: left 0.6s ease;
-    }
-
-    .streaming-link::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(179, 102, 255, 0.2) 0%, transparent 100%);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      z-index: -1;
-    }
-
-    .streaming-link:hover {
-      border-color: rgba(179, 102, 255, 0.8);
-      color: #b366ff;
-      text-shadow: 0 0 20px rgba(179, 102, 255, 0.5);
-      box-shadow: 
-        0 0 20px rgba(179, 102, 255, 0.2),
-        inset 0 0 20px rgba(179, 102, 255, 0.1);
-    }
-
-    .streaming-link:hover::before {
-      left: 100%;
-    }
-
-    .streaming-link:hover::after {
-      opacity: 1;
     }
 
     /* ===== BACK BUTTON ===== */
@@ -1145,10 +1139,10 @@
       left: 40px;
       width: 50px;
       height: 50px;
-      background: rgba(179, 102, 255, 0.1);
-      border: 1px solid rgba(179, 102, 255, 0.4);
+      background: rgba(52, 152, 219, 0.1);
+      border: 1px solid rgba(52, 152, 219, 0.4);
       border-radius: 50%;
-      color: #b366ff;
+      color: #3498db;
       font-size: 24px;
       cursor: pointer;
       display: flex;
@@ -1161,9 +1155,9 @@
     }
 
     .experience-back:hover {
-      background: rgba(179, 102, 255, 0.2);
-      border-color: rgba(179, 102, 255, 0.8);
-      box-shadow: 0 0 20px rgba(179, 102, 255, 0.3);
+      background: rgba(52, 152, 219, 0.2);
+      border-color: rgba(52, 152, 219, 0.8);
+      box-shadow: 0 0 20px rgba(52, 152, 219, 0.3);
       transform: scale(1.1);
     }
 
@@ -1174,12 +1168,12 @@
       }
 
       .section-title {
-        font-size: 48px;
+        font-size: 44px;
       }
 
       .tracks-grid {
         grid-template-columns: 1fr;
-        gap: 30px;
+        gap: 25px;
       }
 
       .gallery-grid {
@@ -1191,8 +1185,17 @@
       }
 
       .credits-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
         gap: 40px;
+      }
+
+      .cta-section {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .streaming-links {
+        justify-content: center;
       }
     }
 
@@ -1201,27 +1204,22 @@
         font-size: 48px;
       }
 
-      .hero-subtitle {
-        font-size: 14px;
-      }
-
       .tracklist-content,
       .gallery-section,
-      .credits-section,
-      .cta-section {
-        padding: 60px 20px;
+      .credits-section {
+        padding: 40px 20px;
       }
 
       .section-title {
-        font-size: 36px;
+        font-size: 32px;
       }
 
       .track-card {
-        padding: 24px;
+        padding: 20px;
       }
 
       .track-card-title {
-        font-size: 20px;
+        font-size: 18px;
       }
 
       .gallery-grid {
@@ -1233,13 +1231,26 @@
         gap: 20px;
       }
 
+      .cta-section {
+        padding: 30px 15px;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .cta-title {
+        font-size: 24px;
+      }
+
       .streaming-links {
         flex-direction: column;
-        gap: 12px;
+        gap: 10px;
+        width: 100%;
       }
 
       .streaming-link {
         width: 100%;
+        padding: 10px 16px;
+        font-size: 10px;
       }
     }
 
@@ -1253,11 +1264,7 @@
       }
 
       .section-title {
-        font-size: 28px;
-      }
-
-      .cta-title {
-        font-size: 32px;
+        font-size: 24px;
       }
 
       .experience-back {
@@ -1265,6 +1272,14 @@
         height: 44px;
         top: 20px;
         left: 20px;
+        font-size: 20px;
+      }
+
+      .cta-section {
+        padding: 20px 12px;
+      }
+
+      .cta-title {
         font-size: 20px;
       }
     }
@@ -1344,11 +1359,22 @@
     <div class="hero-section">
       <div class="hero-content">
         <h1 class="hero-title">NO WAY OUT</h1>
-        <div class="hero-subtitle">A$AP Rocky Inspired Experience</div>
         <div class="hero-divider"></div>
       </div>
       <div class="scroll-indicator">
         <div class="scroll-dot"></div>
+      </div>
+    </div>
+
+    <!-- Sticky CTA Section (appears at top of scroll) -->
+    <div class="cta-section">
+      <h2 class="cta-title">Stream Now</h2>
+      <div class="streaming-links">
+        <a href="https://open.spotify.com/album/YOUR_ALBUM_ID" target="_blank" class="streaming-link">Spotify</a>
+        <a href="https://music.apple.com/album/YOUR_ALBUM_ID" target="_blank" class="streaming-link">Apple Music</a>
+        <a href="https://www.youtube.com/results?search_query=NO+WAY+OUT+CHRONIS" target="_blank" class="streaming-link">YouTube</a>
+        <a href="https://soundcloud.com/chronis" target="_blank" class="streaming-link">SoundCloud</a>
+        <a href="https://chronis.bandcamp.com" target="_blank" class="streaming-link">Bandcamp</a>
       </div>
     </div>
 
@@ -1483,26 +1509,27 @@
       <div class="credits-grid">
         <div class="credits-column">
           <h3>Production</h3>
-          <p><span class="credit-name">Producer:</span> John Doe</p>
-          <p><span class="credit-name">Engineer:</span> Jane Smith</p>
+          <p><span class="credit-name">Producer:</span> Chronis</p>
+          <p><span class="credit-name">Engineer:</span> Chronis</p>
         </div>
         <div class="credits-column">
-          <h3>Design</h3>
-          <p><span class="credit-name">Art Director:</span> Alex Johnson</p>
-          <p><span class="credit-name">Graphic Designer:</span> Emily Davis</p>
+          <h3>Featured Artists</h3>
+          <p><span class="credit-name">Elsa Fiona:</span> Violin, Trumpet</p>
+          <p><span class="credit-name">August Falls:</span> Vocals</p>
+          <p><span class="credit-name">Habib:</span> Vocals</p>
+          <p><span class="credit-name">Pijus:</span> Production</p>
         </div>
-      </div>
-    </div>
-
-    <!-- CTA Section -->
-    <div class="cta-section">
-      <h2 class="cta-title">Stream Now</h2>
-      <div class="streaming-links">
-        <a href="https://open.spotify.com/album/YOUR_ALBUM_ID" target="_blank" class="streaming-link">Spotify</a>
-        <a href="https://music.apple.com/album/YOUR_ALBUM_ID" target="_blank" class="streaming-link">Apple Music</a>
-        <a href="https://www.youtube.com/results?search_query=NO+WAY+OUT+CHRONIS" target="_blank" class="streaming-link">YouTube</a>
-        <a href="https://soundcloud.com/chronis" target="_blank" class="streaming-link">SoundCloud</a>
-        <a href="https://chronis.bandcamp.com" target="_blank" class="streaming-link">Bandcamp</a>
+        <div class="credits-column">
+          <h3>Contributions</h3>
+          <p><span class="credit-name">Kalisch:</span> Trumpet</p>
+          <p><span class="credit-name">SKAM2?:</span> Production</p>
+        </div>
+        <div class="credits-column">
+          <h3>Album Info</h3>
+          <p><span class="credit-name">Title:</span> NO WAY OUT</p>
+          <p><span class="credit-name">Label:</span> Chronis Studio</p>
+          <p><span class="credit-name">Released:</span> 2026</p>
+        </div>
       </div>
     </div>
   </div>
