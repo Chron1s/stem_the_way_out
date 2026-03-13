@@ -631,14 +631,14 @@
       }
     }
 
-    /* EXPERIENCE ALBUM PAGE - Cinematic Blue Palette */
+    /* EXPERIENCE ALBUM PAGE - Brutalist Gritty Margiela Aesthetic */
     #experiencePage {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100vh;
-      background: #0a0a0a;
+      background: #050505;
       display: none;
       z-index: 998;
       opacity: 0;
@@ -651,7 +651,7 @@
       opacity: 1;
     }
 
-    /* Film grain overlay */
+    /* Heavy gritty texture overlay - distressed paper */
     #experiencePage::before {
       content: '';
       position: fixed;
@@ -659,10 +659,34 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise"/><feColorMatrix in="noise" type="saturate" values="0.2"/></filter><rect width="100" height="100" fill="%23000" filter="url(%23grain)"/></svg>');
+      background-image: 
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="6" result="noise" seed="2"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R" yChannelSelector="G"/></filter></defs><rect width="200" height="200" fill="%23000" filter="url(%23noise)"/></svg>'),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><rect width="300" height="300" fill="%23050505" opacity="0.3"/><circle cx="50" cy="50" r="2" fill="%23222" opacity="0.4"/><circle cx="150" cy="120" r="1.5" fill="%23333" opacity="0.3"/><circle cx="250" cy="80" r="2.5" fill="%23111" opacity="0.35"/></svg>');
+      background-size: 200px 200px, 300px 300px;
+      background-position: 0 0, 20px 30px;
       pointer-events: none;
       z-index: 1000;
-      opacity: 0.08;
+      opacity: 0.4;
+      mix-blend-mode: multiply;
+    }
+
+    /* Scan lines for industrial feel */
+    #experiencePage::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
+      z-index: 999;
     }
 
     .experience-wrapper {
@@ -675,45 +699,54 @@
       scroll-behavior: smooth;
     }
 
-    /* ===== HERO SECTION ===== */
+    /* ===== HERO SECTION - Raw & Unpolished ===== */
     .hero-section {
       position: relative;
       width: 100%;
       height: 100vh;
-      background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 50%, #0a1a2e 100%);
+      background: #050505;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .hero-section::before {
       content: '';
       position: absolute;
-      top: -50%;
-      right: -20%;
-      width: 800px;
-      height: 800px;
-      background: radial-gradient(circle, rgba(52, 152, 219, 0.15) 0%, transparent 70%);
-      border-radius: 50%;
-      animation: floatSlow 20s ease-in-out infinite;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 2px,
+          rgba(255, 255, 255, 0.02) 2px,
+          rgba(255, 255, 255, 0.02) 4px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.1) 2px,
+          rgba(0, 0, 0, 0.1) 4px
+        );
+      pointer-events: none;
+      z-index: 1;
     }
 
     .hero-section::after {
       content: '';
       position: absolute;
-      bottom: -30%;
-      left: -10%;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(93, 173, 226, 0.1) 0%, transparent 70%);
-      border-radius: 50%;
-      animation: floatSlow 25s ease-in-out infinite reverse;
-    }
-
-    @keyframes floatSlow {
-      0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(50px, 80px); }
+      top: 0;
+      right: 0;
+      width: 1px;
+      height: 100%;
+      background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      z-index: 2;
     }
 
     .hero-content {
@@ -723,28 +756,31 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 40px;
+      gap: 30px;
     }
 
     .hero-title {
       font-size: 120px;
       font-weight: 900;
-      letter-spacing: -4px;
+      letter-spacing: -2px;
       text-transform: uppercase;
-      line-height: 0.9;
+      line-height: 0.85;
       color: #fff;
       text-shadow: 
-        0 0 20px rgba(52, 152, 219, 0.3),
-        0 0 60px rgba(52, 152, 219, 0.1);
+        -1px -1px 0px rgba(0, 0, 0, 0.5),
+        2px 2px 0px rgba(0, 0, 0, 0.2);
       animation: heroFadeIn 1.2s ease-out 0.3s backwards;
       font-family: 'Space Mono', monospace;
+      font-style: italic;
+      letter-spacing: -3px;
     }
 
     .hero-divider {
-      width: 120px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #3498db, transparent);
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #666, #999, #666, transparent);
       animation: heroFadeIn 1.2s ease-out 0.9s backwards;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
     }
 
     @keyframes heroFadeIn {
@@ -769,115 +805,123 @@
     }
 
     .scroll-dot {
-      width: 8px;
-      height: 8px;
-      background: #3498db;
+      width: 6px;
+      height: 6px;
+      background: #888;
+      border: 1px solid #555;
       border-radius: 50%;
       opacity: 0.6;
     }
 
     @keyframes scrollPulse {
-      0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
-      50% { transform: translateX(-50%) translateY(12px); opacity: 1; }
+      0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.4; }
+      50% { transform: translateX(-50%) translateY(12px); opacity: 0.8; }
     }
 
-    /* ===== STICKY CTA SECTION (moved up, always accessible) ===== */
+    /* ===== STICKY CTA SECTION - Raw Brutalist ===== */
     .cta-section {
       position: sticky;
       top: 0;
       width: 100%;
-      background: linear-gradient(180deg, rgba(10, 10, 10, 0.95) 0%, rgba(26, 25, 46, 0.95) 100%);
-      backdrop-filter: blur(10px);
-      padding: 40px 60px;
+      background: #0a0a0a;
+      backdrop-filter: none;
+      padding: 30px 40px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 40px;
+      gap: 30px;
       z-index: 50;
-      border-bottom: 1px solid rgba(52, 152, 219, 0.2);
+      border-bottom: 2px solid #222;
+      border-top: 1px solid #1a1a1a;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 4px,
+        rgba(255, 255, 255, 0.01) 4px,
+        rgba(255, 255, 255, 0.01) 8px
+      );
+      pointer-events: none;
+      z-index: 1;
     }
 
     .cta-title {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 900;
-      letter-spacing: -1px;
+      letter-spacing: 0px;
       text-transform: uppercase;
       color: #fff;
       font-family: 'Space Mono', monospace;
       white-space: nowrap;
+      position: relative;
+      z-index: 2;
+      font-style: italic;
     }
 
     .streaming-links {
       display: flex;
-      gap: 15px;
+      gap: 12px;
       flex-wrap: wrap;
       align-items: center;
+      position: relative;
+      z-index: 2;
     }
 
     .streaming-link {
       position: relative;
-      padding: 12px 24px;
+      padding: 10px 18px;
       background: transparent;
-      border: 1px solid rgba(52, 152, 219, 0.5);
-      color: #3498db;
+      border: 1px solid #555;
+      color: #999;
       text-decoration: none;
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 1.5px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
       text-transform: uppercase;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.2s ease;
       font-family: 'Space Mono', monospace;
       overflow: hidden;
-      backdrop-filter: blur(10px);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5);
     }
 
     .streaming-link::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.4), transparent);
-      transition: left 0.5s ease;
-    }
-
-    .streaming-link::after {
-      content: '';
-      position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, transparent 100%);
+      background: #1a1a1a;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.2s ease;
       z-index: -1;
     }
 
     .streaming-link:hover {
-      border-color: rgba(52, 152, 219, 0.8);
-      color: #85c1e9;
-      text-shadow: 0 0 15px rgba(52, 152, 219, 0.6);
+      border-color: #fff;
+      color: #fff;
       box-shadow: 
-        0 0 20px rgba(52, 152, 219, 0.2),
-        inset 0 0 15px rgba(52, 152, 219, 0.1);
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+        0 0 0 1px #555;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
     }
 
     .streaming-link:hover::before {
-      left: 100%;
-    }
-
-    .streaming-link:hover::after {
       opacity: 1;
     }
 
-    /* ===== TRACKLIST INTERACTIVE SECTION ===== */
+    /* ===== TRACKLIST SECTION - Distressed Layout ===== */
     .tracklist-hero {
       position: relative;
       width: 100%;
       min-height: auto;
-      background: #0a0a0a;
+      background: #050505;
       display: flex;
-      padding: 80px 0;
+      padding: 60px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .tracklist-background {
@@ -886,291 +930,238 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(180deg, #0a0a0a 0%, #0a1a2e 50%, #0a0a0a 100%);
+      background: 
+        repeating-linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.3),
+          rgba(0, 0, 0, 0.3) 1px,
+          transparent 1px,
+          transparent 3px
+        );
       z-index: 0;
+      opacity: 0.3;
     }
 
     .tracklist-content {
       position: relative;
       z-index: 10;
       width: 100%;
-      max-width: 1400px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 0 60px;
+      padding: 0 50px;
     }
 
     .section-title {
-      font-size: 56px;
+      font-size: 52px;
       font-weight: 900;
-      letter-spacing: -2px;
+      letter-spacing: -1px;
       text-transform: uppercase;
       color: #fff;
-      margin-bottom: 60px;
+      margin-bottom: 50px;
       position: relative;
       display: inline-block;
       font-family: 'Space Mono', monospace;
+      font-style: italic;
     }
 
     .section-title::before {
       content: '';
       position: absolute;
-      bottom: -15px;
+      bottom: -10px;
       left: 0;
-      width: 100%;
-      height: 3px;
-      background: linear-gradient(90deg, #3498db 0%, #5dade2 50%, transparent 100%);
-      opacity: 0.8;
+      width: 80px;
+      height: 1px;
+      background: #666;
+      opacity: 0.6;
     }
 
     .tracks-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-      margin-bottom: 60px;
+      grid-template-columns: 1fr;
+      gap: 0;
+      margin-bottom: 40px;
     }
 
     .track-card {
       position: relative;
-      padding: 32px;
-      background: linear-gradient(135deg, rgba(52, 80, 100, 0.2) 0%, rgba(30, 50, 70, 0.2) 100%);
-      border: 1px solid rgba(52, 152, 219, 0.2);
-      border-radius: 8px;
+      padding: 20px 30px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-left: 3px solid #444;
       cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      overflow: hidden;
-      backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
+      overflow: visible;
     }
 
     .track-card::before {
       content: '';
       position: absolute;
+      left: 0;
       top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.15), transparent);
-      transition: left 0.6s ease;
+      bottom: 0;
+      width: 3px;
+      background: #666;
+      opacity: 0;
+      transition: all 0.2s ease;
     }
 
     .track-card:hover {
-      background: linear-gradient(135deg, rgba(52, 152, 219, 0.3) 0%, rgba(93, 173, 226, 0.2) 100%);
-      border-color: rgba(52, 152, 219, 0.5);
-      transform: translateY(-8px);
-      box-shadow: 0 15px 50px rgba(52, 152, 219, 0.2);
+      background: rgba(255, 255, 255, 0.02);
+      border-left-color: #999;
+      padding-left: 40px;
     }
 
     .track-card:hover::before {
-      left: 100%;
+      opacity: 1;
+      width: 5px;
     }
 
     .track-card-number {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: #5dade2;
-      margin-bottom: 10px;
+      color: #666;
+      margin-bottom: 6px;
       font-family: 'Space Mono', monospace;
     }
 
     .track-card-title {
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 900;
       text-transform: uppercase;
       color: #fff;
-      margin-bottom: 6px;
-      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+      letter-spacing: 0px;
       font-family: 'Space Mono', monospace;
     }
 
     .track-card-artist {
-      font-size: 12px;
-      color: #aaa;
-      font-style: italic;
-      margin-bottom: 12px;
+      font-size: 11px;
+      color: #888;
+      font-style: normal;
+      margin-bottom: 0;
       font-family: 'Inter', sans-serif;
+      letter-spacing: 0.5px;
     }
 
     .track-card-description {
-      font-size: 13px;
-      line-height: 1.5;
-      color: #bbb;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #777;
       font-family: 'Inter', sans-serif;
+      display: none;
     }
 
     .track-card-meta {
       position: absolute;
-      top: 16px;
-      right: 16px;
+      top: 20px;
+      right: 30px;
       font-size: 10px;
       letter-spacing: 1px;
       text-transform: uppercase;
-      color: #3498db;
+      color: #555;
       font-family: 'Space Mono', monospace;
-      opacity: 0.7;
+      opacity: 0.6;
     }
 
-    /* ===== VISUAL GALLERY SECTION ===== */
-    .gallery-section {
-      position: relative;
-      width: 100%;
-      min-height: auto;
-      background: #000;
-      padding: 80px 60px;
-    }
-
-    .gallery-title {
-      font-size: 56px;
-      font-weight: 900;
-      letter-spacing: -2px;
-      text-transform: uppercase;
-      color: #fff;
-      margin-bottom: 60px;
-      font-family: 'Space Mono', monospace;
-      position: relative;
-      display: inline-block;
-    }
-
-    .gallery-title::before {
-      content: '';
-      position: absolute;
-      bottom: -15px;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: linear-gradient(90deg, #3498db 0%, #5dade2 50%, transparent 100%);
-      opacity: 0.8;
-    }
-
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 25px;
-      margin-bottom: 60px;
-    }
-
-    .gallery-item {
-      position: relative;
-      aspect-ratio: 1;
-      background: linear-gradient(135deg, #2a3a4a 0%, #1a2a3a 100%);
-      border: 1px solid rgba(52, 152, 219, 0.2);
-      border-radius: 4px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 0.5s ease;
-    }
-
-    .gallery-item:nth-child(2) {
-      grid-row: 1 / 3;
-    }
-
-    .gallery-item::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(52, 152, 219, 0.2) 0%, transparent 100%);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-
-    .gallery-item:hover::before {
-      opacity: 1;
-    }
-
-    .gallery-label {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.95));
-      color: #3498db;
-      font-size: 12px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      font-family: 'Space Mono', monospace;
-      font-weight: 700;
-    }
-
-    .gallery-item:hover .gallery-label {
-      opacity: 1;
-    }
-
-    /* ===== CREDITS SECTION ===== */
+    /* ===== CREDITS SECTION - Minimal Brutalism ===== */
     .credits-section {
       position: relative;
       width: 100%;
-      background: linear-gradient(180deg, #0a0a0a 0%, #0a1a2e 100%);
-      padding: 80px 60px;
+      background: #050505;
+      padding: 60px 50px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      align-items: flex-start;
+      justify-content: flex-start;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .credits-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: 
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 40px,
+          rgba(255, 255, 255, 0.01) 40px,
+          rgba(255, 255, 255, 0.01) 80px
+        );
+      pointer-events: none;
+      z-index: 1;
     }
 
     .credits-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 60px;
-      max-width: 1400px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 80px;
+      max-width: 1200px;
       width: 100%;
       margin-bottom: 40px;
+      position: relative;
+      z-index: 2;
     }
 
     .credits-column h3 {
-      font-size: 16px;
+      font-size: 13px;
       font-weight: 900;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      color: #3498db;
-      margin-bottom: 20px;
+      color: #999;
+      margin-bottom: 16px;
       font-family: 'Space Mono', monospace;
-      border-bottom: 1px solid rgba(52, 152, 219, 0.3);
-      padding-bottom: 12px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 8px;
     }
 
     .credits-column p {
-      font-size: 12px;
-      color: #aaa;
+      font-size: 11px;
+      color: #777;
       line-height: 1.8;
       font-family: 'Inter', sans-serif;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
     }
 
     .credits-column .credit-name {
-      color: #3498db;
+      color: #999;
       font-weight: 600;
     }
 
-    /* ===== BACK BUTTON ===== */
+    /* ===== BACK BUTTON - Industrial ===== */
     .experience-back {
       position: fixed;
-      top: 40px;
-      left: 40px;
-      width: 50px;
-      height: 50px;
-      background: rgba(52, 152, 219, 0.1);
-      border: 1px solid rgba(52, 152, 219, 0.4);
-      border-radius: 50%;
-      color: #3498db;
-      font-size: 24px;
+      top: 30px;
+      left: 30px;
+      width: 48px;
+      height: 48px;
+      background: #0a0a0a;
+      border: 2px solid #444;
+      border-radius: 0;
+      color: #888;
+      font-size: 22px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       font-family: 'Space Mono', monospace;
       z-index: 100;
-      backdrop-filter: blur(10px);
+      backdrop-filter: none;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5);
     }
 
     .experience-back:hover {
-      background: rgba(52, 152, 219, 0.2);
-      border-color: rgba(52, 152, 219, 0.8);
-      box-shadow: 0 0 20px rgba(52, 152, 219, 0.3);
-      transform: scale(1.1);
+      background: #1a1a1a;
+      border-color: #666;
+      color: #fff;
+      box-shadow: 
+        inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+        0 0 0 1px #333;
     }
 
     /* ===== RESPONSIVE ===== */
@@ -1180,89 +1171,83 @@
       }
 
       .section-title {
-        font-size: 44px;
-      }
-
-      .tracks-grid {
-        grid-template-columns: 1fr;
-        gap: 25px;
-      }
-
-      .gallery-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .gallery-item:nth-child(2) {
-        grid-row: auto;
+        font-size: 40px;
       }
 
       .credits-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
         gap: 40px;
       }
 
       .cta-section {
         flex-direction: column;
         text-align: center;
+        gap: 20px;
       }
 
       .streaming-links {
         justify-content: center;
+        width: 100%;
+      }
+
+      .streaming-link {
+        flex: 1;
+        min-width: 100px;
       }
     }
 
     @media (max-width: 768px) {
       .hero-title {
         font-size: 48px;
+        letter-spacing: -2px;
       }
 
       .tracklist-content,
-      .gallery-section,
       .credits-section {
-        padding: 40px 20px;
+        padding: 30px 20px;
       }
 
       .section-title {
-        font-size: 32px;
+        font-size: 28px;
       }
 
       .track-card {
-        padding: 20px;
+        padding: 16px 20px;
       }
 
       .track-card-title {
-        font-size: 18px;
+        font-size: 16px;
       }
 
-      .gallery-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .credits-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
+      .track-card-meta {
+        top: 16px;
+        right: 20px;
+        font-size: 9px;
       }
 
       .cta-section {
-        padding: 30px 15px;
-        flex-direction: column;
-        gap: 20px;
+        padding: 20px 15px;
       }
 
       .cta-title {
-        font-size: 24px;
+        font-size: 22px;
       }
 
       .streaming-links {
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
         width: 100%;
       }
 
       .streaming-link {
         width: 100%;
-        padding: 10px 16px;
-        font-size: 10px;
+        padding: 8px 12px;
+        font-size: 9px;
+      }
+
+      .credits-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
       }
     }
 
@@ -1276,23 +1261,36 @@
       }
 
       .section-title {
-        font-size: 24px;
+        font-size: 20px;
       }
 
       .experience-back {
         width: 44px;
         height: 44px;
-        top: 20px;
-        left: 20px;
-        font-size: 20px;
+        top: 16px;
+        left: 16px;
+        font-size: 18px;
       }
 
       .cta-section {
-        padding: 20px 12px;
+        padding: 16px 10px;
+        gap: 12px;
       }
 
       .cta-title {
-        font-size: 20px;
+        font-size: 18px;
+      }
+
+      .tracklist-content {
+        padding: 20px 15px;
+      }
+
+      .track-card {
+        padding: 14px 12px;
+      }
+
+      .track-card-title {
+        font-size: 14px;
       }
     }
   </style>
@@ -1487,31 +1485,6 @@
             <div class="track-card-description">Looping final whisper</div>
             <div class="track-card-meta">3:40</div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Visual Gallery Section -->
-    <div class="gallery-section">
-      <h2 class="gallery-title">Visual Gallery</h2>
-      <div class="gallery-grid">
-        <div class="gallery-item">
-          <div class="gallery-label">Image 1</div>
-        </div>
-        <div class="gallery-item">
-          <div class="gallery-label">Image 2</div>
-        </div>
-        <div class="gallery-item">
-          <div class="gallery-label">Image 3</div>
-        </div>
-        <div class="gallery-item">
-          <div class="gallery-label">Image 4</div>
-        </div>
-        <div class="gallery-item">
-          <div class="gallery-label">Image 5</div>
-        </div>
-        <div class="gallery-item">
-          <div class="gallery-label">Image 6</div>
         </div>
       </div>
     </div>
