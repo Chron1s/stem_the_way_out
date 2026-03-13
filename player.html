@@ -700,7 +700,7 @@
   </div>
   <div class="skip-controls">
     <button class="skip-btn" id="skipBack" title="Back 10s">-10</button>
-    <button class="skip-btn" id="playButton" title="Play/Pause">PLAY</button>
+    <button class="skip-btn" id="playControl" title="Play/Pause">PLAY</button>
     <button class="skip-btn" id="skipForward" title="Forward 10s">+10</button>
   </div>
 </div>
@@ -1067,10 +1067,6 @@
         slider.addEventListener('touchmove', (e) => { if (isDragging) { dragStarted = true; handleMove(e.touches[0].clientX, e.touches[0].clientY); } }, { passive: false });
         slider.addEventListener('touchend', () => { if (isDragging && !dragStarted) soloStem(); isDragging = false; });
       });
-
-      // Setup track navigation buttons
-      document.getElementById('prevTrack').addEventListener('click', () => goToTrack(-1));
-      document.getElementById('nextTrack').addEventListener('click', () => goToTrack(1));
 
       // Keyboard shortcuts
       document.addEventListener('keydown', (e) => {
