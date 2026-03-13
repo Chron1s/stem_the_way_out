@@ -1204,6 +1204,8 @@
       this.progressFill.style.width = '0%';
       this.progressScrubber.style.left = '0%';
       this.currentTimeEl.textContent = '0:00';
+      // Loop back to beginning and play
+      this.play();
     }
 
     updateProgress() {
