@@ -1,642 +1,826 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>SIGNAL - Player</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NO WAY OUT PLAYER</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NO WAY OUT">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23000' width='100' height='100' rx='20'/><circle cx='50' cy='50' r='35' fill='none' stroke='%23fff' stroke-width='4'/><circle cx='50' cy='50' r='12' fill='%23fff'/></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23000' width='180' height='180'/><circle cx='90' cy='90' r='60' fill='none' stroke='%23fff' stroke-width='6'/><circle cx='90' cy='90' r='20' fill='%23fff'/></svg>">
   <style>
     * {
       box-sizing: border-box;
       user-select: none;
       -webkit-user-select: none;
       -webkit-tap-highlight-color: transparent;
+      margin: 0;
+      padding: 0;
     }
 
-    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&display=swap');
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
 
     body {
-      background: #0a0a0a;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f3460 100%);
       color: #fff;
       font-family: 'Space Mono', monospace;
       margin: 0;
       padding: 0;
       min-height: 100vh;
+      min-height: -webkit-fill-available;
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
+      align-items: stretch;
+      justify-content: flex-start;
+      overflow: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 0, 127, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0, 255, 200, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 1;
     }
 
     /* Header */
     .header {
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 15px 20px;
-      border-bottom: 1px solid #1a1a1a;
+      border-bottom: 2px solid rgba(255, 0, 127, 0.3);
+      position: relative;
+      flex-shrink: 0;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
     }
 
     .back-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #555;
-      text-decoration: none;
-      font-size: 11px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      transition: color 0.2s ease;
-      padding: 8px 12px;
-      border: 1px solid #222;
-      border-radius: 20px;
-      background: transparent;
+      width: 45px;
+      height: 45px;
+      color: #ff007f;
+      font-size: 24px;
+      border: 2px solid #ff007f;
+      border-radius: 8px;
+      background: rgba(255, 0, 127, 0.1);
       cursor: pointer;
       font-family: 'Space Mono', monospace;
+      transition: all 0.3s ease;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
     }
 
     .back-btn:hover {
-      color: #fff;
-      border-color: #444;
+      background: rgba(255, 0, 127, 0.3);
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(255, 0, 127, 0.5);
     }
 
     .track-title {
-      font-size: 12px;
+      font-size: 16px;
       font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-align: center;
+      flex: 1;
+      background: linear-gradient(90deg, #ff007f, #00ffc8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-family: 'Bebas Neue', cursive;
+    }
+
+    .fullscreen-btn {
+      color: #00ffc8;
+      font-size: 11px;
       letter-spacing: 2px;
       text-transform: uppercase;
+      padding: 8px 14px;
+      border: 2px solid #00ffc8;
+      border-radius: 6px;
+      background: rgba(0, 255, 200, 0.1);
+      cursor: pointer;
+      font-family: 'Space Mono', monospace;
+      transition: all 0.3s ease;
+      font-weight: 700;
     }
 
-    .header-spacer {
-      flex: 1;
+    .fullscreen-btn:hover {
+      background: rgba(0, 255, 200, 0.3);
+      box-shadow: 0 0 20px rgba(0, 255, 200, 0.5);
+      transform: scale(1.05);
     }
 
-    /* Main Player Area */
+    /* Main Player Area - Collage Grid */
     .player-container {
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 15px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      grid-auto-rows: 120px;
+      gap: 12px;
+      padding: 20px;
+      overflow-y: auto;
+      align-content: center;
+      justify-items: center;
+      z-index: 5;
     }
 
-    /* Stem Control Grid - Cross Pattern */
+    /* Stem Control Grid - asymmetrical collage layout */
     .stem-grid {
       display: grid;
-      grid-template-columns: auto 70px auto;
-      grid-template-rows: auto 70px auto;
-      gap: 6px;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(4, 140px);
+      gap: 16px;
       align-items: center;
       justify-items: center;
+      width: 100%;
+      height: 100%;
+      padding: 20px;
+      perspective: 1000px;
     }
 
-    /* Individual Stem Controllers */
     .stem-control {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      gap: 12px;
+      padding: 20px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stem-control::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+      pointer-events: none;
     }
 
     .stem-control.horizontal {
       flex-direction: row;
-      gap: 8px;
+      gap: 16px;
     }
 
-    .stem-control.top { grid-column: 2; grid-row: 1; }
-    .stem-control.left { grid-column: 1; grid-row: 2; justify-self: end; }
-    .stem-control.center { grid-column: 2; grid-row: 2; }
-    .stem-control.right { grid-column: 3; grid-row: 2; justify-self: start; }
-    .stem-control.bottom { grid-column: 2; grid-row: 3; }
+    .stem-control.top { 
+      grid-column: 2 / 3; 
+      grid-row: 1 / 2;
+    }
+
+    .stem-control.left { 
+      grid-column: 1 / 2; 
+      grid-row: 2 / 3;
+    }
+
+    .stem-control.center { 
+      grid-column: 2 / 4; 
+      grid-row: 2 / 4;
+      display: flex;
+      z-index: 20;
+    }
+
+    .stem-control.right { 
+      grid-column: 4 / 5; 
+      grid-row: 2 / 3;
+    }
+
+    .stem-control.bottom { 
+      grid-column: 3 / 4; 
+      grid-row: 4 / 5;
+    }
+
+    /* Color schemes for each stem */
+    .stem-control[data-stem="vocals"] {
+      background: rgba(255, 0, 127, 0.15);
+      border-color: #ff007f;
+      box-shadow: 0 8px 32px rgba(255, 0, 127, 0.2);
+    }
+
+    .stem-control[data-stem="vocals"]:hover {
+      background: rgba(255, 0, 127, 0.25);
+      box-shadow: 0 12px 40px rgba(255, 0, 127, 0.4);
+      transform: translateY(-5px);
+    }
+
+    .stem-control[data-stem="drums"] {
+      background: rgba(255, 193, 7, 0.15);
+      border-color: #ffc107;
+      box-shadow: 0 8px 32px rgba(255, 193, 7, 0.2);
+    }
+
+    .stem-control[data-stem="drums"]:hover {
+      background: rgba(255, 193, 7, 0.25);
+      box-shadow: 0 12px 40px rgba(255, 193, 7, 0.4);
+      transform: translateY(-5px);
+    }
+
+    .stem-control[data-stem="bass"] {
+      background: rgba(0, 255, 200, 0.15);
+      border-color: #00ffc8;
+      box-shadow: 0 8px 32px rgba(0, 255, 200, 0.2);
+    }
+
+    .stem-control[data-stem="bass"]:hover {
+      background: rgba(0, 255, 200, 0.25);
+      box-shadow: 0 12px 40px rgba(0, 255, 200, 0.4);
+      transform: translateY(-5px);
+    }
+
+    .stem-control[data-stem="other"] {
+      background: rgba(138, 43, 226, 0.15);
+      border-color: #8a2be2;
+      box-shadow: 0 8px 32px rgba(138, 43, 226, 0.2);
+    }
+
+    .stem-control[data-stem="other"]:hover {
+      background: rgba(138, 43, 226, 0.25);
+      box-shadow: 0 12px 40px rgba(138, 43, 226, 0.4);
+      transform: translateY(-5px);
+    }
 
     .stem-label {
-      font-size: 11px;
-      letter-spacing: 3px;
+      font-size: 13px;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      color: #555;
-      transition: color 0.2s ease;
-    }
-
-    .stem-control:hover .stem-label {
       color: #fff;
+      font-weight: 700;
+      font-family: 'Bebas Neue', cursive;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     }
 
-    /* Futuristic Light Bar Slider - No frame, just LEDs */
+    /* Light Bar Slider */
     .light-bar {
       display: flex;
-      gap: 6px;
-      padding: 0;
-      background: transparent;
-      border-radius: 0;
-      box-shadow: none;
-      border: none;
-      position: relative;
+      gap: 7px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
       cursor: pointer;
       touch-action: none;
+      border: none;
+      outline: none;
+      backdrop-filter: blur(5px);
     }
 
     .light-bar.horizontal {
-      width: auto;
-      height: auto;
+      width: 100px;
+      height: 40px;
       flex-direction: row;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      padding: 8px;
+      padding: 8px 12px;
     }
 
-    /* Left slider (Other) - fills from right to left (inside to outside) */
     .stem-control.left .light-bar.horizontal {
       flex-direction: row-reverse;
     }
 
     .light-bar.vertical {
-      width: auto;
-      height: auto;
+      width: 40px;
+      height: 100px;
       flex-direction: column-reverse;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      padding: 8px;
+      padding: 12px 8px;
     }
 
-    /* Bottom slider (Bass) - fills from top to bottom (inside to outside) */
     .stem-control.bottom .light-bar.vertical {
       flex-direction: column;
     }
 
+    /* LED Orbs - vibrant and dynamic */
     .led-segment {
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
-      background: #1a1a1a;
-      transition: all 0.08s ease-out;
-      position: relative;
-      opacity: 0.4;
+      background: radial-gradient(circle at 30% 30%, #333 0%, #111 60%, #000 100%);
+      flex-shrink: 0;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      outline: none;
+      transition: all 0.1s ease;
     }
 
     .led-segment.active {
       opacity: 1;
     }
 
-    /* Stem-specific LED colors - Dark blue shades */
     .stem-control[data-stem="drums"] .led-segment.active {
-      background: radial-gradient(circle at 30% 30%, #5dade2, #2e86de 40%, #1a5276);
-      box-shadow: 
-        0 0 8px #2e86de,
-        0 0 16px rgba(46, 134, 222, 0.6),
-        0 0 24px rgba(46, 134, 222, 0.3),
-        inset 0 1px 2px rgba(255,255,255,0.4);
+      background: radial-gradient(circle at 35% 35%, #ffed4e 0%, #ffc107 40%, #ff8f00 100%);
+      box-shadow: 0 0 15px rgba(255, 193, 7, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3);
     }
 
     .stem-control[data-stem="bass"] .led-segment.active {
-      background: radial-gradient(circle at 30% 30%, #3498db, #1a5276 40%, #0d2840);
-      box-shadow: 
-        0 0 8px #1a5276,
-        0 0 16px rgba(26, 82, 118, 0.6),
-        0 0 24px rgba(26, 82, 118, 0.3),
-        inset 0 1px 2px rgba(255,255,255,0.4);
+      background: radial-gradient(circle at 35% 35%, #40ffff 0%, #00ffc8 40%, #00d9a3 100%);
+      box-shadow: 0 0 15px rgba(0, 255, 200, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3);
     }
 
     .stem-control[data-stem="other"] .led-segment.active {
-      background: radial-gradient(circle at 30% 30%, #85c1e9, #5dade2 40%, #2874a6);
-      box-shadow: 
-        0 0 8px #5dade2,
-        0 0 16px rgba(93, 173, 226, 0.6),
-        0 0 24px rgba(93, 173, 226, 0.3),
-        inset 0 1px 2px rgba(255,255,255,0.4);
+      background: radial-gradient(circle at 35% 35%, #d946ef 0%, #8a2be2 40%, #5a0bb5 100%);
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3);
     }
 
     .stem-control[data-stem="vocals"] .led-segment.active {
-      background: radial-gradient(circle at 30% 30%, #aed6f1, #85c1e9 40%, #3498db);
-      box-shadow: 
-        0 0 8px #85c1e9,
-        0 0 16px rgba(133, 193, 233, 0.6),
-        0 0 24px rgba(133, 193, 233, 0.3),
-        inset 0 1px 2px rgba(255,255,255,0.4);
+      background: radial-gradient(circle at 35% 35%, #ff66b2 0%, #ff007f 40%, #d61a6b 100%);
+      box-shadow: 0 0 15px rgba(255, 0, 127, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3);
     }
 
-    /* Hover glow effect on slider */
-    .light-bar:hover {
-      border-color: transparent;
-    }
-
-    .stem-control[data-stem="drums"] .light-bar:hover {
-      box-shadow: none;
-    }
-    .stem-control[data-stem="bass"] .light-bar:hover {
-      box-shadow: none;
-    }
-    .stem-control[data-stem="other"] .light-bar:hover {
-      box-shadow: none;
-    }
-    .stem-control[data-stem="vocals"] .light-bar:hover {
-      box-shadow: none;
-    }
-
-    /* Center Play Button - Smaller */
-    .play-button {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: transparent;
-      border: 2px solid #333;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-    }
-
-    .play-button:hover {
-      border-color: #fff;
-      transform: scale(1.05);
-    }
-
-    .play-button:active {
-      transform: scale(0.95);
-    }
-
-    .play-icon {
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 8px 0 8px 14px;
-      border-color: transparent transparent transparent #fff;
-      margin-left: 3px;
-      transition: all 0.2s ease;
-    }
-
-    .play-button.playing .play-icon {
-      border: none;
-      width: 14px;
-      height: 14px;
-      margin-left: 0;
-      background: linear-gradient(to right, 
-        #fff 0%, #fff 35%, 
-        transparent 35%, transparent 65%, 
-        #fff 65%, #fff 100%);
-    }
-
-    /* Progress Bar */
-    .progress-container {
+    /* Progress Section */
+    .progress-section {
       width: 100%;
-      max-width: 320px;
-      margin-top: 20px;
-      padding: 0 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      flex-shrink: 0;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      border-top: 2px solid rgba(0, 255, 200, 0.3);
     }
 
-    .time-display {
+    .time-row {
+      width: 100%;
+      max-width: 400px;
       display: flex;
       justify-content: space-between;
-      font-size: 9px;
-      letter-spacing: 1px;
-      color: #444;
-      margin-bottom: 5px;
+      margin-bottom: 12px;
+      padding: 0 20px;
+    }
+
+    .time-text {
+      font-size: 12px;
+      color: #00ffc8;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      min-width: 40px;
+    }
+
+    .time-text:last-child {
+      text-align: right;
     }
 
     .progress-bar {
       width: 100%;
-      height: 3px;
-      background: #1a1a1a;
-      border-radius: 2px;
+      max-width: 400px;
+      height: 8px;
+      background: transparent;
+      border-radius: 4px;
       cursor: pointer;
       position: relative;
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 255, 200, 0.3);
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #3498db, #85c1e9);
+      background: linear-gradient(90deg, #ff007f, #00ffc8);
       border-radius: 2px;
       width: 0%;
       transition: width 0.1s linear;
+      box-shadow: 0 0 10px rgba(0, 255, 200, 0.6);
     }
 
-    /* Skip Controls */
+    .progress-scrubber {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: linear-gradient(135deg, #ff007f, #00ffc8);
+      border-radius: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      left: 0%;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.15s;
+      pointer-events: none;
+      box-shadow: 0 0 15px rgba(0, 255, 200, 0.8);
+      border: 2px solid #fff;
+    }
+
+    .progress-bar.dragging .progress-scrubber {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.3);
+    }
+
+    .progress-time-tooltip {
+      position: absolute;
+      bottom: 30px;
+      background: linear-gradient(135deg, rgba(255, 0, 127, 0.9), rgba(0, 255, 200, 0.9));
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      transform: translateX(-50%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .progress-bar.dragging .progress-time-tooltip {
+      opacity: 1;
+    }
+
     .skip-controls {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 16px;
-      margin-top: 10px;
+      gap: 40px;
     }
 
     .skip-btn {
-      width: 28px;
-      height: 28px;
-      background: transparent;
-      border: 1px solid #2a2a2a;
-      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(255, 0, 127, 0.2), rgba(0, 255, 200, 0.2));
+      border: 2px solid;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      color: #444;
+      color: #fff;
+      font-family: 'Bebas Neue', cursive;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      padding: 12px 20px;
+      min-width: 60px;
+      text-align: center;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .skip-btn:hover {
-      border-color: #fff;
-      color: #fff;
+    .skip-btn#skipBack,
+    .skip-btn#skipForward {
+      border-color: #ffc107;
+      color: #ffc107;
+    }
+
+    .skip-btn#skipBack:hover,
+    .skip-btn#skipForward:hover {
+      background: rgba(255, 193, 7, 0.2);
+      box-shadow: 0 0 20px rgba(255, 193, 7, 0.5);
+      transform: scale(1.1);
+    }
+
+    .skip-btn#playControl {
+      border-color: #ff007f;
+      color: #ff007f;
+      font-size: 24px;
+      padding: 15px 25px;
+      min-width: 80px;
+    }
+
+    .skip-btn#playControl:hover {
+      background: rgba(255, 0, 127, 0.2);
+      box-shadow: 0 0 30px rgba(255, 0, 127, 0.6);
+      transform: scale(1.15);
     }
 
     .skip-btn:active {
       transform: scale(0.95);
     }
 
-    .skip-btn svg {
-      width: 10px;
-      height: 10px;
-      fill: currentColor;
-    }
-
-    /* Loading State */
+    /* Loading */
     .loading-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: #0a0a0a;
+      background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 100;
-      transition: opacity 0.5s ease;
+      z-index: 1000;
     }
 
     .loading-overlay.hidden {
-      opacity: 0;
-      pointer-events: none;
+      display: none;
     }
 
     .loading-text {
-      font-size: 12px;
+      font-size: 18px;
       letter-spacing: 4px;
       text-transform: uppercase;
-      color: #444;
-      margin-bottom: 20px;
+      background: linear-gradient(90deg, #ff007f, #00ffc8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 30px;
+      font-weight: 700;
+      font-family: 'Bebas Neue', cursive;
     }
 
     .loading-bar {
       width: 200px;
-      height: 2px;
-      background: #222;
-      border-radius: 1px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
       overflow: hidden;
+      border-radius: 2px;
+      border: 1px solid rgba(0, 255, 200, 0.3);
     }
 
     .loading-progress {
       height: 100%;
-      background: #fff;
+      background: linear-gradient(90deg, #ff007f, #00ffc8);
       width: 0%;
-      transition: width 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 255, 200, 0.6);
     }
 
-    /* Pre-load state - shows track info before loading */
-    .preload-content {
-      text-align: center;
-    }
-
-    .preload-track-name {
-      font-size: 28px;
+    /* Help Button */
+    .help-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(255, 0, 127, 0.2), rgba(0, 255, 200, 0.2));
+      border: 2px solid #00ffc8;
+      color: #00ffc8;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', cursive;
+      transition: all 0.3s ease;
+      z-index: 50;
       font-weight: 700;
-      letter-spacing: 6px;
-      text-transform: uppercase;
-      color: #fff;
-      margin-bottom: 10px;
     }
 
-    .preload-featuring {
-      font-size: 12px;
+    .help-btn:hover {
+      background: rgba(0, 255, 200, 0.2);
+      box-shadow: 0 0 25px rgba(0, 255, 200, 0.6);
+      transform: scale(1.15);
+    }
+
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+      .help-btn {
+        bottom: calc(20px + env(safe-area-inset-bottom));
+        right: calc(20px + env(safe-area-inset-right));
+      }
+    }
+
+    /* Help Modal */
+    .help-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    .help-overlay.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .help-modal {
+      background: linear-gradient(135deg, rgba(255, 0, 127, 0.1), rgba(0, 255, 200, 0.1));
+      border: 2px solid;
+      border-image: linear-gradient(135deg, #ff007f, #00ffc8) 1;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 380px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .help-overlay.visible .help-modal {
+      transform: scale(1);
+    }
+
+    .help-title {
+      font-size: 18px;
+      font-weight: 700;
       letter-spacing: 3px;
-      color: #555;
-      margin-bottom: 40px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #ff007f, #00ffc8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 25px;
+      text-align: center;
+      font-family: 'Bebas Neue', cursive;
     }
 
-    .load-btn {
-      padding: 20px 50px;
-      background: transparent;
-      border: 2px solid #333;
-      border-radius: 50px;
-      color: #fff;
-      font-family: 'Space Mono', monospace;
-      font-size: 14px;
+    .help-section {
+      margin-bottom: 20px;
+    }
+
+    .help-section-title {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #00ffc8;
+      margin-bottom: 12px;
       font-weight: 700;
-      letter-spacing: 4px;
+    }
+
+    .help-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(0, 255, 200, 0.2);
+    }
+
+    .help-item:last-child {
+      border-bottom: none;
+    }
+
+    .help-action {
+      font-size: 12px;
+      color: #ccc;
+    }
+
+    .help-key {
+      font-size: 11px;
+      color: #fff;
+      background: linear-gradient(135deg, rgba(255, 0, 127, 0.3), rgba(0, 255, 200, 0.3));
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-family: 'Bebas Neue', cursive;
+      border: 1px solid rgba(0, 255, 200, 0.5);
+      font-weight: 700;
+    }
+
+    .help-close {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      background: linear-gradient(135deg, rgba(255, 0, 127, 0.2), rgba(0, 255, 200, 0.2));
+      border: 2px solid #00ffc8;
+      border-radius: 8px;
+      color: #00ffc8;
+      font-size: 12px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       cursor: pointer;
+      font-family: 'Bebas Neue', cursive;
       transition: all 0.3s ease;
+      font-weight: 700;
     }
 
-    .load-btn:hover {
-      background: #fff;
-      color: #000;
-      border-color: #fff;
-      box-shadow: 0 0 40px rgba(255,255,255,0.2);
+    .help-close:hover {
+      background: rgba(0, 255, 200, 0.2);
+      box-shadow: 0 0 20px rgba(0, 255, 200, 0.5);
     }
 
-    .load-btn.loading {
-      pointer-events: none;
-      opacity: 0.5;
+    .help-note {
+      font-size: 11px;
+      color: #999;
+      padding: 8px 0;
     }
 
-    .loading-info {
+    .help-desktop {
       display: none;
-      margin-top: 30px;
     }
 
-    .loading-info.visible {
+    .help-mobile {
       display: block;
     }
 
-    /* Responsive - Mobile friendly compact design */
-    @media (max-width: 500px) {
+    @media (hover: hover) and (pointer: fine) {
+      .help-desktop {
+        display: block;
+      }
+      .help-mobile {
+        display: none;
+      }
+    }
+
+    /* Fullscreen styles */
+    body.fullscreen .header,
+    body.fullscreen .help-btn,
+    body.fullscreen .progress-section {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    body.fullscreen:hover .header,
+    body.fullscreen:hover .help-btn,
+    body.fullscreen:hover .progress-section {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* Safe areas for iPhone */
+    @supports (padding-top: env(safe-area-inset-top)) {
+      .header { padding-top: calc(15px + env(safe-area-inset-top)); }
+      .progress-section { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+    }
+
+    @media (max-width: 768px) {
       .stem-grid {
-        grid-template-columns: auto 60px auto;
-        grid-template-rows: auto 60px auto;
-        gap: 4px;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(3, 120px);
+        gap: 12px;
       }
 
-      .light-bar.horizontal,
-      .light-bar.vertical {
-        gap: 5px;
-        padding: 10px;
+      .stem-control.top { 
+        grid-column: 1 / 3; 
+        grid-row: 1 / 2;
       }
 
-      .led-segment {
-        width: 14px;
-        height: 14px;
+      .stem-control.left { 
+        grid-column: 1 / 2; 
+        grid-row: 2 / 3;
       }
 
-      .play-button {
-        width: 50px;
-        height: 50px;
+      .stem-control.right { 
+        grid-column: 2 / 3; 
+        grid-row: 2 / 3;
       }
 
-      .play-icon {
-        border-width: 8px 0 8px 14px;
-        margin-left: 3px;
-      }
-
-      .play-button.playing .play-icon {
-        width: 14px;
-        height: 14px;
-      }
-
-      .header {
-        padding: 10px 15px;
-      }
-
-      .back-btn {
-        font-size: 9px;
-        padding: 6px 10px;
+      .stem-control.bottom { 
+        grid-column: 1 / 3; 
+        grid-row: 3 / 4;
       }
 
       .track-title {
-        font-size: 10px;
-        letter-spacing: 1px;
-      }
-
-      .stem-label {
-        font-size: 8px;
-        letter-spacing: 2px;
-      }
-
-      .stem-control {
-        gap: 4px;
-      }
-
-      .stem-control.horizontal {
-        gap: 6px;
-      }
-
-      .player-container {
-        padding: 15px 10px;
-      }
-
-      .progress-container {
-        max-width: 280px;
-        margin-top: 15px;
+        font-size: 14px;
       }
 
       .skip-controls {
-        gap: 12px;
-        margin-top: 8px;
-      }
-
-      .skip-btn {
-        width: 24px;
-        height: 24px;
-      }
-    }
-
-    /* Extra small phones */
-    @media (max-width: 380px) {
-      .stem-grid {
-        grid-template-columns: auto 50px auto;
-        grid-template-rows: auto 50px auto;
-        gap: 2px;
-      }
-
-      .led-segment {
-        width: 12px;
-        height: 12px;
-      }
-
-      .light-bar.horizontal,
-      .light-bar.vertical {
-        gap: 4px;
-        padding: 8px;
-      }
-
-      .play-button {
-        width: 44px;
-        height: 44px;
-      }
-
-      .play-icon {
-        border-width: 7px 0 7px 12px;
-      }
-
-      .stem-label {
-        font-size: 7px;
-        letter-spacing: 1px;
-      }
-
-      .progress-container {
-        max-width: 240px;
-      }
-    }
-
-    /* Landscape mode on phones */
-    @media (max-height: 500px) and (orientation: landscape) {
-      .player-container {
-        padding: 8px;
-      }
-
-      .stem-grid {
-        grid-template-columns: auto 50px auto;
-        grid-template-rows: auto 50px auto;
-        gap: 4px;
-      }
-
-      .led-segment {
-        width: 10px;
-        height: 10px;
-      }
-
-      .light-bar.horizontal,
-      .light-bar.vertical {
-        gap: 3px;
-        padding: 6px;
-      }
-
-      .play-button {
-        width: 40px;
-        height: 40px;
-      }
-
-      .header {
-        padding: 6px 12px;
-      }
-
-      .progress-container {
-        margin-top: 10px;
+        gap: 20px;
       }
     }
   </style>
 </head>
 <body>
 
-<!-- Loading Overlay -->
 <div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-info">
-    <div class="loading-text">Loading Stems</div>
-    <div class="loading-bar">
-      <div class="loading-progress" id="loadingProgress"></div>
-    </div>
+  <div class="loading-text">Loading Stems</div>
+  <div class="loading-bar">
+    <div class="loading-progress" id="loadingProgress"></div>
   </div>
 </div>
 
-<!-- Header -->
 <div class="header">
-  <button onclick="window.location.href='index.html?menu=open'" class="back-btn">
-    Tracks
-  </button>
+  <button onclick="window.location.href='index.html?menu=open'" class="back-btn">←</button>
   <div class="track-title" id="trackTitle">Loading...</div>
-  <div class="header-spacer"></div>
+  <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
 </div>
 
-<!-- Player -->
 <div class="player-container">
-
-  <!-- Stem Control Grid -->
   <div class="stem-grid">
-
-    <!-- Vocals (Top) -->
     <div class="stem-control top" data-stem="vocals">
       <span class="stem-label">Vocals</span>
-      <div class="light-bar vertical" data-value="100">
+      <div class="light-bar vertical">
         <div class="led-segment"></div>
         <div class="led-segment"></div>
         <div class="led-segment"></div>
@@ -646,10 +830,9 @@
       </div>
     </div>
 
-    <!-- Other (Left) -->
     <div class="stem-control left horizontal" data-stem="other">
       <span class="stem-label">Other</span>
-      <div class="light-bar horizontal" data-value="100">
+      <div class="light-bar horizontal">
         <div class="led-segment"></div>
         <div class="led-segment"></div>
         <div class="led-segment"></div>
@@ -659,16 +842,8 @@
       </div>
     </div>
 
-    <!-- Center Play Button -->
-    <div class="stem-control center">
-      <div class="play-button" id="playButton">
-        <div class="play-icon"></div>
-      </div>
-    </div>
-
-    <!-- Drums (Right) -->
     <div class="stem-control right horizontal" data-stem="drums">
-      <div class="light-bar horizontal" data-value="100">
+      <div class="light-bar horizontal">
         <div class="led-segment"></div>
         <div class="led-segment"></div>
         <div class="led-segment"></div>
@@ -679,9 +854,8 @@
       <span class="stem-label">Drums</span>
     </div>
 
-    <!-- Bass (Bottom) -->
     <div class="stem-control bottom" data-stem="bass">
-      <div class="light-bar vertical" data-value="100">
+      <div class="light-bar vertical">
         <div class="led-segment"></div>
         <div class="led-segment"></div>
         <div class="led-segment"></div>
@@ -691,113 +865,320 @@
       </div>
       <span class="stem-label">Bass</span>
     </div>
-
   </div>
-
-  <!-- Progress Bar with Skip Controls -->
-  <div class="progress-container">
-    <div class="time-display">
-      <span id="currentTime">0:00</span>
-      <span id="totalTime">0:00</span>
-    </div>
-    <div class="progress-bar" id="progressBar">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
-    <div class="skip-controls">
-      <button class="skip-btn" id="skipBack">
-        <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
-      </button>
-      <button class="skip-btn" id="skipForward">
-        <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
-      </button>
-    </div>
-  </div>
-
 </div>
 
+<div class="progress-section">
+  <div class="time-row">
+    <span class="time-text" id="currentTime">0:00</span>
+    <span class="time-text" id="totalTime">0:00</span>
+  </div>
+  <div class="progress-bar" id="progressBar">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-scrubber" id="progressScrubber"></div>
+    <div class="progress-time-tooltip" id="progressTooltip">0:00</div>
+  </div>
+  <div class="skip-controls">
+    <button class="skip-btn" id="skipBack" title="Back 10s">-10</button>
+    <button class="skip-btn" id="playControl" title="Play/Pause">▶</button>
+    <button class="skip-btn" id="skipForward" title="Forward 10s">+10</button>
+  </div>
+</div>
+
+<!-- Help Button -->
+<button class="help-btn" id="helpBtn">?</button>
+
+<!-- Help Modal -->
+<div class="help-overlay" id="helpOverlay">
+  <div class="help-modal">
+    <!-- Mobile Help -->
+    <div class="help-mobile">
+      <div class="help-title">Mobile Controls</div>
+      
+      <div class="help-section">
+        <div class="help-section-title">Sound</div>
+        <div class="help-item">
+          <span class="help-action">Turn OFF Silent Mode</span>
+        </div>
+        <div class="help-note">Audio will not play if Silent Mode is enabled</div>
+      </div>
+      
+      <div class="help-section">
+        <div class="help-section-title">Playback</div>
+        <div class="help-item">
+          <span class="help-action">Tap Play Button</span>
+          <span class="help-key">Play / Pause</span>
+        </div>
+      </div>
+      
+      <div class="help-section">
+        <div class="help-section-title">Stem Mixing</div>
+        <div class="help-item">
+          <span class="help-action">Tap once</span>
+          <span class="help-key">Solo stem</span>
+        </div>
+        <div class="help-item">
+          <span class="help-action">Drag orbs</span>
+          <span class="help-key">Adjust volume</span>
+        </div>
+      </div>
+      
+      <div class="help-section">
+        <div class="help-section-title">Gestures</div>
+        <div class="help-item">
+          <span class="help-action">Swipe left / right</span>
+          <span class="help-key">Next / Prev track</span>
+        </div>
+        <div class="help-item">
+          <span class="help-action">Swipe up / down</span>
+          <span class="help-key">Volume up / down</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Desktop Help -->
+    <div class="help-desktop">
+      <div class="help-title">Desktop Controls</div>
+      
+      <div class="help-section">
+        <div class="help-section-title">Sound</div>
+        <div class="help-note">Make sure system audio is enabled</div>
+      </div>
+      
+      <div class="help-section">
+        <div class="help-section-title">Playback</div>
+        <div class="help-item">
+          <span class="help-action">Space</span>
+          <span class="help-key">Play / Pause</span>
+        </div>
+        <div class="help-item">
+          <span class="help-action">F</span>
+          <span class="help-key">Fullscreen</span>
+        </div>
+      </div>
+      
+      <div class="help-section">
+        <div class="help-section-title">Stem Mixing</div>
+        <div class="help-item">
+          <span class="help-action">Click orbs</span>
+          <span class="help-key">Solo stem</span>
+        </div>
+        <div class="help-item">
+          <span class="help-action">Drag orbs</span>
+          <span class="help-key">Adjust volume</span>
+        </div>
+        <div class="help-item">
+          <span class="help-action">1 2 3 4</span>
+          <span class="help-key">Solo stems</span>
+        </div>
+        <div class="help-item">
+          <span class="help-action">0</span>
+          <span class="help-key">Reset all</span>
+        </div>
+      </div>
+      
+      <div class="help-section">
+        <div class="help-section-title">Navigation</div>
+        <div class="help-item">
+          <span class="help-action">↑ ↓</span>
+          <span class="help-key">Prev / Next track</span>
+        </div>
+        <div class="help-item">
+          <span class="help-action">← →</span>
+          <span class="help-key">Skip ±10 seconds</span>
+        </div>
+      </div>
+    </div>
+    
+    <button class="help-close" id="helpClose">Got it</button>
+  </div>
+</div>
+
+<audio id="silentAudio" src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwmHAAAAAAD/+1DEAAAGAAGn9AAAIwAANP8AAABM" loop playsinline></audio>
+
 <script>
-  // ========================================
-  // AUDIO ENGINE
-  // ========================================
+  // iOS Silent Mode Bypass - must be triggered by user interaction
+  let audioUnlocked = false;
+  
+  function unlockAudio() {
+    if (audioUnlocked) return;
+    
+    // Create and play a silent HTML5 audio to unlock audio playback
+    const silentAudio = document.getElementById('silentAudio');
+    silentAudio.volume = 0.01;
+    const playPromise = silentAudio.play();
+    if (playPromise) {
+      playPromise.then(() => {
+        silentAudio.pause();
+        silentAudio.currentTime = 0;
+      }).catch(() => {});
+    }
+    
+    // Create AudioContext and play silent buffer
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) {
+      const ctx = new AudioContext();
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      gainNode.gain.value = 0.001;
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      oscillator.start(0);
+      oscillator.stop(0.001);
+      ctx.close();
+    }
+    
+    audioUnlocked = true;
+  }
+
+  // Attach to multiple events for better iOS coverage
+  ['touchstart', 'touchend', 'click', 'keydown'].forEach(event => {
+    document.addEventListener(event, unlockAudio, { once: false, passive: true });
+  });
+
+  // TRACKS must be defined first before being used
+  const TRACKS = {
+    'script': { name: 'Script (Intro)', stems: { vocals: { file: 'audio/01_SC_Instruments.mp3', label: 'Instruments' }, drums: { file: 'audio/01_SC_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/01_SC_Bass.mp3', label: 'Bass' }, other: { file: 'audio/01_SC_Other.mp3', label: 'Other' } } },
+    'neon': { name: 'Neon', stems: { vocals: { file: 'audio/02_NE_Instruments.mp3', label: 'Instruments' }, drums: { file: 'audio/02_NE_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/02_NE_Bass.mp3', label: 'Bass' }, other: { file: 'audio/02_NE_Other.mp3', label: 'Other' } } },
+    'smoke-show': { name: 'Smoke Show', stems: { vocals: { file: 'audio/03_SMS_Vocals.mp3', label: 'Groove' }, drums: { file: 'audio/03_SMS_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/03_SMS_Bass.mp3', label: 'Bass' }, other: { file: 'audio/03_SMS_Other.mp3', label: 'Other' } } },
+    'godless-idols': { name: 'Godless Idols', stems: { vocals: { file: 'audio/GI_Voice.mp3', label: 'Vocals' }, drums: { file: 'audio/GI_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/GI_Bass.mp3', label: 'Bass' }, other: { file: 'audio/GI_Other.mp3', label: 'Other' } } },
+    'printer-brain': { name: 'Printer Brain', stems: { vocals: { file: 'audio/05_PB_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/05_PB_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/05_PB_Bass.mp3', label: 'Bass' }, other: { file: 'audio/05_PB_Other.mp3', label: 'Other' } } },
+    'ash-and-gold': { name: 'Ash and Gold', stems: { vocals: { file: 'audio/06_AG_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/06_AG_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/06_AG_Instruments.mp3', label: 'Instruments' }, other: { file: 'audio/06_AG_Other.mp3', label: 'Other' } } },
+    'production-line': { name: 'Production Line', stems: { vocals: { file: 'audio/07_PL_Vocals.mp3', label: 'Texture' }, drums: { file: 'audio/07_PL_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/07_PL_Bass.mp3', label: 'Bass' }, other: { file: 'audio/07_PL_Other.mp3', label: 'Other' } } },
+    'byd3s1gn': { name: 'ByD3s1Gn', stems: { vocals: { file: 'audio/08_BD_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/08_BD_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/08_BD_Bass.mp3', label: 'Bass' }, other: { file: 'audio/08_BD_Instruments.mp3', label: 'Synth' } } },
+    'youre-meant-to-forget-this': { name: "You're Meant to Forget This", stems: { vocals: { file: 'audio/09_YAMTFT_Instrument.mp3', label: 'Instrument' }, drums: { file: 'audio/09_YAMTFT_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/09_YAMTFT_Bass.mp3', label: 'Bass' }, other: null } },
+    'broken-blueprints': { name: 'Broken Blueprints', stems: { vocals: { file: 'audio/10_BL_Instruments.mp3', label: 'Instruments' }, drums: { file: 'audio/10_BL_Drums.mp3', label: 'Drums' }, bass: { file: 'audio/10_BL_Bass.mp3', label: 'Bass' }, other: { file: 'audio/10_BL_Other.mp3', label: 'Other' } } },
+    'blurred-lines': { name: 'Blurred Lines (Interlude)', stems: { vocals: { file: 'audio/11_BLI_Sample.mp3', label: 'Keys' }, drums: { file: 'audio/11_BLI_Noise.mp3', label: 'Noise' }, bass: null, other: { file: 'audio/11_BLI_Other.mp3', label: 'Other' } } },
+    'synthetic-dream': { name: 'Synthetic Dream', stems: { vocals: { file: 'audio/12_SF_Pads.mp3', label: 'Pads' }, drums: { file: 'audio/12_SF_Druma.mp3', label: 'Drums' }, bass: { file: 'audio/12_SF_Bass.mp3', label: 'Bass' }, other: { file: 'audio/12_SF_Arp.mp3', label: 'Arp' } } },
+    'glass-walls': { name: 'Glass Walls (Outro)', stems: { vocals: { file: 'audio/13_GW_Vocals.mp3', label: 'Vocals' }, drums: { file: 'audio/13_GW_Instruments.mp3', label: 'Synth' }, bass: null, other: { file: 'audio/13_GW_Other.mp3', label: 'Other' } } }
+  };
+
+  // Track list for navigation
+  const TRACK_ORDER = [
+    'script', 'neon', 'smoke-show', 'godless-idols', 'printer-brain',
+    'ash-and-gold', 'production-line', 'byd3s1gn', 'youre-meant-to-forget-this',
+    'broken-blueprints', 'blurred-lines', 'synthetic-dream', 'glass-walls'
+  ];
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const trackId = urlParams.get('track') || 'godless-idols';
+  const TRACK_CONFIG = TRACKS[trackId] || TRACKS['godless-idols'];
+  const currentTrackIndex = TRACK_ORDER.indexOf(trackId);
+
+  // Navigate to previous/next track
+  function goToTrack(direction) {
+    let newIndex = currentTrackIndex + direction;
+    if (newIndex < 0) newIndex = TRACK_ORDER.length - 1;
+    if (newIndex >= TRACK_ORDER.length) newIndex = 0;
+    // Save current position before leaving
+    savePosition();
+    sessionStorage.setItem('nwo_swipe_nav', 'true');
+    window.location.href = `player.html?track=${TRACK_ORDER[newIndex]}`;
+  }
+
+  // Save position to localStorage - DISABLED
+  function savePosition() {
+    // Position saving disabled - tracks start from beginning
+  }
+
+  // Load saved position - DISABLED
+  function loadPosition() {
+    return 0; // Always start from beginning
+  }
+
+  // Save position periodically and on page unload - DISABLED
+  // setInterval(savePosition, 5000);
+  // window.addEventListener('beforeunload', savePosition);
+  // window.addEventListener('pagehide', savePosition);
+
+  document.getElementById('trackTitle').textContent = TRACK_CONFIG.name;
+  document.title = `CHRONIS - ${TRACK_CONFIG.name}`;
 
   class StemPlayer {
     constructor() {
-      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      this.audioContext = null;
       this.isPlaying = false;
       this.startTime = 0;
       this.pauseTime = 0;
       this.duration = 0;
-
       this.stems = {
-        vocals: { buffer: null, source: null, gainNode: null, volume: 100 },
-        drums: { buffer: null, source: null, gainNode: null, volume: 100 },
-        bass: { buffer: null, source: null, gainNode: null, volume: 100 },
-        other: { buffer: null, source: null, gainNode: null, volume: 100 }
+        vocals: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastRms: 0, smoothedRms: 0 },
+        drums: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastRms: 0, smoothedRms: 0 },
+        bass: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastRms: 0, smoothedRms: 0 },
+        other: { buffer: null, source: null, gainNode: null, volume: 100, analyser: null, lastRms: 0, smoothedRms: 0 }
       };
-
-      this.masterGain = this.audioContext.createGain();
-      this.masterGain.connect(this.audioContext.destination);
-
+      this.masterGain = null;
       this.loadingProgress = document.getElementById('loadingProgress');
       this.loadingOverlay = document.getElementById('loadingOverlay');
       this.progressBar = document.getElementById('progressBar');
       this.progressFill = document.getElementById('progressFill');
+      this.progressScrubber = document.getElementById('progressScrubber');
+      this.progressTooltip = document.getElementById('progressTooltip');
       this.currentTimeEl = document.getElementById('currentTime');
       this.totalTimeEl = document.getElementById('totalTime');
-
       this.init();
     }
 
+    initAudioContext() {
+      if (this.audioContext) return;
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      this.audioContext = new AudioContext();
+      this.masterGain = this.audioContext.createGain();
+      this.masterGain.connect(this.audioContext.destination);
+      if (this.audioContext.state === 'suspended') this.audioContext.resume();
+    }
+
     async init() {
-      await this.loadStems();
-      this.setupUI();
-      this.setupProgressBar();
-      this.setupSkipControls();
-      
-      // Initialize all sliders to full
-      Object.keys(this.stems).forEach(stem => {
-        updateLightBar(stem, 100);
-      });
-
-      // Get duration from first stem
-      for (const stem of Object.values(this.stems)) {
-        if (stem.buffer) {
-          this.duration = stem.buffer.duration;
-          this.totalTimeEl.textContent = this.formatTime(this.duration);
-          break;
+      try {
+        this.initAudioContext();
+        await this.loadStems();
+        this.setupUI();
+        this.setupProgressBar();
+        this.setupSkipControls();
+        Object.keys(this.stems).forEach(stem => updateLightBar(stem, 100));
+        for (const stem of Object.values(this.stems)) {
+          if (stem.buffer) {
+            this.duration = stem.buffer.duration;
+            this.totalTimeEl.textContent = this.formatTime(this.duration);
+            break;
+          }
         }
+        this.updateProgress();
+        this.loadingOverlay.classList.add('hidden');
+      } catch (e) {
+        console.log('Waiting for user interaction');
       }
-
-      // Start progress update loop
-      this.updateProgress();
-      
-      // Hide loading
-      this.loadingOverlay.classList.add('hidden');
     }
 
     async loadStems() {
+      if (!this.audioContext) return;
       const stemsToLoad = Object.entries(TRACK_CONFIG.stems).filter(([_, stem]) => stem !== null);
       const totalStems = stemsToLoad.length;
       let loaded = 0;
 
+      // Load stems sequentially to ensure sync
       for (const [stemName, stemData] of stemsToLoad) {
         if (stemData && stemData.file) {
           try {
-            console.log(`Loading ${stemName}: ${stemData.file}`);
             const response = await fetch(stemData.file);
             const arrayBuffer = await response.arrayBuffer();
             const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
-
             const gainNode = this.audioContext.createGain();
-            gainNode.connect(this.masterGain);
-
+            const analyser = this.audioContext.createAnalyser();
+            analyser.fftSize = 256;
+            analyser.smoothingTimeConstant = 0.3;
+            gainNode.connect(analyser);
+            analyser.connect(this.masterGain);
             this.stems[stemName].buffer = audioBuffer;
             this.stems[stemName].gainNode = gainNode;
-
+            this.stems[stemName].analyser = analyser;
             loaded++;
             this.loadingProgress.style.width = (loaded / totalStems * 100) + '%';
-
-            console.log(`✓ Loaded ${stemName}`);
           } catch (error) {
             console.error(`Failed to load ${stemName}:`, error);
           }
@@ -806,225 +1187,164 @@
     }
 
     setupUI() {
-      // Play button
-      document.getElementById('playButton').addEventListener('click', () => this.togglePlay());
-
-      // Stem sliders with improved touch/mouse handling
       document.querySelectorAll('.stem-control[data-stem]').forEach(control => {
         const stemName = control.dataset.stem;
         const slider = control.querySelector('.light-bar');
         const isHorizontal = slider.classList.contains('horizontal');
         const isLeftSlider = control.classList.contains('left');
-
         let isDragging = false;
         let dragStarted = false;
 
         const updateVolume = (percent) => {
           percent = Math.max(0, Math.min(100, percent));
           this.stems[stemName].volume = percent;
-
           updateLightBar(stemName, percent);
-
           if (this.stems[stemName].gainNode) {
-            this.stems[stemName].gainNode.gain.setTargetAtTime(
-              percent / 100, 
-              this.audioContext.currentTime, 
-              0.02
-            );
+            this.stems[stemName].gainNode.gain.setTargetAtTime(percent / 100, this.audioContext.currentTime, 0.02);
           }
         };
 
         const handleMove = (clientX, clientY) => {
           const rect = slider.getBoundingClientRect();
           let percent;
-          
           if (isHorizontal) {
-            if (isLeftSlider) {
-              percent = 100 - ((clientX - rect.left) / rect.width) * 100;
-            } else {
-              percent = ((clientX - rect.left) / rect.width) * 100;
-            }
+            percent = isLeftSlider ? 100 - ((clientX - rect.left) / rect.width) * 100 : ((clientX - rect.left) / rect.width) * 100;
           } else {
             const isBottomSlider = control.classList.contains('bottom');
-            if (isBottomSlider) {
-              percent = ((clientY - rect.top) / rect.height) * 100;
-            } else {
-              percent = 100 - ((clientY - rect.top) / rect.height) * 100;
-            }
+            percent = isBottomSlider ? ((clientY - rect.top) / rect.height) * 100 : 100 - ((clientY - rect.top) / rect.height) * 100;
           }
-          
           updateVolume(percent);
         };
 
-        // Solo function - single click
         const soloStem = () => {
-          const allMuted = Object.entries(this.stems)
-            .filter(([name]) => name !== stemName)
-            .every(([, stem]) => stem.volume === 0);
-          
-          const thisStemFull = this.stems[stemName].volume === 100;
-
-          if (allMuted && thisStemFull) {
-            // Unsolo - restore all stems to 100
+          const allMuted = Object.entries(this.stems).filter(([n]) => n !== stemName).every(([, s]) => s.volume === 0);
+          const thisFull = this.stems[stemName].volume === 100;
+          if (allMuted && thisFull) {
             Object.keys(this.stems).forEach(name => {
               this.stems[name].volume = 100;
-              if (this.stems[name].gainNode) {
-                this.stems[name].gainNode.gain.setTargetAtTime(1, this.audioContext.currentTime, 0.02);
-              }
+              if (this.stems[name].gainNode) this.stems[name].gainNode.gain.setTargetAtTime(1, this.audioContext.currentTime, 0.02);
               updateLightBar(name, 100);
             });
           } else {
-            // Solo - mute others, max this one
             Object.keys(this.stems).forEach(name => {
-              if (name === stemName) {
-                this.stems[name].volume = 100;
-                if (this.stems[name].gainNode) {
-                  this.stems[name].gainNode.gain.setTargetAtTime(1, this.audioContext.currentTime, 0.02);
-                }
-                updateLightBar(name, 100);
-              } else {
-                this.stems[name].volume = 0;
-                if (this.stems[name].gainNode) {
-                  this.stems[name].gainNode.gain.setTargetAtTime(0, this.audioContext.currentTime, 0.02);
-                }
-                updateLightBar(name, 0);
-              }
+              const vol = name === stemName ? 100 : 0;
+              this.stems[name].volume = vol;
+              if (this.stems[name].gainNode) this.stems[name].gainNode.gain.setTargetAtTime(vol / 100, this.audioContext.currentTime, 0.02);
+              updateLightBar(name, vol);
             });
           }
         };
 
-        // Mouse events
-        slider.addEventListener('mousedown', (e) => {
-          e.preventDefault();
-          isDragging = true;
-          dragStarted = false;
-        });
+        slider.addEventListener('mousedown', (e) => { e.preventDefault(); isDragging = true; dragStarted = false; });
+        document.addEventListener('mousemove', (e) => { if (isDragging) { dragStarted = true; handleMove(e.clientX, e.clientY); } });
+        document.addEventListener('mouseup', () => { if (isDragging && !dragStarted) soloStem(); isDragging = false; });
+        slider.addEventListener('touchstart', (e) => { e.preventDefault(); isDragging = true; dragStarted = false; }, { passive: false });
+        slider.addEventListener('touchmove', (e) => { if (isDragging) { dragStarted = true; handleMove(e.touches[0].clientX, e.touches[0].clientY); } }, { passive: false });
+        slider.addEventListener('touchend', () => { if (isDragging && !dragStarted) soloStem(); isDragging = false; });
+      });
 
-        document.addEventListener('mousemove', (e) => {
-          if (isDragging) {
-            dragStarted = true;
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (!window.player) return;
+        
+        switch(e.code) {
+          case 'Space':
             e.preventDefault();
-            handleMove(e.clientX, e.clientY);
-          }
-        });
-
-        document.addEventListener('mouseup', (e) => {
-          if (isDragging && !dragStarted) {
-            // Was a click, not a drag - solo the stem
-            soloStem();
-          }
-          isDragging = false;
-          dragStarted = false;
-        });
-
-        // Touch events
-        let touchMoved = false;
-        slider.addEventListener('touchstart', (e) => {
-          e.preventDefault();
-          isDragging = true;
-          touchMoved = false;
-        }, { passive: false });
-
-        slider.addEventListener('touchmove', (e) => {
-          if (isDragging) {
-            touchMoved = true;
+            window.player.togglePlay();
+            break;
+          case 'ArrowLeft':
             e.preventDefault();
-            handleMove(e.touches[0].clientX, e.touches[0].clientY);
-          }
-        }, { passive: false });
-
-        slider.addEventListener('touchend', (e) => {
-          if (isDragging && !touchMoved) {
-            // Was a tap, not a drag - solo the stem
-            soloStem();
-          }
-          isDragging = false;
-          touchMoved = false;
-        });
-
-        // Double-click/tap to mute/unmute
-        let lastTap = 0;
-        slider.addEventListener('dblclick', () => {
-          const current = this.stems[stemName].volume;
-          if (current > 0) {
-            this.stems[stemName].prevVolume = current;
-            updateVolume(0);
-          } else {
-            updateVolume(this.stems[stemName].prevVolume || 100);
-          }
-        });
+            window.player.seekTo(Math.max(0, window.player.getCurrentTime() - 10));
+            break;
+          case 'ArrowRight':
+            e.preventDefault();
+            window.player.seekTo(Math.min(window.player.duration, window.player.getCurrentTime() + 10));
+            break;
+          case 'ArrowUp':
+            e.preventDefault();
+            goToTrack(-1);
+            break;
+          case 'ArrowDown':
+            e.preventDefault();
+            goToTrack(1);
+            break;
+          case 'Digit1':
+          case 'Numpad1':
+            e.preventDefault();
+            soloStemByKey('vocals');
+            break;
+          case 'Digit2':
+          case 'Numpad2':
+            e.preventDefault();
+            soloStemByKey('drums');
+            break;
+          case 'Digit3':
+          case 'Numpad3':
+            e.preventDefault();
+            soloStemByKey('bass');
+            break;
+          case 'Digit4':
+          case 'Numpad4':
+            e.preventDefault();
+            soloStemByKey('other');
+            break;
+          case 'Digit0':
+          case 'Numpad0':
+            e.preventDefault();
+            // Reset all stems to 100%
+            Object.keys(window.player.stems).forEach(name => {
+              window.player.stems[name].volume = 100;
+              if (window.player.stems[name].gainNode) {
+                window.player.stems[name].gainNode.gain.setTargetAtTime(1, window.player.audioContext.currentTime, 0.02);
+              }
+              updateLightBar(name, 100);
+            });
+            break;
+        }
       });
     }
 
     setupProgressBar() {
       let isDragging = false;
-
       const seek = (clientX) => {
         const rect = this.progressBar.getBoundingClientRect();
         const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
         this.seekTo(percent * this.duration);
+        this.progressScrubber.style.left = `${percent * 100}%`;
+        this.progressTooltip.style.left = `${percent * 100}%`;
+        this.progressTooltip.textContent = this.formatTime(percent * this.duration);
       };
-
-      this.progressBar.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        seek(e.clientX);
-      });
-
-      document.addEventListener('mousemove', (e) => {
-        if (isDragging) seek(e.clientX);
-      });
-
-      document.addEventListener('mouseup', () => {
-        isDragging = false;
-      });
-
-      // Touch support
-      this.progressBar.addEventListener('touchstart', (e) => {
-        isDragging = true;
-        seek(e.touches[0].clientX);
-      }, { passive: true });
-
-      this.progressBar.addEventListener('touchmove', (e) => {
-        if (isDragging) seek(e.touches[0].clientX);
-      }, { passive: true });
-
-      this.progressBar.addEventListener('touchend', () => {
-        isDragging = false;
-      });
+      this.progressBar.addEventListener('mousedown', (e) => { isDragging = true; this.progressBar.classList.add('dragging'); seek(e.clientX); });
+      document.addEventListener('mousemove', (e) => { if (isDragging) seek(e.clientX); });
+      document.addEventListener('mouseup', () => { isDragging = false; this.progressBar.classList.remove('dragging'); });
+      this.progressBar.addEventListener('touchstart', (e) => { isDragging = true; this.progressBar.classList.add('dragging'); seek(e.touches[0].clientX); }, { passive: true });
+      this.progressBar.addEventListener('touchmove', (e) => { if (isDragging) seek(e.touches[0].clientX); }, { passive: true });
+      this.progressBar.addEventListener('touchend', () => { isDragging = false; this.progressBar.classList.remove('dragging'); });
     }
 
     setupSkipControls() {
-      document.getElementById('skipBack').addEventListener('click', () => {
-        this.seekTo(Math.max(0, this.getCurrentTime() - 10));
-      });
-
-      document.getElementById('skipForward').addEventListener('click', () => {
-        this.seekTo(Math.min(this.duration, this.getCurrentTime() + 10));
+      document.getElementById('skipBack').addEventListener('click', () => this.seekTo(Math.max(0, this.getCurrentTime() - 10)));
+      document.getElementById('skipForward').addEventListener('click', () => this.seekTo(Math.min(this.duration, this.getCurrentTime() + 10)));
+      document.getElementById('playControl').addEventListener('click', () => {
+        unlockAudio();
+        window.player.initAudioContext();
+        if (window.player.audioContext.state === 'suspended') window.player.audioContext.resume();
+        window.player.togglePlay();
       });
     }
 
     getCurrentTime() {
-      if (this.isPlaying) {
-        return this.audioContext.currentTime - this.startTime;
-      }
-      return this.pauseTime;
+      if (!this.audioContext) return 0;
+      return this.isPlaying ? this.audioContext.currentTime - this.startTime : this.pauseTime;
     }
 
     seekTo(time) {
+      if (!this.audioContext) return;
       time = Math.max(0, Math.min(time, this.duration));
-      
       if (this.isPlaying) {
-        // Stop and restart at new position
-        Object.values(this.stems).forEach(stem => {
-          if (stem.source) {
-            stem.source.stop();
-            stem.source = null;
-          }
-        });
-
+        Object.values(this.stems).forEach(stem => { if (stem.source) { stem.source.stop(); stem.source = null; } });
         this.startTime = this.audioContext.currentTime - time;
-
-        Object.entries(this.stems).forEach(([name, stem]) => {
+        Object.entries(this.stems).forEach(([_, stem]) => {
           if (stem.buffer) {
             const source = this.audioContext.createBufferSource();
             source.buffer = stem.buffer;
@@ -1036,252 +1356,145 @@
       } else {
         this.pauseTime = time;
       }
-
-      // Update UI
-      const percent = (time / this.duration) * 100;
-      this.progressFill.style.width = percent + '%';
+      this.progressFill.style.width = (time / this.duration) * 100 + '%';
+      this.progressScrubber.style.left = (time / this.duration) * 100 + '%';
       this.currentTimeEl.textContent = this.formatTime(time);
     }
 
-    togglePlay() {
-      if (this.isPlaying) {
-        this.pause();
-      } else {
-        this.play();
-      }
-    }
+    togglePlay() { if (this.isPlaying) this.pause(); else this.play(); }
 
     play() {
-      if (this.isPlaying) return;
-
-      if (this.audioContext.state === 'suspended') {
-        this.audioContext.resume();
-      }
-
+      if (this.isPlaying || !this.audioContext) return;
+      if (this.audioContext.state === 'suspended') this.audioContext.resume();
       const offset = this.pauseTime;
       this.startTime = this.audioContext.currentTime - offset;
-
-      Object.entries(this.stems).forEach(([name, stem]) => {
+      Object.entries(this.stems).forEach(([_, stem]) => {
         if (stem.buffer) {
           const source = this.audioContext.createBufferSource();
           source.buffer = stem.buffer;
           source.connect(stem.gainNode);
           source.start(0, offset);
           stem.source = source;
-
           stem.gainNode.gain.value = stem.volume / 100;
         }
       });
-
       this.isPlaying = true;
-      document.getElementById('playButton').classList.add('playing');
+      document.getElementById('playControl').textContent = '⏸';
     }
 
     pause() {
       if (!this.isPlaying) return;
-
       this.pauseTime = this.audioContext.currentTime - this.startTime;
-
-      Object.values(this.stems).forEach(stem => {
-        if (stem.source) {
-          stem.source.stop();
-          stem.source = null;
-        }
-      });
-
+      Object.values(this.stems).forEach(stem => { if (stem.source) { stem.source.stop(); stem.source = null; } });
       this.isPlaying = false;
-      document.getElementById('playButton').classList.remove('playing');
+      document.getElementById('playControl').textContent = '▶';
     }
 
     stop() {
       this.pause();
       this.pauseTime = 0;
       this.progressFill.style.width = '0%';
+      this.progressScrubber.style.left = '0%';
       this.currentTimeEl.textContent = '0:00';
+      // Loop back to beginning and play
+      this.play();
     }
 
     updateProgress() {
       const update = () => {
-        if (this.isPlaying) {
+        if (this.isPlaying && this.audioContext) {
           const currentTime = this.getCurrentTime();
-          const percent = (currentTime / this.duration) * 100;
-          this.progressFill.style.width = Math.min(percent, 100) + '%';
+          this.progressFill.style.width = Math.min((currentTime / this.duration) * 100, 100) + '%';
+          this.progressScrubber.style.left = Math.min((currentTime / this.duration) * 100, 100) + '%';
           this.currentTimeEl.textContent = this.formatTime(currentTime);
-
-          if (currentTime >= this.duration) {
-            this.stop();
-          }
+          if (currentTime >= this.duration) this.stop();
+          this.updateRhythmicPulse();
         }
         requestAnimationFrame(update);
       };
       update();
     }
 
+    updateRhythmicPulse() {
+      Object.entries(this.stems).forEach(([stemName, stem]) => {
+        if (stem.analyser && stem.volume > 0 && stem.buffer) {
+          const dataArray = new Uint8Array(stem.analyser.frequencyBinCount);
+          stem.analyser.getByteFrequencyData(dataArray);
+          
+          // Calculate RMS energy
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i] * dataArray[i];
+          }
+          const rms = Math.sqrt(sum / dataArray.length);
+          
+          // Normalize to 0-1 range (max RMS is around 180)
+          const normalizedLevel = Math.min(rms / 80, 1);
+          
+          // Map to opacity: 0.3 (quiet) to 1.0 (loud)
+          const opacity = 0.3 + (normalizedLevel * 0.7);
+          
+          // Apply directly to LED segments for real-time reactivity
+          const control = document.querySelector(`.stem-control[data-stem="${stemName}"]`);
+          if (control) {
+            const segments = control.querySelectorAll('.led-segment.active');
+            segments.forEach(seg => {
+              seg.style.opacity = opacity.toFixed(2);
+            });
+          }
+        }
+      });
+    }
+
     formatTime(seconds) {
+      if (!seconds || isNaN(seconds) || !isFinite(seconds)) return '0:00';
       const mins = Math.floor(seconds / 60);
       const secs = Math.floor(seconds % 60);
       return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
   }
 
-  // Update LED visualization
   function updateLightBar(stemName, volume) {
     const control = document.querySelector(`.stem-control[data-stem="${stemName}"]`);
     if (!control) return;
-    
     const segments = control.querySelectorAll('.led-segment');
-    const totalSegments = segments.length;
-    const activeSegments = Math.round((volume / 100) * totalSegments);
-    
-    segments.forEach((seg, index) => {
-      if (index < activeSegments) {
-        seg.classList.add('active');
-      } else {
-        seg.classList.remove('active');
-      }
+    const activeCount = Math.round((volume / 100) * segments.length);
+    segments.forEach((seg, i) => {
+      if (i < activeCount) seg.classList.add('active');
+      else seg.classList.remove('active');
     });
   }
 
-  // ========================================
-  // TRACK CONFIGURATION
-  // ========================================
-
-  const TRACKS = {
-    'script': {
-      name: 'Script (Intro)',
-      stems: {
-        vocals: { file: 'audio/01_SC_Instruments.mp3', label: 'Instruments' },
-        drums: { file: 'audio/01_SC_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/01_SC_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/01_SC_Other.mp3', label: 'Other' }
-      }
-    },
-    'neon': {
-      name: 'Neon',
-      stems: {
-        vocals: { file: 'audio/02_NE_Instruments.mp3', label: 'Instruments' },
-        drums: { file: 'audio/02_NE_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/02_NE_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/02_NE_Other.mp3', label: 'Other' }
-      }
-    },
-    'smoke-show': {
-      name: 'Smoke Show',
-      stems: {
-        vocals: { file: 'audio/03_SMS_Vocals.mp3', label: 'Vocals' },
-        drums: { file: 'audio/03_SMS_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/03_SMS_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/03_SMS_Other.mp3', label: 'Other' }
-      }
-    },
-    'godless-idols': {
-      name: 'Godless Idols',
-      stems: {
-        vocals: { file: 'audio/GI_Voice.mp3', label: 'Voice' },
-        drums: { file: 'audio/GI_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/GI_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/GI_Other.mp3', label: 'Other' }
-      }
-    },
-    'printer-brain': {
-      name: 'Printer Brain',
-      stems: {
-        vocals: { file: 'audio/05_PB_Vocals.mp3', label: 'Vocals' },
-        drums: { file: 'audio/05_PB_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/05_PB_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/05_PB_Other.mp3', label: 'Other' }
-      }
-    },
-    'ash-and-gold': {
-      name: 'Ash and Gold',
-      stems: {
-        vocals: { file: 'audio/06_AG_Vocals.mp3', label: 'Vocals' },
-        drums: { file: 'audio/06_AG_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/06_AG_Instruments.mp3', label: 'Instruments' },
-        other: { file: 'audio/06_AG_Other.mp3', label: 'Other' }
-      }
-    },
-    'production-line': {
-      name: 'Production Line',
-      stems: {
-        vocals: { file: 'audio/07_PL_Vocals.mp3', label: 'Vocals' },
-        drums: { file: 'audio/07_PL_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/07_PL_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/07_PL_Other.mp3', label: 'Other' }
-      }
-    },
-    'byd3s1gn': {
-      name: 'ByD3s1Gn',
-      stems: {
-        vocals: { file: 'audio/08_BD_Vocals.mp3', label: 'Vocals' },
-        drums: { file: 'audio/08_BD_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/08_BD_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/08_BD_Instruments.mp3', label: 'Instruments' }
-      }
-    },
-    'youre-meant-to-forget-this': {
-      name: "You're Meant to Forget This",
-      stems: {
-        vocals: { file: 'audio/09_YAMTFT_Instrument.mp3', label: 'Instrument' },
-        drums: { file: 'audio/09_YAMTFT_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/09_YAMTFT_Bass.mp3', label: 'Bass' },
-        other: null
-      }
-    },
-    'broken-blueprints': {
-      name: 'Broken Blueprints',
-      stems: {
-        vocals: { file: 'audio/10_BL_Instruments.mp3', label: 'Instruments' },
-        drums: { file: 'audio/10_BL_Drums.mp3', label: 'Drums' },
-        bass: { file: 'audio/10_BL_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/10_BL_Other.mp3', label: 'Other' }
-      }
-    },
-    'blurred-lines': {
-      name: 'Blurred Lines (Interlude)',
-      stems: {
-        vocals: { file: 'audio/11_BLI_Sample.mp3', label: 'Sample' },
-        drums: { file: 'audio/11_BLI_Noise.mp3', label: 'Noise' },
-        bass: null,
-        other: { file: 'audio/11_BLI_Other.mp3', label: 'Other' }
-      }
-    },
-    'synthetic-dream': {
-      name: 'Synthetic Dream',
-      stems: {
-        vocals: { file: 'audio/12_SF_Pads.mp3', label: 'Pads' },
-        drums: { file: 'audio/12_SF_Druma.mp3', label: 'Drums' },
-        bass: { file: 'audio/12_SF_Bass.mp3', label: 'Bass' },
-        other: { file: 'audio/12_SF_Arp.mp3', label: 'Arp' }
-      }
-    },
-    'glass-walls': {
-      name: 'Glass Walls (Outro)',
-      stems: {
-        vocals: { file: 'audio/13_GW_Vocals.mp3', label: 'Vocals' },
-        drums: { file: 'audio/13_GW_Instruments.mp3', label: 'Instruments' },
-        bass: null,
-        other: { file: 'audio/13_GW_Other.mp3', label: 'Other' }
-      }
+  function soloStemByKey(stemName) {
+    if (!window.player || !window.player.stems[stemName].buffer) return;
+    const allMuted = Object.entries(window.player.stems)
+      .filter(([n]) => n !== stemName)
+      .every(([, s]) => s.volume === 0);
+    const thisFull = window.player.stems[stemName].volume === 100;
+    
+    if (allMuted && thisFull) {
+      // Restore all
+      Object.keys(window.player.stems).forEach(name => {
+        window.player.stems[name].volume = 100;
+        if (window.player.stems[name].gainNode) {
+          window.player.stems[name].gainNode.gain.setTargetAtTime(1, window.player.audioContext.currentTime, 0.02);
+        }
+        updateLightBar(name, 100);
+      });
+    } else {
+      // Solo this stem
+      Object.keys(window.player.stems).forEach(name => {
+        const vol = name === stemName ? 100 : 0;
+        window.player.stems[name].volume = vol;
+        if (window.player.stems[name].gainNode) {
+          window.player.stems[name].gainNode.gain.setTargetAtTime(vol / 100, window.player.audioContext.currentTime, 0.02);
+        }
+        updateLightBar(name, vol);
+      });
     }
-  };
+  }
 
-  // Get track from URL or default to godless-idols
-  const urlParams = new URLSearchParams(window.location.search);
-  const trackId = urlParams.get('track') || 'godless-idols';
-  const TRACK_CONFIG = TRACKS[trackId] || TRACKS['godless-idols'];
-
-  // Set track title
-  document.getElementById('trackTitle').textContent = TRACK_CONFIG.name;
-  document.title = `SIGNAL - ${TRACK_CONFIG.name}`;
-
-  // Update stem labels and hide unused sliders
-  const stemPositions = {
-    vocals: '.stem-control.top',
-    drums: '.stem-control.right',
-    bass: '.stem-control.bottom',
-    other: '.stem-control.left'
-  };
+  const stemPositions = { vocals: '.stem-control.top', drums: '.stem-control.right', bass: '.stem-control.bottom', other: '.stem-control.left' };
 
   Object.entries(stemPositions).forEach(([stem, selector]) => {
     const control = document.querySelector(selector);
@@ -1293,8 +1506,171 @@
     }
   });
 
-  // Auto-load stems on page load
-  new StemPlayer();
+  // Create player and restore position
+  const player = new StemPlayer();
+  window.player = player;
+  
+  // Restore saved position after a short delay
+  setTimeout(() => {
+    const savedPosition = loadPosition();
+    if (savedPosition > 0 && savedPosition < player.duration - 1) {
+      player.seekTo(savedPosition);
+    }
+  }, 500);
+
+  // Help Modal
+  const helpOverlay = document.getElementById('helpOverlay');
+  const helpBtn = document.getElementById('helpBtn');
+  const helpClose = document.getElementById('helpClose');
+
+  function showHelp() {
+    helpOverlay.classList.add('visible');
+  }
+
+  function hideHelp() {
+    helpOverlay.classList.remove('visible');
+  }
+
+  helpBtn.addEventListener('click', showHelp);
+  helpClose.addEventListener('click', hideHelp);
+  helpOverlay.addEventListener('click', (e) => {
+    if (e.target === helpOverlay) hideHelp();
+  });
+
+  // Show help only ONCE ever, when coming from track menu (index.html)
+  // Use sessionStorage to mark that we're navigating between tracks (swipe)
+  const isSwipeNavigation = sessionStorage.getItem('nwo_swipe_nav') === 'true';
+  const hasSeenHelp = localStorage.getItem('nwo_help_seen') === 'true';
+  
+  if (!isSwipeNavigation && !hasSeenHelp) {
+    // First time from menu - show help
+    showHelp();
+    localStorage.setItem('nwo_help_seen', 'true');
+  }
+  
+  // Mark future navigations as swipe (will be set before goToTrack)
+  sessionStorage.removeItem('nwo_swipe_nav');
+
+  // Fullscreen
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  
+  // Check if fullscreen is supported
+  const fullscreenSupported = document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen;
+  
+  // Detect iOS
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+  function toggleFullscreen() {
+    // iOS doesn't support fullscreen API - show tip instead
+    if (isIOS) {
+      alert('To go fullscreen on iPhone:\n\n1. Tap the Share button\n2. Select "Add to Home Screen"\n3. Open from your home screen');
+      return;
+    }
+    
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(err => {
+          console.log('Fullscreen error:', err);
+        });
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      }
+      document.body.classList.add('fullscreen');
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+      document.body.classList.remove('fullscreen');
+    }
+  }
+
+  fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+  // Add F key for fullscreen
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'KeyF' && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      toggleFullscreen();
+    }
+    if (e.code === 'Escape' && helpOverlay.classList.contains('visible')) {
+      hideHelp();
+    }
+  });
+
+  // Update fullscreen state on change
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      document.body.classList.remove('fullscreen');
+    }
+  });
+  document.addEventListener('webkitfullscreenchange', () => {
+    if (!document.webkitFullscreenElement) {
+      document.body.classList.remove('fullscreen');
+    }
+  });
+
+  // Swipe Gestures
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchStartTime = 0;
+  const playerContainer = document.querySelector('.player-container');
+
+  playerContainer.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchStartTime = Date.now();
+  }, { passive: true });
+
+  playerContainer.addEventListener('touchend', (e) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const touchDuration = Date.now() - touchStartTime;
+    
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+    const absDeltaX = Math.abs(deltaX);
+    const absDeltaY = Math.abs(deltaY);
+    
+    // Only trigger if swipe is fast enough and long enough
+    if (touchDuration < 300 && (absDeltaX > 50 || absDeltaY > 50)) {
+      // Horizontal swipe - next/prev track
+      if (absDeltaX > absDeltaY && absDeltaX > 50) {
+        if (deltaX > 0) {
+          goToTrack(-1); // Swipe right = previous
+        } else {
+          goToTrack(1); // Swipe left = next
+        }
+      }
+      // Vertical swipe - master volume
+      else if (absDeltaY > absDeltaX && absDeltaY > 50) {
+        if (window.player && window.player.masterGain) {
+          const currentVol = window.player.masterGain.gain.value;
+          if (deltaY < 0) {
+            // Swipe up = volume up
+            window.player.masterGain.gain.value = Math.min(1, currentVol + 0.2);
+          } else {
+            // Swipe down = volume down
+            window.player.masterGain.gain.value = Math.max(0, currentVol - 0.2);
+          }
+        }
+      }
+    }
+  }, { passive: true });
+
+  // Update fullscreen state on change
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      document.body.classList.remove('fullscreen');
+    }
+  });
+  document.addEventListener('webkitfullscreenchange', () => {
+    if (!document.webkitFullscreenElement) {
+      document.body.classList.remove('fullscreen');
+    }
+  });
 </script>
 
 </body>
