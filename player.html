@@ -1131,7 +1131,12 @@
     setupSkipControls() {
       document.getElementById('skipBack').addEventListener('click', () => this.seekTo(Math.max(0, this.getCurrentTime() - 10)));
       document.getElementById('skipForward').addEventListener('click', () => this.seekTo(Math.min(this.duration, this.getCurrentTime() + 10)));
-      document.getElementById('playControl').addEventListener('click', () => this.togglePlay());
+      document.getElementById('playControl').addEventListener('click', () => {
+        unlockAudio();
+        window.player.initAudioContext();
+        if (window.player.audioContext.state === 'suspended') window.player.audioContext.resume();
+        window.player.togglePlay();
+      });
     }
 
     getCurrentTime() {
@@ -1180,6 +1185,7 @@
         }
       });
       this.isPlaying = true;
+      document.getElementById('playControl').textContent = '⏸';
     }
 
     pause() {
@@ -1187,6 +1193,7 @@
       this.pauseTime = this.audioContext.currentTime - this.startTime;
       Object.values(this.stems).forEach(stem => { if (stem.source) { stem.source.stop(); stem.source = null; } });
       this.isPlaying = false;
+      document.getElementById('playControl').textContent = '▶';
     }
 
     stop() {
